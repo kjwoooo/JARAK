@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,5 +27,5 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private List<SubCategory> subCategories;
+    private List<SubCategory> subCategories = new ArrayList<>();
 }
