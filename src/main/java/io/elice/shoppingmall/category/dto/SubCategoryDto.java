@@ -2,7 +2,12 @@ package io.elice.shoppingmall.category.dto;
 
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.entity.SubCategory;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter @Setter
+@NoArgsConstructor
 public class SubCategoryDto {
 
     private Long id;
