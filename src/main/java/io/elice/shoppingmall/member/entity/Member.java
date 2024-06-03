@@ -1,6 +1,6 @@
 package io.elice.shoppingmall.member.entity;
 
-import io.elice.shoppingmall.member.entity.address.Address;
+import io.elice.shoppingmall.address.entity.Address;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
