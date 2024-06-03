@@ -7,6 +7,7 @@ import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.text.html.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +25,22 @@ public class AddressService {
         return addressRepository.findById(id);
     }
 
-    public Optional<Address> findByMemberId(Long memberId){
+    public List<Address> findByMemberId(Long memberId){
         Member member = memberRepository.findById(memberId).orElse(null);
         if(member == null){
             return null;
         }
 
         return addressRepository.findByMember(member);
+    }
+
+    public Optional<Address> findByAddressIdAndMemberId(Long memberId, Long addressId){
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if(member==null){
+            return null;
+        }
+
+        return addressRepository.findByIdAndMember(addressId, member);
     }
 
     private Address save(Address address){
