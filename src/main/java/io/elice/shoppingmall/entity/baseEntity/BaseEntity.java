@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.entity.base;
+package io.elice.shoppingmall.entity.baseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
