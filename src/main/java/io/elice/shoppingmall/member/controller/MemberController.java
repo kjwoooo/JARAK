@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.member.controller;
 
+import io.elice.shoppingmall.Utility.Utility;
 import io.elice.shoppingmall.member.entity.LoginInfo;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.entity.MemberDTO;
@@ -25,6 +26,7 @@ import io.elice.shoppingmall.security.JwtTokenUtil;
 public class MemberController {
 
     private final MemberService memberService;
+    private final Utility util;
 
     @GetMapping("/members")
     public ResponseEntity getMembers(){
@@ -54,17 +56,13 @@ public class MemberController {
         Member member = memberService.login(loginInfo);
 
         if(member == null){
-            System.out.println("member null");
             return new ResponseEntity(loginInfo, HttpStatus.NOT_FOUND);
         }
 
-        String secretKey = SecurityConfig.getSecretKey();
-        long expireTimeMs = SecurityConfig.getExpireTimeMs();
+        String jwtToken = JwtTokenUtil.createToken(member.getUsername(), member.getAdmin(), util.SECRET_KEY, util.EXPIRE_TIME_MS);
 
-        String jwtToken = JwtTokenUtil.createToken(member.getUsername(), member.getAdmin(), secretKey, expireTimeMs);
-
-        Cookie cookie = new Cookie("jwtToken", jwtToken);
-        cookie.setMaxAge(60 * 60 * 24);
+        Cookie cookie = new Cookie(util.JWT_COOKIE_NAME, jwtToken);
+        cookie.setMaxAge(util.JWT_COOKIE_MAX_AGE);
 
         response.addCookie(cookie);
         response.addHeader(HttpHeaders.AUTHORIZATION, member.getAdmin());

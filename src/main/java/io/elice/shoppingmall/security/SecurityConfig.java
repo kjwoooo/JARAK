@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.security;
 
 
+import io.elice.shoppingmall.Utility.Utility;
 import io.elice.shoppingmall.member.MemberAuthority;
 import io.elice.shoppingmall.member.service.MemberService;
 import lombok.Getter;
@@ -26,17 +27,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig{
-    @Getter
-    private static final String secretKey = "sdagxcs56d4gxc65g48asfafssg4xc685sasadg84a46asd46w8e4684sadggsdg654xc";
-    @Getter
-    private static final long expireTimeMs = 1000*60*60;
+
+    private final Utility util;
     private final MemberService memberService;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        System.out.println("[Log] SecurityConfig.filterChain 실행");
-
         http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
 
@@ -54,7 +51,7 @@ public class SecurityConfig{
 //            .requestMatchers(HttpMethod.GET, "/admin").hasRole(MemberAuthority.ADMIN.name())
 //        );
 
-        http.addFilterBefore(new JwtTokenFilter(secretKey, memberService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtTokenFilter(util.SECRET_KEY, memberService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
