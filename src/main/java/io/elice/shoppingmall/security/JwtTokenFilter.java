@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.security;
 
+import io.elice.shoppingmall.Utility.Utility;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import jakarta.servlet.FilterChain;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,6 +25,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final String secretKey;
     private final MemberService memberService;
+    private final Utility util;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -38,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
 
             Cookie jwtTokenCookie = Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals("jwtToken"))
+                .filter(cookie -> cookie.getName().equals(util.JWT_COOKIE_NAME))
                 .findFirst()
                 .orElse(null);
 
@@ -71,11 +74,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                member.getUsername(), null, List.of(new SimpleGrantedAuthority(member.getAdmin())));
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+        User user = new User(username, member.getPassword(), List.of(new SimpleGrantedAuthority(member.getAdmin())));
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            user, null, List.of(new SimpleGrantedAuthority(member.getAdmin())));
+
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
         filterChain.doFilter(request, response);
     }
 }

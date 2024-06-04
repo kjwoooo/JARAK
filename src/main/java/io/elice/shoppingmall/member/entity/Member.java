@@ -38,7 +38,7 @@ public class Member {
     private String password;
 
     @Column(nullable = false)
-    private String phoneNumber;
+    private String phone;
 
     @Column(nullable = false)
     private Integer gender;

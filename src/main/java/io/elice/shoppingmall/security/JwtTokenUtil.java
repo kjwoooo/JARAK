@@ -24,6 +24,7 @@ public class JwtTokenUtil {
 
         Claims claims = Jwts.claims();
         claims.put("username", username);
+        claims.put("role", role);
         long now = System.currentTimeMillis();
 
         return Jwts.builder()

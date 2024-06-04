@@ -51,7 +51,7 @@ public class MemberController {
         return new ResponseEntity(new MemberResponseDTO(member), HttpStatus.OK);
     }
 
-    @PostMapping("/loginTest")
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginInfo loginInfo, HttpServletResponse response){
         Member member = memberService.login(loginInfo);
 
@@ -78,11 +78,6 @@ public class MemberController {
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody MemberDTO memberDTO){
         Member newMember = memberService.save(memberDTO);
-
-        if(newMember == null){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
         return new ResponseEntity(newMember, HttpStatus.CREATED);
     }
 

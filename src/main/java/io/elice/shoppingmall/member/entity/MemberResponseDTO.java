@@ -24,7 +24,7 @@ public class MemberResponseDTO {
         this.displayName = member.getDisplayName();
         this.username = member.getUsername();
         this.email = member.getEmail();
-        this.phoneNumber = member.getPhoneNumber();
+        this.phoneNumber = member.getPhone();
         this.gender = member.getGender();
         this.admin = MemberAuthority.valueOf(member.getAdmin());
         this.membership = UserMembership.valueOf(member.getMembership());

@@ -41,17 +41,17 @@ public class SecurityConfig{
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
-        http.authorizeHttpRequests(authorize -> authorize
-            .anyRequest().permitAll());
-
 //        http.authorizeHttpRequests(authorize -> authorize
-//            .requestMatchers(HttpMethod.POST, "/loginTest").permitAll()
-//            .requestMatchers(HttpMethod.POST, "/register").permitAll()
-//            .requestMatchers(HttpMethod.GET,"/member/**").hasAnyRole(MemberAuthority.ADMIN.name(), MemberAuthority.USER.name())
-//            .requestMatchers(HttpMethod.GET, "/admin").hasRole(MemberAuthority.ADMIN.name())
-//        );
+//            .anyRequest().permitAll());
 
-        http.addFilterBefore(new JwtTokenFilter(util.SECRET_KEY, memberService), UsernamePasswordAuthenticationFilter.class);
+        http.authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(HttpMethod.POST, "/loginTest").permitAll()
+            .requestMatchers(HttpMethod.POST, "/register").permitAll()
+            .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority(MemberAuthority.ADMIN.name(), MemberAuthority.USER.name())
+            .requestMatchers(HttpMethod.GET, "/admin").hasAuthority(MemberAuthority.ADMIN.name())
+        );
+
+        http.addFilterBefore(new JwtTokenFilter(util.SECRET_KEY, memberService, util), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
