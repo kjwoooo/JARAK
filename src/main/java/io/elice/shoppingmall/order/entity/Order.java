@@ -30,7 +30,7 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, referencedColumnName = "id")
     private Member member;
 
     @Column(nullable = false)
