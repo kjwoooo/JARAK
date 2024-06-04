@@ -59,10 +59,9 @@ public class CategoryService {
     //  카테고리 업데이트
     @Transactional(readOnly = false)
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(id).orElse(null);
-        if (category == null) {
-            throw new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id);
-        }
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
+
         category.setName(categoryDto.getName());
         categoryRepository.save(category);
         return new CategoryDto(category);
@@ -72,10 +71,10 @@ public class CategoryService {
     //  카테고리 삭제
     @Transactional(readOnly = false)
     public void deleteCategory(Long id) {
-        Category category = categoryRepository.findById(id).orElse(null);
-        if (category == null) {
-            throw new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id);
-        }
-        categoryRepository.delete(category);
+        categoryRepository.findById(id).ifPresentOrElse(
+                categoryRepository::delete, // 메서드 참조 (값이 있을 때 삭제)
+                () -> { throw new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id); }
+                // 람다식 (값이 없을 때 예외 발생)
+        );
     }
 }
