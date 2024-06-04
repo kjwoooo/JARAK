@@ -23,9 +23,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private final String secretKey;
+    private final JwtTokenUtil util;
     private final MemberService memberService;
-    private final Utility util;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -41,7 +40,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
 
             Cookie jwtTokenCookie = Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals(util.JWT_COOKIE_NAME))
+                .filter(cookie -> cookie.getName().equals(util.getJWT_COOKIE_NAME()))
                 .findFirst()
                 .orElse(null);
 
@@ -61,12 +60,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String token = authorizationHeader.split(" ")[1];
 
-        if(JwtTokenUtil.isExpired(token, secretKey)){
+        if(JwtTokenUtil.isExpired(token, util.getSECRET_KEY())){
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = JwtTokenUtil.getUsername(token, secretKey);
+        String username = JwtTokenUtil.getUsername(token, util.getSECRET_KEY());
         Member member = memberService.findByUsername(username).orElse(null);
 
         if(member == null){

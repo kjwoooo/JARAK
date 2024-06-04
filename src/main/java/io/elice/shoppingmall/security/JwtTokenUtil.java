@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
 import java.util.Date;
 import javax.swing.SingleSelectionModel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,14 @@ import org.springframework.stereotype.Component;
 public class JwtTokenUtil {
 
     private final PrincipalDetailsService principalDetailsService;
+    @Getter
+    private final String SECRET_KEY = "sdagxcs56d4gxc65g48asfafssg4xc685sasadg84a46asd46w8e4684sadggsdg654xc";
+    @Getter
+    private final String JWT_COOKIE_NAME = "jwtToken";
+    @Getter
+    private final long EXPIRE_TIME_MS = 1000*60*60;
+    @Getter
+    private final int JWT_COOKIE_MAX_AGE = 60 * 60 * 24;
 
     public static String createToken(String username, String role, String key, long expireTimeMs){
 
