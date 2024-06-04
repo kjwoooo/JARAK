@@ -12,16 +12,18 @@ public class SubCategoryDto {
 
     private Long id;
     private String name;
-    private Category category;
-
+    private Long categoryId;
     public SubCategoryDto(SubCategory subCategory) {
         this.id = subCategory.getId();
         this.name = subCategory.getName();
-        this.category = subCategory.getCategory();
+        this.categoryId = subCategory.getCategory().getId();
     }
-
     public SubCategory toEntity() {
-        return new SubCategory(id, name,category);
+        SubCategory subCategory = new SubCategory();
+        subCategory.setId(this.id);
+        subCategory.setName(this.name);
+        //  해당하는 상위 카테고리에 대한 정보를 찾아서 설정
+        return subCategory;
     }
 
 
