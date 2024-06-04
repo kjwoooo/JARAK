@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrderDTO {
     private Long id;
-    private Integer memberId;
+    private Long memberId;
     private Integer price;
     private Date orderDate;
     private String payCard;

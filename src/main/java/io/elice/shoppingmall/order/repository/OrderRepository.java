@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    // 특정 사용자에 대한 주문 조회
     List<Order> findByMemberIdOrderByIdDesc(Long memberId);
 }
