@@ -1,17 +1,14 @@
 package io.elice.shoppingmall.member.controller;
 
-import io.elice.shoppingmall.Utility.Utility;
-import io.elice.shoppingmall.member.entity.LoginInfo;
+import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.entity.MemberDTO;
 import io.elice.shoppingmall.member.entity.MemberResponseDTO;
 import io.elice.shoppingmall.member.service.MemberService;
-import io.elice.shoppingmall.security.SecurityConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +32,7 @@ public class MemberController {
             MemberResponseDTO::new).toList();
 
         if(members.isEmpty()){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Member>(HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity(members, HttpStatus.OK);
@@ -46,18 +43,18 @@ public class MemberController {
         Member member = memberService.findById(id).orElse(null);
 
         if(member == null){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<MemberResponseDTO>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity(new MemberResponseDTO(member), HttpStatus.OK);
+        return new ResponseEntity<MemberResponseDTO>(new MemberResponseDTO(member), HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginInfo loginInfo, HttpServletResponse response){
-        Member member = memberService.login(loginInfo);
+    public ResponseEntity login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
+        Member member = memberService.login(memberLogin);
 
         if(member == null){
-            return new ResponseEntity(loginInfo, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(memberLogin, HttpStatus.NOT_FOUND);
         }
 
         String jwtToken = JwtTokenUtil.createToken(member.getUsername(), member.getAdmin(), util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());

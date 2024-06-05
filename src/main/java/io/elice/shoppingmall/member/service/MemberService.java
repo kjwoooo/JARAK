@@ -1,15 +1,13 @@
 package io.elice.shoppingmall.member.service;
 
 
-import io.elice.shoppingmall.member.entity.LoginInfo;
+import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.entity.MemberDTO;
 import io.elice.shoppingmall.member.repository.MemberRepository;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,29 +30,20 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
-    public Member login(LoginInfo loginInfo){
-        Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElse(null);
-
-        if(member == null)
-            return null;
-
-        if(!encoder.matches(loginInfo.getPassword(), member.getPassword()))
-            return null;
-
-        return member;
-
-        /*
+    public Member login(MemberLogin loginInfo){
         Optional<Member> member = memberRepository.findByUsername(loginInfo.getUsername());
 
-        try {
-            if (!member.get().getPassword().equals(loginInfo.getPassword()))
-                return null;
+        if(member.isEmpty())
+            return null;
 
-            return member;
-        } catch (NoSuchElementException e){
-            e.printStackTrace();
-        }
-         */
+        if(!encoder.matches(loginInfo.getPassword(), member.get().getPassword()))
+            return null;
+
+        return member.get();
+    }
+
+    public void delete(Long id){
+
     }
 
     public Member save(MemberDTO memberDto){
