@@ -45,10 +45,9 @@ public class SecurityConfig{
 //            .anyRequest().permitAll());
 
         http.authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
-            .requestMatchers(HttpMethod.GET, "/logout").permitAll()
             .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority(MemberAuthority.ADMIN.name(), MemberAuthority.USER.name())
             .requestMatchers(HttpMethod.GET, "/admin").hasAuthority(MemberAuthority.ADMIN.name())
+            .anyRequest().permitAll()
         );
 
         http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);

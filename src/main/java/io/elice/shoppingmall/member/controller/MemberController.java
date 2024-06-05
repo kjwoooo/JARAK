@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ import io.elice.shoppingmall.security.JwtTokenUtil;
 public class MemberController {
 
     private final MemberService memberService;
-    private final Utility util;
+    private final JwtTokenUtil util;
 
     @GetMapping("/members")
     public ResponseEntity getMembers(){
@@ -59,15 +60,24 @@ public class MemberController {
             return new ResponseEntity(loginInfo, HttpStatus.NOT_FOUND);
         }
 
-        String jwtToken = JwtTokenUtil.createToken(member.getUsername(), member.getAdmin(), util.SECRET_KEY, util.EXPIRE_TIME_MS);
+        String jwtToken = JwtTokenUtil.createToken(member.getUsername(), member.getAdmin(), util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
 
-        Cookie cookie = new Cookie(util.JWT_COOKIE_NAME, jwtToken);
-        cookie.setMaxAge(util.JWT_COOKIE_MAX_AGE);
+        Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);
+        cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
 
         response.addCookie(cookie);
         response.addHeader(HttpHeaders.AUTHORIZATION, member.getAdmin());
 
         return new ResponseEntity(member, HttpStatus.OK);
+    }
+
+    @GetMapping("/member-logout")
+    public ResponseEntity logout(HttpServletResponse response){
+        Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        return new ResponseEntity("logout", HttpStatus.OK);
     }
 
     @GetMapping("/member/info")
