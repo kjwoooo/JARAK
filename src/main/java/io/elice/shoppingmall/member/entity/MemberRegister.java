@@ -1,7 +1,6 @@
 package io.elice.shoppingmall.member.entity;
 
 import io.elice.shoppingmall.member.MemberAuthority;
-import io.elice.shoppingmall.member.UserMembership;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDTO {
+public class MemberRegister {
     private String displayName;
     private String email;
     private String username;
@@ -19,9 +18,8 @@ public class MemberDTO {
     private String phone;
     private Integer gender;
     private MemberAuthority admin;
-    private UserMembership membership;
 
-    public MemberDTO(Member member){
+    public MemberRegister(Member member){
         this.displayName = member.getDisplayName();
         this.username = member.getUsername();
         this.email = member.getEmail();
@@ -29,10 +27,9 @@ public class MemberDTO {
         this.phone = member.getPhone();
         this.gender = member.getGender();
         this.admin = MemberAuthority.valueOf(member.getAdmin());
-        this.membership = UserMembership.valueOf(member.getMembership());
     }
 
-    public Member toEntity(){
+    public Member toUserEntity(){
         Member member = new Member();
         member.setDisplayName(displayName);
         member.setEmail(email);
@@ -41,15 +38,36 @@ public class MemberDTO {
         member.setPhone(phone);
         member.setGender(gender);
         member.setAdmin(admin.name());
-        member.setMembership(membership.name());
+        member.setMembership(MemberAuthority.USER.name());
 
         return member;
     }
 
-    public Member toEntity(Long id){
-        Member user = toEntity();
-        user.setId(id);
+    public Member toUserEntity(Long id){
+        Member member = toUserEntity();
+        member.setId(id);
 
-        return user;
+        return member;
+    }
+
+    public Member toAdminEntity(){
+        Member member = new Member();
+        member.setDisplayName(displayName);
+        member.setEmail(email);
+        member.setUsername(username);
+        member.setPassword(password);
+        member.setPhone(phone);
+        member.setGender(gender);
+        member.setAdmin(admin.name());
+        member.setMembership(MemberAuthority.ADMIN.name());
+
+        return member;
+    }
+
+    public Member toAdminEntity(Long id){
+        Member member = toAdminEntity();
+        member.setId(id);
+
+        return member;
     }
 }

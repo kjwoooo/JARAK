@@ -15,18 +15,16 @@ public class MemberResponseDTO {
     private String displayName;
     private String email;
     private String username;
-    private String phoneNumber;
+    private String phone;
     private Integer gender;
-    private MemberAuthority admin;
     private UserMembership membership;
 
     public MemberResponseDTO(Member member){
         this.displayName = member.getDisplayName();
         this.username = member.getUsername();
         this.email = member.getEmail();
-        this.phoneNumber = member.getPhone();
+        this.phone = member.getPhone();
         this.gender = member.getGender();
-        this.admin = MemberAuthority.valueOf(member.getAdmin());
         this.membership = UserMembership.valueOf(member.getMembership());
     }
 }
