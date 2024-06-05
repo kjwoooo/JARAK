@@ -2,6 +2,7 @@ package io.elice.shoppingmall.member.controller;
 
 import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
+import io.elice.shoppingmall.member.entity.MemberModifyInfo;
 import io.elice.shoppingmall.member.entity.MemberRegister;
 import io.elice.shoppingmall.member.entity.MemberResponseDTO;
 import io.elice.shoppingmall.member.service.MemberService;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,13 +39,25 @@ public class MemberController {
     }
 
     @GetMapping("/members/{id}")
-    public ResponseEntity<?> getMember(@RequestParam Long id){
+    public ResponseEntity<?> getMember(@PathVariable Long id){
         Optional<Member> member = memberService.findById(id);
 
         if(member.isEmpty())
             return new ResponseEntity<>("해당 회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(new MemberResponseDTO(member.get()), HttpStatus.OK);
+    }
+
+    @PostMapping("/members/{id}")
+    public ResponseEntity<?> postMember(@PathVariable Long id, @RequestBody MemberModifyInfo memberModify){
+        if(!memberService.isMatchPassword(id, memberModify.getPassword()))
+            return new ResponseEntity<>("현재 비밀번호가 잘못되었습니다.", HttpStatus.BAD_REQUEST);
+
+        Optional<MemberResponseDTO> memberResponseDTO = memberService.save(id, memberModify);
+        if(memberResponseDTO.isEmpty())
+            return new ResponseEntity<>("해당 회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(memberResponseDTO.get(), HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -73,8 +87,8 @@ public class MemberController {
         return new ResponseEntity<>("로그아웃 완료.", HttpStatus.OK);
     }
 
-    @DeleteMapping("/unregister")
-    public void delete(HttpServletResponse response, @RequestParam Long id){
+    @DeleteMapping("/unregister/{id}")
+    public void delete(HttpServletResponse response, @PathVariable Long id){
         jwtTokenDestroy(response);
         memberService.delete(id);
     }
@@ -87,10 +101,10 @@ public class MemberController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody MemberRegister memberDTO){
-        if(!memberService.isPossibleUsername(memberDTO.getUsername()))
+        if(memberService.isExistUsername(memberDTO.getUsername()))
             return new ResponseEntity<>("이미 존재하는 ID 입니다.", HttpStatus.BAD_REQUEST);
 
-        Optional<Member> newMember = memberService.save(memberDTO);
+        memberService.save(memberDTO);
 
         return new ResponseEntity<>("회원 등록 완료.", HttpStatus.CREATED);
     }
