@@ -45,8 +45,6 @@ public class SecurityConfig{
 //            .anyRequest().permitAll());
 
         http.authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority(MemberAuthority.ADMIN.name(), MemberAuthority.USER.name())
-            .requestMatchers(HttpMethod.GET, "/admin").hasAuthority(MemberAuthority.ADMIN.name())
             .anyRequest().permitAll()
         );
 
