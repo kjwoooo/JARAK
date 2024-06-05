@@ -3,7 +3,7 @@ package io.elice.shoppingmall.member.service;
 
 import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
-import io.elice.shoppingmall.member.entity.MemberDTO;
+import io.elice.shoppingmall.member.entity.MemberRegister;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
@@ -30,43 +30,42 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
-    public Member login(MemberLogin loginInfo){
+    public Optional<Member> login(MemberLogin loginInfo){
         Optional<Member> member = memberRepository.findByUsername(loginInfo.getUsername());
 
         if(member.isEmpty())
-            return null;
+            return Optional.empty();
 
         if(!encoder.matches(loginInfo.getPassword(), member.get().getPassword()))
-            return null;
+            return Optional.empty();
 
-        return member.get();
+        return member;
     }
 
     public void delete(Long id){
-
+        Optional<Member> memberOptional = memberRepository.findById(id);
+        memberOptional.ifPresent(memberRepository::delete);
     }
 
-    public Member save(MemberDTO memberDto){
-        try{
-            memberDto.setPassword(encoder.encode(memberDto.getPassword()));
+    public Optional<Member> save(MemberRegister memberDto){
+        if(memberRepository.existsByUsername(memberDto.getUsername())){
+            return Optional.empty();
+        }
 
-            return memberRepository.save(memberDto.toEntity());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+        memberDto.setPassword(encoder.encode(memberDto.getPassword()));
+
+        return Optional.of(memberRepository.save(memberDto.toUserEntity()));
     }
 
-    public Member save(Long id, MemberDTO memberDto){
-        Member oldMember = memberRepository.findById(id).orElse(null);
-        if(oldMember==null){
+    public Optional<Member> save(Long id, MemberRegister memberDto){
+        Optional<Member> oldMember = memberRepository.findById(id);
+        if(oldMember.isEmpty()){
             return save(memberDto);
         }
 
-        Member newMember = memberDto.toEntity();
+        Member newMember = memberDto.toUserEntity();
         newMember.setId(id);
 
-        return memberRepository.save(newMember);
+        return Optional.of(memberRepository.save(newMember));
     }
 }
