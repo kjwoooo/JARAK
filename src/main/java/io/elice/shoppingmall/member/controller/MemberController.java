@@ -49,7 +49,7 @@ public class MemberController {
         return new ResponseEntity(new MemberResponseDTO(member.get()), HttpStatus.OK);
     }
 
-    @PostMapping("/members-login")
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
         Optional<Member> memberOptional = memberService.login(memberLogin);
 
@@ -69,14 +69,14 @@ public class MemberController {
         return new ResponseEntity(member, HttpStatus.OK);
     }
 
-    @GetMapping("/members-logout")
+    @GetMapping("/logout")
     public ResponseEntity logout(HttpServletResponse response){
         jwtTokenDestroy(response);
 
         return new ResponseEntity("logout", HttpStatus.OK);
     }
 
-    @DeleteMapping("/members-unregister")
+    @DeleteMapping("/unregister")
     public void delete(HttpServletResponse response, @RequestParam Long id){
         jwtTokenDestroy(response);
         memberService.delete(id);
@@ -88,7 +88,7 @@ public class MemberController {
         response.addCookie(cookie);
     }
 
-    @PostMapping("/members-register")
+    @PostMapping("/register")
     public ResponseEntity register(@RequestBody MemberRegister memberDTO){
         Optional<Member> newMember = memberService.save(memberDTO);
         if(newMember.isEmpty())

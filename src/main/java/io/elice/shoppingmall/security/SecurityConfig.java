@@ -50,6 +50,9 @@ public class SecurityConfig{
             .anyRequest().permitAll()
         );
 
+        http.logout(logout -> logout
+            .logoutUrl("logout"));
+
         http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
