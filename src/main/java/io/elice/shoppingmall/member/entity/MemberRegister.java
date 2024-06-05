@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.member.entity;
 
 import io.elice.shoppingmall.member.MemberAuthority;
+import io.elice.shoppingmall.member.Membership;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,6 @@ public class MemberRegister {
     private String password;
     private String phone;
     private Integer gender;
-    private MemberAuthority admin;
 
     public MemberRegister(Member member){
         this.displayName = member.getDisplayName();
@@ -26,47 +26,32 @@ public class MemberRegister {
         this.password = member.getPassword();
         this.phone = member.getPhone();
         this.gender = member.getGender();
-        this.admin = MemberAuthority.valueOf(member.getAdmin());
     }
 
-    public Member toUserEntity(){
+    private Member toEntity(){
         Member member = new Member();
+
         member.setDisplayName(displayName);
         member.setEmail(email);
         member.setUsername(username);
         member.setPassword(password);
         member.setPhone(phone);
         member.setGender(gender);
-        member.setAdmin(admin.name());
-        member.setMembership(MemberAuthority.USER.name());
+        member.setMembership(Membership.BRONZE.name());
 
         return member;
     }
 
-    public Member toUserEntity(Long id){
-        Member member = toUserEntity();
-        member.setId(id);
+    public Member toUserEntity(){
+        Member member = toEntity();
+        member.setAdmin(MemberAuthority.USER.name());
 
         return member;
     }
 
     public Member toAdminEntity(){
-        Member member = new Member();
-        member.setDisplayName(displayName);
-        member.setEmail(email);
-        member.setUsername(username);
-        member.setPassword(password);
-        member.setPhone(phone);
-        member.setGender(gender);
-        member.setAdmin(admin.name());
-        member.setMembership(MemberAuthority.ADMIN.name());
-
-        return member;
-    }
-
-    public Member toAdminEntity(Long id){
-        Member member = toAdminEntity();
-        member.setId(id);
+        Member member = toEntity();
+        member.setAdmin(MemberAuthority.ADMIN.name());
 
         return member;
     }

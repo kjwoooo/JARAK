@@ -1,7 +1,5 @@
 package io.elice.shoppingmall.member.entity;
 
-import io.elice.shoppingmall.member.MemberAuthority;
-import io.elice.shoppingmall.member.UserMembership;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +15,7 @@ public class MemberResponseDTO {
     private String username;
     private String phone;
     private Integer gender;
-    private UserMembership membership;
+    private String membership;
 
     public MemberResponseDTO(Member member){
         this.displayName = member.getDisplayName();
@@ -25,6 +23,6 @@ public class MemberResponseDTO {
         this.email = member.getEmail();
         this.phone = member.getPhone();
         this.gender = member.getGender();
-        this.membership = UserMembership.valueOf(member.getMembership());
+        this.membership = member.getMembership();
     }
 }

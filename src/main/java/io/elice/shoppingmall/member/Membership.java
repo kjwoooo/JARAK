@@ -1,12 +1,12 @@
 package io.elice.shoppingmall.member;
 
-public enum UserMembership {
+public enum Membership {
     BRONZE("BRONZE"),
     SILVER("SILVER"),
     GOLD("GOLD");
 
     private final String name;
-    private UserMembership(String name){
+    private Membership(String name){
         this.name = name;
     }
 }
