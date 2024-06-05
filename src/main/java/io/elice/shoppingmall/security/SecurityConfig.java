@@ -1,7 +1,5 @@
 package io.elice.shoppingmall.security;
 
-
-import io.elice.shoppingmall.Utility.Utility;
 import io.elice.shoppingmall.member.MemberAuthority;
 import io.elice.shoppingmall.member.service.MemberService;
 import lombok.Getter;
