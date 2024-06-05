@@ -1,0 +1,71 @@
+[33mcommit c38f20a3f2ac46817cf7196a59fb92d387b08aca[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: narim <ehdrkd648@naver.com>
+Date:   Mon Jun 3 17:11:20 2024 +0900
+
+    feat: entity 추가
+
+[33mcommit 15859bd5beb530a90d969e6ef5fb85b353543b10[m[33m ([m[1;31morigin/feat/cart[m[33m)[m
+Merge: d0aefdc fa04965
+Author: [Cloud3] 전일우 <ilwoo6422@naver.com>
+Date:   Wed May 29 07:45:23 2024 +0000
+
+    Merge branch 'user' into 'master'
+    
+    comment: build.gradle 주석 해제
+    
+    See merge request cloud_track/class_03/web_project2/team06/clothes_shopping_mall!3
+
+[33mcommit fa04965c56b2b018b0643a16ddf8bf0819e3f4c8[m
+Merge: 689dbcd 54684c8
+Author: [Cloud3] 전일우 <ilwoo6422@naver.com>
+Date:   Wed May 29 07:44:14 2024 +0000
+
+    Merge branch 'feature1-jeon' into 'user'
+    
+    feat: BaseEntity 추가
+    
+    See merge request cloud_track/class_03/web_project2/team06/clothes_shopping_mall!2
+
+[33mcommit 54684c80c395a17962a15dfaeb4b90754ebf7a02[m
+Author: FFFace <59927358+FFFace@users.noreply.github.com>
+Date:   Wed May 29 16:08:22 2024 +0900
+
+    feat: BaseEntity 추가
+    - 생성 및 수정을 할 때, 자동으로 날짜를 변경해 줄 클래스
+
+[33mcommit 689dbcd333b5b3d8cf565a5a4fffedbd815d8c04[m
+Author: FFFace <59927358+FFFace@users.noreply.github.com>
+Date:   Wed May 29 14:19:58 2024 +0900
+
+    comment: build.gradle 주석 해제
+    - build.gradle 내 일부 dependency 주석 해제(security 등)
+
+[33mcommit d0aefdc13d3787256d9ff0a9b1ef8e97945e4c62[m
+Author: FFFace <59927358+FFFace@users.noreply.github.com>
+Date:   Wed May 29 14:00:06 2024 +0900
+
+    comment: ㅠbuild.gradle의 일부 dependencies의 주석 해제
+    - ìbuild 파일- security 등 ì 주석 처리되어 있던 일부 dependency 주석ì을 해제 했했습니다.
+
+[33mcommit 9d4f3becbe222b092939e44417e24e5ec52c79e7[m
+Merge: 11d12a5 905891a
+Author: [코치] 이재원 <jae_won@icloud.com>
+Date:   Wed May 29 02:33:12 2024 +0000
+
+    Merge branch 'feature/category-controller' into 'dev'
+    
+    feature: category controller 추가
+    
+    See merge request cloud_track/class_03/web_project2/team06/clothes_shopping_mall!1
+
+[33mcommit 905891ac48ab5b8791925ad3ed75ce5f6b9bde93[m
+Author: Jamie.Lee <jamie.lee@jamie.local>
+Date:   Wed May 29 11:32:16 2024 +0900
+
+    feature: category controller 추가
+
+[33mcommit 11d12a52eef56ff30a79ebe891f697bcf83f1870[m
+Author: FFFace <59927358+FFFace@users.noreply.github.com>
+Date:   Mon May 27 14:52:45 2024 +0900
+
+    commit starter code
