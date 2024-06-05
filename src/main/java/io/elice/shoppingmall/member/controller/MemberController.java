@@ -29,32 +29,29 @@ public class MemberController {
     private final JwtTokenUtil util;
 
     @GetMapping("/members")
-    public ResponseEntity getMembers(){
+    public ResponseEntity<List<MemberResponseDTO>> getMembers(){
         List<MemberResponseDTO> members = memberService.findAll().stream().map(
             MemberResponseDTO::new).toList();
 
-        if(members.isEmpty())
-            return new ResponseEntity<Member>(HttpStatus.NOT_FOUND);
-
-        return new ResponseEntity(members, HttpStatus.OK);
+        return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
     @GetMapping("/members/{id}")
-    public ResponseEntity getMember(@RequestParam Long id){
+    public ResponseEntity<?> getMember(@RequestParam Long id){
         Optional<Member> member = memberService.findById(id);
 
         if(member.isEmpty())
-            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("해당 회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity(new MemberResponseDTO(member.get()), HttpStatus.OK);
+        return new ResponseEntity<>(new MemberResponseDTO(member.get()), HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
+    public ResponseEntity<String> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
         Optional<Member> memberOptional = memberService.login(memberLogin);
 
         if(memberOptional.isEmpty())
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("아이디 또는 비밀번호가 잘못되었습니다.", HttpStatus.NOT_FOUND);
 
         Member member = memberOptional.get();
 
@@ -66,14 +63,14 @@ public class MemberController {
         response.addCookie(cookie);
         response.addHeader(HttpHeaders.AUTHORIZATION, member.getAdmin());
 
-        return new ResponseEntity(member, HttpStatus.OK);
+        return new ResponseEntity<>("로그인 완료.", HttpStatus.OK);
     }
 
     @GetMapping("/logout")
-    public ResponseEntity logout(HttpServletResponse response){
+    public ResponseEntity<String> logout(HttpServletResponse response){
         jwtTokenDestroy(response);
 
-        return new ResponseEntity("logout", HttpStatus.OK);
+        return new ResponseEntity<>("로그아웃 완료.", HttpStatus.OK);
     }
 
     @DeleteMapping("/unregister")
@@ -89,16 +86,12 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody MemberRegister memberDTO){
+    public ResponseEntity<String> register(@RequestBody MemberRegister memberDTO){
+        if(!memberService.isPossibleUsername(memberDTO.getUsername()))
+            return new ResponseEntity<>("이미 존재하는 ID 입니다.", HttpStatus.BAD_REQUEST);
+
         Optional<Member> newMember = memberService.save(memberDTO);
-        if(newMember.isEmpty())
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity(newMember.get(), HttpStatus.CREATED);
-    }
-
-    @GetMapping("/admin")
-    public ResponseEntity admin(){
-        return new ResponseEntity("admin", HttpStatus.OK);
+        return new ResponseEntity<>("회원 등록 완료.", HttpStatus.CREATED);
     }
 }

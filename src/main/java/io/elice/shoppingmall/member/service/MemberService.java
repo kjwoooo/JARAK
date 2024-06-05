@@ -47,11 +47,11 @@ public class MemberService {
         memberOptional.ifPresent(memberRepository::delete);
     }
 
-    public Optional<Member> save(MemberRegister memberDto){
-        if(memberRepository.existsByUsername(memberDto.getUsername())){
-            return Optional.empty();
-        }
+    public boolean isPossibleUsername(String username){
+        return memberRepository.existsByUsername(username);
+    }
 
+    public Optional<Member> save(MemberRegister memberDto){
         memberDto.setPassword(encoder.encode(memberDto.getPassword()));
 
         return Optional.of(memberRepository.save(memberDto.toUserEntity()));
