@@ -1,20 +1,21 @@
 package io.elice.shoppingmall.member.service;
 
 
-import io.elice.shoppingmall.member.entity.LoginInfo;
+import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.entity.MemberDTO;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-
+    private final PasswordEncoder encoder;
 
 
     public List<Member> findAll(){
@@ -29,20 +30,32 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
-    public Member login(LoginInfo loginInfo){
-        Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElse(null);
+    public Member login(MemberLogin loginInfo){
+        Optional<Member> member = memberRepository.findByUsername(loginInfo.getUsername());
 
-        if(member == null)
+        if(member.isEmpty())
             return null;
 
-        if(!member.getPassword().equals(loginInfo.getPassword()))
+        if(!encoder.matches(loginInfo.getPassword(), member.get().getPassword()))
             return null;
 
-        return member;
+        return member.get();
+    }
+
+    public void delete(Long id){
+
     }
 
     public Member save(MemberDTO memberDto){
-        return memberRepository.save(memberDto.toEntity());
+        try{
+            memberDto.setPassword(encoder.encode(memberDto.getPassword()));
+
+            return memberRepository.save(memberDto.toEntity());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Member save(Long id, MemberDTO memberDto){

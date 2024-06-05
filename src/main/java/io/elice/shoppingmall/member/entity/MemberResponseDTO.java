@@ -11,45 +11,22 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDTO {
+public class MemberResponseDTO {
     private String displayName;
     private String email;
     private String username;
-    private String password;
-    private String phone;
+    private String phoneNumber;
     private Integer gender;
     private MemberAuthority admin;
     private UserMembership membership;
 
-    public MemberDTO(Member member){
+    public MemberResponseDTO(Member member){
         this.displayName = member.getDisplayName();
         this.username = member.getUsername();
         this.email = member.getEmail();
-        this.password = member.getPassword();
-        this.phone = member.getPhone();
+        this.phoneNumber = member.getPhone();
         this.gender = member.getGender();
         this.admin = MemberAuthority.valueOf(member.getAdmin());
         this.membership = UserMembership.valueOf(member.getMembership());
-    }
-
-    public Member toEntity(){
-        Member member = new Member();
-        member.setDisplayName(displayName);
-        member.setEmail(email);
-        member.setUsername(username);
-        member.setPassword(password);
-        member.setPhone(phone);
-        member.setGender(gender);
-        member.setAdmin(admin.name());
-        member.setMembership(membership.name());
-
-        return member;
-    }
-
-    public Member toEntity(Long id){
-        Member user = toEntity();
-        user.setId(id);
-
-        return user;
     }
 }

@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.security;
 
 
+import io.elice.shoppingmall.Utility.Utility;
 import io.elice.shoppingmall.member.MemberAuthority;
 import io.elice.shoppingmall.member.service.MemberService;
 import lombok.Getter;
@@ -26,17 +27,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig{
-    @Getter
-    private static final String secretKey = "sdagxcs56d4gxc65g48asfafssg4xc685sasadg84a46asd46w8e4684sadggsdg654xc";
-    @Getter
-    private static final long expireTimeMs = 1000*60*60;
+
+    private final JwtTokenUtil util;
     private final MemberService memberService;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        System.out.println("[Log] SecurityConfig.filterChain 실행");
-
         http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
 
@@ -44,17 +41,16 @@ public class SecurityConfig{
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
-        http.authorizeHttpRequests(authorize -> authorize
-            .anyRequest().permitAll());
-
 //        http.authorizeHttpRequests(authorize -> authorize
-//            .requestMatchers(HttpMethod.POST, "/loginTest").permitAll()
-//            .requestMatchers(HttpMethod.POST, "/register").permitAll()
-//            .requestMatchers(HttpMethod.GET,"/member/**").hasAnyRole(MemberAuthority.ADMIN.name(), MemberAuthority.USER.name())
-//            .requestMatchers(HttpMethod.GET, "/admin").hasRole(MemberAuthority.ADMIN.name())
-//        );
+//            .anyRequest().permitAll());
 
-        http.addFilterBefore(new JwtTokenFilter(secretKey, memberService), UsernamePasswordAuthenticationFilter.class);
+        http.authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority(MemberAuthority.ADMIN.name(), MemberAuthority.USER.name())
+            .requestMatchers(HttpMethod.GET, "/admin").hasAuthority(MemberAuthority.ADMIN.name())
+            .anyRequest().permitAll()
+        );
+
+        http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

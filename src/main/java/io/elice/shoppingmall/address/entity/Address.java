@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.member.entity.address;
+package io.elice.shoppingmall.address.entity;
 
 import io.elice.shoppingmall.member.entity.Member;
 import jakarta.persistence.Column;
@@ -8,8 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +25,7 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name="member_id")
-    private Member memberId;
+    private Member member;
 
     @Column(nullable = false)
     private String recipientName;
@@ -39,14 +37,14 @@ public class Address {
     private String addr;
 
     @Column(nullable = false)
-    private String addr_detail;
+    private String addrDetail;
 
     @Column(nullable = false)
     private String recipientTel;
 
     @Column(nullable = false)
-    private String delivery_req;
+    private String deliveryReq;
 
     @Column(nullable = false)
-    private String def_destination;
+    private String defDestination;
 }
