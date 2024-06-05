@@ -41,9 +41,9 @@ public class AddressController {
         return new ResponseEntity<>(addressOptional.get(), HttpStatus.OK);
     }
 
-    @PostMapping("/addresses/{memberId}")
-    public ResponseEntity<?> postMemberAddress(@PathVariable Long memberId, @RequestBody AddressDTO addressDto){
-        Optional<AddressResponseDTO> addressResponseDTOOptional = addressService.save(memberId, addressDto);
+    @PostMapping("/addresses/{id}")
+    public ResponseEntity<?> postMemberAddress(@PathVariable Long id, @RequestBody AddressDTO addressDto){
+        Optional<AddressResponseDTO> addressResponseDTOOptional = addressService.save(id, addressDto);
 
         if(addressResponseDTOOptional.isEmpty())
             return new ResponseEntity<>("잘못된 회원 정보 입니다.", HttpStatus.NOT_FOUND);
