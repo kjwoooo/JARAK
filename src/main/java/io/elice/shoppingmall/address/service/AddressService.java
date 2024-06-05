@@ -2,6 +2,7 @@ package io.elice.shoppingmall.address.service;
 
 import io.elice.shoppingmall.address.entity.Address;
 import io.elice.shoppingmall.address.entity.AddressDTO;
+import io.elice.shoppingmall.address.entity.AddressResponseDTO;
 import io.elice.shoppingmall.address.repository.AddressRepository;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.repository.MemberRepository;
@@ -35,39 +36,42 @@ public class AddressService {
     }
 
     public Optional<Address> findByAddressIdAndMemberId(Long memberId, Long addressId){
-        Member member = memberRepository.findById(memberId).orElse(null);
-        if(member==null){
-            return null;
+        Optional<Member> memberOptional = memberRepository.findById(memberId);
+        if(memberOptional.isEmpty()){
+            return Optional.empty();
         }
 
-        return addressRepository.findByIdAndMember(addressId, member);
+        return addressRepository.findByIdAndMember(addressId, memberOptional.get());
     }
 
-    private Address save(Address address){
-        return addressRepository.save(address);
+    private Optional<AddressResponseDTO> save(Address address){
+        AddressResponseDTO addressResponseDTO = new AddressResponseDTO(addressRepository.save(address));
+        return Optional.of(addressResponseDTO);
     }
 
-    public Address save(AddressDTO addressDto){
-        Member member = memberRepository.findById(addressDto.getMemberId()).orElse(null);
+    public Optional<AddressResponseDTO> save(AddressDTO addressDto){
+        Optional<Member> memberOptional = memberRepository.findById(addressDto.getMemberId());
 
-        if(member == null){
-            return null;
+        if(memberOptional.isEmpty()){
+            return Optional.empty();
         }
 
         Address address = addressDto.toEntity();
-        address.setMember(member);
+        address.setMember(memberOptional.get());
 
         return save(address);
     }
 
-    public Address save(Long id, AddressDTO addressDTO){
-        Address address = addressRepository.findById(id).orElse(null);
+    public Optional<AddressResponseDTO> save(Long id, AddressDTO addressDTO){
+        Optional<Address> addressOptional = addressRepository.findById(id);
 
-        if(address == null){
+        if(addressOptional.isEmpty()){
             return save(addressDTO);
         }
 
+        Address address = addressOptional.get();
         Address newAddress = addressDTO.toEntity();
+
         newAddress.setMember(address.getMember());
         newAddress.setId(address.getId());
 
