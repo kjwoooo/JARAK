@@ -45,6 +45,7 @@ public class SecurityConfig{
 //            .anyRequest().permitAll());
 
         http.authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/unregister/{id}").hasAuthority(MemberAuthority.USER.name())
             .anyRequest().permitAll()
         );
 
