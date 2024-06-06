@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.product.Entity.Review;
 
 import io.elice.shoppingmall.entity.base.BaseEntity;
+import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,7 @@ public class Review extends BaseEntity { //member entity 받으면 연관관계 
     private Integer id;
 
     @Column
-    private String memberId;
+    private Integer memberId;
 
     @Column(nullable = false, length = 20)
     private String title;
@@ -34,4 +35,14 @@ public class Review extends BaseEntity { //member entity 받으면 연관관계 
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
+
+    public static Review toSaveEntity(ReviewDTO reviewDTO,Item item){
+        Review review = new Review();
+        review.setMemberId(reviewDTO.getMemberId());
+        review.setTitle(reviewDTO.getTitle());
+        review.setContent(reviewDTO.getContent());
+        review.setImg(reviewDTO.getImg());
+        review.setRate(reviewDTO.getRate());
+        return review;
+    }
 }
