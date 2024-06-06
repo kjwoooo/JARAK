@@ -1,7 +1,8 @@
 package io.elice.shoppingmall.product.Entity.Review;
 
-import io.elice.shoppingmall.entity.base.BaseEntity;
+
 import io.elice.shoppingmall.product.DTO.ReviewDTO;
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,7 +1,11 @@
 {
   "dependencies": {
     "aws-sdk": "^2.1556.0",
+    "axios": "^1.7.2",
     "bulma": "^0.9.4",
-    "bulma-carousel": "^4.0.24"
+    "bulma-carousel": "^4.0.24",
+    "http-proxy-middleware": "^3.0.0",
+    "install": "^0.13.0",
+    "npm": "^10.8.1"
   }
 }

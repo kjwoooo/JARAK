@@ -1,7 +1,8 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
+
 //import io.elice.shoppingmall.category.controller.CategoryController;
-import io.elice.shoppingmall.entity.base.BaseEntity;
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.DTO.ItemDTO;
 import io.elice.shoppingmall.product.Entity.Option.Brand;
 import io.elice.shoppingmall.product.Entity.Option.Gender;

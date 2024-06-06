@@ -16,7 +16,7 @@ public class MemberDTO {
     private String email;
     private String username;
     private String password;
-    private String phoneNumber;
+    private String phone;
     private Integer gender;
     private MemberAuthority admin;
     private UserMembership membership;
@@ -26,7 +26,7 @@ public class MemberDTO {
         this.username = member.getUsername();
         this.email = member.getEmail();
         this.password = member.getPassword();
-        this.phoneNumber = member.getPhoneNumber();
+        this.phone = member.getPhone();
         this.gender = member.getGender();
         this.admin = MemberAuthority.valueOf(member.getAdmin());
         this.membership = UserMembership.valueOf(member.getMembership());
@@ -38,7 +38,7 @@ public class MemberDTO {
         member.setEmail(email);
         member.setUsername(username);
         member.setPassword(password);
-        member.setPhoneNumber(phoneNumber);
+        member.setPhone(phone);
         member.setGender(gender);
         member.setAdmin(admin.name());
         member.setMembership(membership.name());
