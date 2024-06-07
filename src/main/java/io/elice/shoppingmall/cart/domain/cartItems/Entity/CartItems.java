@@ -25,14 +25,17 @@ public class CartItems extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    //cartid
-    //itemid
+//
+//    //item:CartItem = 1:N 양방향, 연관관계의 주인은 cartitem
+//    @ManyToOne
+//    @JoinColumn(name="item_id")
+//    private Item item_id;
+
     @ManyToOne
     @JoinColumn(name="cart_id")
     private Cart cart_id;
 
     private boolean selected;
     private int quantity;
-
 
 }
