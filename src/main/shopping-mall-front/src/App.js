@@ -41,7 +41,7 @@ function App() {
             >
               <NavDropdown title="MAN" id="navbarScrollingDropdown">
                 <NavDropdown.Item href="#action3">머슬핏 티셔츠</NavDropdown.Item>
-                <NavDropdown.Item href="#action4">개쩌는 반바지</NavDropdown.Item>
+                <NavDropdown.Item href="#action4">쩌는 반바지</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="#action5">상당한 자켓</NavDropdown.Item>
               </NavDropdown>
