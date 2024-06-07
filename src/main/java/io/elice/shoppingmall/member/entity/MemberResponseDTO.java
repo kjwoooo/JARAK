@@ -20,7 +20,7 @@ public class MemberResponseDTO {
     public MemberResponseDTO(Member member){
         this.displayName = member.getDisplayName();
         this.username = member.getUsername();
-        this.email = member.getEmail();
+        this.email = member.getLoginInfo().getEmail();
         this.phone = member.getPhone();
         this.gender = member.getGender();
         this.membership = member.getMembership();

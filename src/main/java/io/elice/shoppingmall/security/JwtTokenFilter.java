@@ -73,7 +73,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
 
-        User user = new User(username, member.getPassword(), List.of(new SimpleGrantedAuthority(member.getAdmin())));
+        User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAdmin())));
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             user, null, List.of(new SimpleGrantedAuthority(member.getAdmin())));
