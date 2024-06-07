@@ -1,20 +1,24 @@
 package io.elice.shoppingmall.member.service;
 
 
-import io.elice.shoppingmall.member.entity.LoginInfo;
+import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
-import io.elice.shoppingmall.member.entity.MemberDTO;
+import io.elice.shoppingmall.member.entity.MemberModifyInfo;
+import io.elice.shoppingmall.member.entity.MemberRegister;
+import io.elice.shoppingmall.member.entity.MemberResponseDTO;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.text.html.Option;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-
+    private final PasswordEncoder encoder;
 
 
     public List<Member> findAll(){
@@ -29,31 +33,60 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
-    public Member login(LoginInfo loginInfo){
-        Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElse(null);
+    public Optional<Member> login(MemberLogin loginInfo){
+        Optional<Member> memberOptional = memberRepository.findByUsername(loginInfo.getUsername());
 
-        if(member == null)
-            return null;
+        if(memberOptional.isEmpty())
+            return Optional.empty();
 
-        if(!member.getPassword().equals(loginInfo.getPassword()))
-            return null;
+        if(!encoder.matches(loginInfo.getPassword(), memberOptional.get().getPassword()))
+            return Optional.empty();
 
-        return member;
+        return memberOptional;
     }
 
-    public Member save(MemberDTO memberDto){
-        return memberRepository.save(memberDto.toEntity());
+    public void delete(Long id){
+        Optional<Member> memberOptional = memberRepository.findById(id);
+        memberOptional.ifPresent(memberRepository::delete);
     }
 
-    public Member save(Long id, MemberDTO memberDto){
-        Member oldMember = memberRepository.findById(id).orElse(null);
-        if(oldMember==null){
-            return save(memberDto);
+    public boolean isExistUsername(String username){
+        return memberRepository.existsByUsername(username);
+    }
+
+    public boolean isMatchPassword(Long id, String password){
+        Optional<Member> memberOptional = findById(id);
+
+        if(memberOptional.isEmpty())
+            return false;
+
+        if(!encoder.matches(password, memberOptional.get().getPassword()))
+            return false;
+
+        return true;
+    }
+
+    public Optional<MemberResponseDTO> save(MemberRegister memberDto){
+        memberDto.setPassword(encoder.encode(memberDto.getPassword()));
+        Member member = memberRepository.save(memberDto.toUserEntity());
+
+        return Optional.of(new MemberResponseDTO(member));
+    }
+
+    public Optional<MemberResponseDTO> save(Long id, MemberModifyInfo memberModifyInfo){
+        Optional<Member> oldMemberOptional = findById(id);
+        if(oldMemberOptional.isEmpty()){
+            return Optional.empty();
         }
 
-        Member newMember = memberDto.toEntity();
-        newMember.setId(id);
+        memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
 
-        return memberRepository.save(newMember);
+        Member oldMember = oldMemberOptional.get();
+        oldMember.modifyMember(memberModifyInfo);
+
+        oldMember = memberRepository.save(oldMember);
+        MemberResponseDTO memberResponseDTO = new MemberResponseDTO(oldMember);
+
+        return Optional.of(memberResponseDTO);
     }
 }
