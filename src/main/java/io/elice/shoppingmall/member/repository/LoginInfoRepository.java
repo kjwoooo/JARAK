@@ -4,5 +4,5 @@ import io.elice.shoppingmall.member.entity.LoginInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LoginInfoRepository extends JpaRepository<LoginInfo, Long> {
-    public boolean isExistsByEmail(String email);
+    public boolean existsByEmail(String email);
 }

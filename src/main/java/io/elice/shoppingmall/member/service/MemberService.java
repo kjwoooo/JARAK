@@ -53,11 +53,11 @@ public class MemberService {
     }
 
     public boolean isExistUsername(String username){
-        return memberRepository.isExistsByUsername(username);
+        return memberRepository.existsByUsername(username);
     }
 
     public boolean isExistEmail(String email){
-        return loginInfoRepository.isExistsByEmail(email);
+        return loginInfoRepository.existsByEmail(email);
     }
 
     public boolean isMatchPassword(Long id, String password){
