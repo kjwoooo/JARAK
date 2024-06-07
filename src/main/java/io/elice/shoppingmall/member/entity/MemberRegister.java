@@ -17,7 +17,7 @@ public class MemberRegister {
     private String username;
     private String password;
     private String phone;
-    private Integer gender;
+    private String gender;
 
     public MemberRegister(Member member){
         this.displayName = member.getDisplayName();
