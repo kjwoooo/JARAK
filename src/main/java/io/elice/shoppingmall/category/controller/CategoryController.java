@@ -5,7 +5,6 @@ import io.elice.shoppingmall.category.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    // 모든 카테고리 조회
+    /**모든 카테고리 조회*/
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         List<CategoryDto> categories = categoryService.getAllCategories();
@@ -35,6 +34,14 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> getCategory(@PathVariable Long id) {
         CategoryDto category = categoryService.getCategory(id);
         return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
+
+    /**특정 상위 카테고리의 하위 카테고리 조회*/
+    @GetMapping("/{parentId}/subcategories")
+    public ResponseEntity<List<CategoryDto>> getSubCategories(@PathVariable Long parentId) {
+        List<CategoryDto> subcategories = categoryService.getSubCategories(parentId);
+        return new ResponseEntity<>(subcategories, HttpStatus.OK);
     }
 
     /**카테고리 추가*/

@@ -3,7 +3,6 @@ package io.elice.shoppingmall.category.service;
 import io.elice.shoppingmall.category.dto.CategoryDto;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.repository.CategoryRepository;
-import io.elice.shoppingmall.category.repository.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,54 +26,94 @@ public class CategoryService {
     public List<CategoryDto> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         List<CategoryDto> categoryDtos = new ArrayList<>();
+
         for (Category category : categories) {
-            categoryDtos.add(new CategoryDto(category));
+            categoryDtos.add(entityToDto(category));
         }
         return categoryDtos;
+    }
+
+    // 특정상위 카테고리의 하위 카테고리 조회
+    public List<CategoryDto> getSubCategories(Long parentId) {
+        Category parentCategory = categoryRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상위 카테고리입니다: " + parentId));
+
+        List<CategoryDto> subcategories = new ArrayList<>();
+        for (Category subCategory : parentCategory.getSubCategories()) {
+            subcategories.add(entityToDto(subCategory));
+        }
+        return subcategories;
     }
 
 
     //  하나의 카테고리 조회
     public CategoryDto getCategory(Long id) {
-        Category category = categoryRepository.findById(id).orElse(null);
-        return new CategoryDto(category);
+        Category category = categoryRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
+        return entityToDto(category);
     }
-
 
     //  카테고리 추가
     @Transactional(readOnly = false)
     public CategoryDto createCategory(CategoryDto categoryDto) {
-        // 해당하는 이름이 이미 존재하는 경우에 대한 예외
+
         if (categoryRepository.existsByName(categoryDto.getName())) {
             throw new IllegalArgumentException("이미 존재하는 카테고리입니다: " + categoryDto.getName());
         }
-        Category category = new Category();
-        category.setName(categoryDto.getName());
-        categoryRepository.save(category);
 
-        return new CategoryDto(category);
+        Category categoryEntity = categoryDto.toEntity();
+        Category savedCategoryEntity = categoryRepository.save(categoryEntity);
+        return entityToDto(savedCategoryEntity);
     }
+
 
 
     //  카테고리 업데이트
-    @Transactional(readOnly = false)
-    public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
+    // CategoryDto로 받을지 Stirng으로 받을지 고민
+       @Transactional(readOnly = false)
+       public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
+    Category category = categoryRepository.findById(id).orElseThrow(() ->
+                     new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
 
-        category.setName(categoryDto.getName());
-        categoryRepository.save(category);
-        return new CategoryDto(category);
-    }
+           category.setName(categoryDto.getName());
+
+              if (categoryDto.getParentId() != null) {
+                Category parentCategory = categoryRepository.findById(categoryDto
+                        .getParentId()).orElseThrow(() ->
+                        new IllegalArgumentException("존재하지 않는 상위 카테고리입니다: " + categoryDto.getParentId()));
+                category.setParent(parentCategory);
+            } else {
+                category.setParent(null);
+              }
+           Category savedCategory = categoryRepository.save(category);
+              return entityToDto(savedCategory);
+       }
 
 
     //  카테고리 삭제
-    @Transactional(readOnly = false)
+    //  자식 카테고리가 존재하면 재귀적으로 삭제
+    @Transactional
     public void deleteCategory(Long id) {
-        categoryRepository.findById(id).ifPresentOrElse(
-                categoryRepository::delete, // 메서드 참조 (값이 있을 때 삭제)
-                () -> { throw new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id); }
-                // 람다식 (값이 없을 때 예외 발생)
-        );
+        Category category = categoryRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
+
+        deleteSubCategories(category);
+        categoryRepository.deleteById(id);
+    }
+
+    // 자식 카테고리 삭제 메서드
+    private void deleteSubCategories(Category category) {
+        if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
+            category.getSubCategories().forEach(subCategory -> deleteCategory(subCategory.getId()));
+        }
+    }
+
+
+    // Entity를 DTO로 변환하는 메서드
+    public CategoryDto entityToDto(Category category) {
+        return new CategoryDto(category.getName(),
+                Optional.ofNullable(category.getParent())
+                        .map(Category::getId)
+                        .orElse(null));
     }
 }
