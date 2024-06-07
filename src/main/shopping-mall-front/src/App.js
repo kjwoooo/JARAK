@@ -29,6 +29,7 @@ function App() {
 
   return (
     <div className="App">
+      <div>프론트는 VScode로 작업</div>
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container fluid>
           <Navbar.Brand href='/'>쑈핑모올</Navbar.Brand>
