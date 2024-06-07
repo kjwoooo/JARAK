@@ -21,14 +21,14 @@ public class ItemDTO {
     private Integer price;
     private LocalDateTime createdAt;
 
-    public static ItemDTO toItemDTO(Item item, Integer memberId, Integer categoryId, Integer genderId, Integer itemImagesId, Integer brandId) {
+    public static ItemDTO toItemDTO(Item item, Integer genderId, Integer itemImagesId, Integer brandId) {
         ItemDTO itemDTO = new ItemDTO();
         itemDTO.setId(item.getId());
         itemDTO.setItemName(item.getItemName());
         itemDTO.setPrice(item.getPrice());
         itemDTO.setCreatedAt(item.getCreatedAt());
-        itemDTO.setMemberId(memberId);
-        itemDTO.setCategoryId(categoryId);
+        itemDTO.setMemberId(item.getMemberId());
+        itemDTO.setCategoryId(item.getCategoryId());
         itemDTO.setGenderId(genderId);
         itemDTO.setItemImagesId(itemImagesId);
         itemDTO.setBrandId(brandId);
