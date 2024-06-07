@@ -14,5 +14,5 @@ public class MemberModifyInfo {
     private String password;
     private String modifyPassword;
     private String phone;
-    private Integer gender;
+    private String gender;
 }

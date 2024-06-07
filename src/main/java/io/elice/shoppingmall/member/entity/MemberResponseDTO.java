@@ -14,7 +14,7 @@ public class MemberResponseDTO {
     private String email;
     private String username;
     private String phone;
-    private Integer gender;
+    private String gender;
     private String membership;
 
     public MemberResponseDTO(Member member){

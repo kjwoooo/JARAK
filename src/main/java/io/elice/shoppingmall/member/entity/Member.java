@@ -36,7 +36,7 @@ public class Member {
     private String phone;
 
     @Column(nullable = false)
-    private Integer gender;
+    private String gender;
 
     @Column(nullable = false)
     private String admin;
