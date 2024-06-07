@@ -1,6 +1,9 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
+
+//import io.elice.shoppingmall.category.controller.CategoryController;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
+import io.elice.shoppingmall.product.DTO.ItemDTO;
 import io.elice.shoppingmall.product.Entity.Option.Brand;
 import io.elice.shoppingmall.product.Entity.Option.Gender;
 import io.elice.shoppingmall.product.Entity.Review.Request;
@@ -8,8 +11,11 @@ import io.elice.shoppingmall.product.Entity.Review.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 @Entity
@@ -24,10 +30,10 @@ public class Item extends BaseEntity {//    Member,Category entity 받으면 연
     private Integer id;
 
     @Column
-    private String memberId;
+    private Integer memberId;
 
     @Column
-    private String categoryId;
+    private Integer categoryId;
 
     @Column(nullable = false)
     private String itemName;
@@ -48,11 +54,32 @@ public class Item extends BaseEntity {//    Member,Category entity 받으면 연
     private Gender gender;
 
     @OneToMany(mappedBy = "item")
-    private Collection<ItemDetail> itemDetails = new ArrayList<>();
+    private List<ItemDetail> itemDetails = new ArrayList<>();
 
     @OneToMany(mappedBy = "item")
-    private Collection<Request> requests = new ArrayList<>();
+    private List<Request> requests = new ArrayList<>();
 
     @OneToMany(mappedBy = "item")
-    private Collection<Review> reviews = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
+
+    public static Item toSaveItem(ItemDTO itemDTO,ItemImages itemImages, Brand brand, Gender gender){
+        Item item = new Item();
+        item.setItemName(itemDTO.getItemName());
+        item.setPrice(itemDTO.getPrice());
+        item.setItemImages(itemImages);
+        item.setBrand(brand);
+        item.setGender(gender);
+        return item;
+    }
+
+    public static Item toUpdateItem(ItemDTO itemDTO, ItemImages itemImages, Brand brand, Gender gender){
+        Item item = new Item();
+        item.setId(itemDTO.getId());
+        item.setItemName(itemDTO.getItemName());
+        item.setPrice(itemDTO.getPrice());
+        item.setItemImages(itemImages);
+        item.setBrand(brand);
+        item.setGender(gender);
+        return item;
+    }
 }

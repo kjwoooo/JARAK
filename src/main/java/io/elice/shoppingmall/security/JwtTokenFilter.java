@@ -1,6 +1,5 @@
 package io.elice.shoppingmall.security;
 
-import io.elice.shoppingmall.Utility.Utility;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import jakarta.servlet.FilterChain;

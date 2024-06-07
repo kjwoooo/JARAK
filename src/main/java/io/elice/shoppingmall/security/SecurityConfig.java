@@ -1,7 +1,5 @@
 package io.elice.shoppingmall.security;
 
-
-import io.elice.shoppingmall.Utility.Utility;
 import io.elice.shoppingmall.member.MemberAuthority;
 import io.elice.shoppingmall.member.service.MemberService;
 import lombok.Getter;
@@ -45,10 +43,12 @@ public class SecurityConfig{
 //            .anyRequest().permitAll());
 
         http.authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.GET,"/member/**").hasAnyAuthority(MemberAuthority.ADMIN.name(), MemberAuthority.USER.name())
-            .requestMatchers(HttpMethod.GET, "/admin").hasAuthority(MemberAuthority.ADMIN.name())
+            .requestMatchers("/unregister/{id}").hasAuthority(MemberAuthority.USER.name())
             .anyRequest().permitAll()
         );
+
+        http.logout(logout -> logout
+            .logoutUrl("logout"));
 
         http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
 
