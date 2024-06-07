@@ -44,6 +44,15 @@ public class AddressService {
         return addressRepository.findByIdAndMember(addressId, memberOptional.get());
     }
 
+    public void delete(Long id){
+        Optional<Address> addressOptional = addressRepository.findById(id);
+
+        if(addressOptional.isEmpty())
+            return;
+
+        addressRepository.delete(addressOptional.get());
+    }
+
     private Optional<AddressResponseDTO> save(Address address){
         AddressResponseDTO addressResponseDTO = new AddressResponseDTO(addressRepository.save(address));
         return Optional.of(addressResponseDTO);
