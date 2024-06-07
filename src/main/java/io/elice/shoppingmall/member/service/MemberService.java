@@ -1,11 +1,13 @@
 package io.elice.shoppingmall.member.service;
 
 
+import io.elice.shoppingmall.member.entity.LoginInfo;
 import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.entity.MemberModifyInfo;
 import io.elice.shoppingmall.member.entity.MemberRegister;
 import io.elice.shoppingmall.member.entity.MemberResponseDTO;
+import io.elice.shoppingmall.member.repository.LoginInfoRepository;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final LoginInfoRepository loginInfoRepository;
     private final PasswordEncoder encoder;
 
 
@@ -39,7 +42,7 @@ public class MemberService {
         if(memberOptional.isEmpty())
             return Optional.empty();
 
-        if(!encoder.matches(loginInfo.getPassword(), memberOptional.get().getPassword()))
+        if(!encoder.matches(loginInfo.getPassword(), memberOptional.get().getLoginInfo().getPassword()))
             return Optional.empty();
 
         return memberOptional;
@@ -60,15 +63,22 @@ public class MemberService {
         if(memberOptional.isEmpty())
             return false;
 
-        if(!encoder.matches(password, memberOptional.get().getPassword()))
+        if(!encoder.matches(password, memberOptional.get().getLoginInfo().getPassword()))
             return false;
 
         return true;
     }
 
-    public Optional<MemberResponseDTO> save(MemberRegister memberDto){
-        memberDto.setPassword(encoder.encode(memberDto.getPassword()));
-        Member member = memberRepository.save(memberDto.toUserEntity());
+    public Optional<MemberResponseDTO> save(MemberRegister memberRegister){
+        memberRegister.setPassword(encoder.encode(memberRegister.getPassword()));
+
+        LoginInfo loginInfo = new LoginInfo(memberRegister);
+        loginInfo = loginInfoRepository.save(loginInfo);
+
+        Member member = memberRegister.toUserEntity();
+        member.setLoginInfo(loginInfo);
+
+        member = memberRepository.save(member);
 
         return Optional.of(new MemberResponseDTO(member));
     }

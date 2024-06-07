@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,11 +28,9 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
+    @OneToOne
+    @JoinColumn(name="loginInfo_id", nullable = false)
+    private LoginInfo loginInfo;
 
     @Column(nullable = false)
     private String phone;
@@ -46,7 +46,7 @@ public class Member {
 
     public void modifyMember(MemberModifyInfo memberModify){
         this.displayName = memberModify.getDisplayName();
-        this.password = memberModify.getModifyPassword();
+        this.loginInfo.setPassword(memberModify.getModifyPassword());
         this.phone = memberModify.getPhone();
         this.gender = memberModify.getGender();
     }

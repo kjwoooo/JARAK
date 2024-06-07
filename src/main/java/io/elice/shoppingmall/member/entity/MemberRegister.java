@@ -22,8 +22,8 @@ public class MemberRegister {
     public MemberRegister(Member member){
         this.displayName = member.getDisplayName();
         this.username = member.getUsername();
-        this.email = member.getEmail();
-        this.password = member.getPassword();
+        this.email = member.getLoginInfo().getEmail();
+        this.password = member.getLoginInfo().getPassword();
         this.phone = member.getPhone();
         this.gender = member.getGender();
     }
@@ -32,9 +32,7 @@ public class MemberRegister {
         Member member = new Member();
 
         member.setDisplayName(displayName);
-        member.setEmail(email);
         member.setUsername(username);
-        member.setPassword(password);
         member.setPhone(phone);
         member.setGender(gender);
         member.setMembership(Membership.BRONZE.name());
