@@ -100,11 +100,14 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody MemberRegister memberDTO){
-        if(memberService.isExistUsername(memberDTO.getUsername()))
+    public ResponseEntity<String> register(@RequestBody MemberRegister memberRegister){
+        if(memberService.isExistUsername(memberRegister.getUsername()))
             return new ResponseEntity<>("이미 존재하는 ID 입니다.", HttpStatus.BAD_REQUEST);
 
-        memberService.save(memberDTO);
+        if(memberService.isExistEmail(memberRegister.getEmail()))
+            return new ResponseEntity<>("이미 존재하는 Email 입니다.", HttpStatus.BAD_REQUEST);
+
+        memberService.save(memberRegister);
 
         return new ResponseEntity<>("회원 등록 완료.", HttpStatus.CREATED);
     }
