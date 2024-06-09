@@ -20,10 +20,10 @@ import java.util.Optional;
 public class RequestService {
     private final RequestRepository requestRepository;
     private final ItemRepository itemRepository;
-    Integer memberId = 1;
+    public Long memberId = 1L;
 
     //문의 생성
-    public Integer save(RequestDTO requestDTO){
+    public Long save(RequestDTO requestDTO){
         Optional<Item> optionalItem = itemRepository.findById(requestDTO.getId());
         if(optionalItem.isPresent()){
             Item item = optionalItem.get();
@@ -36,7 +36,7 @@ public class RequestService {
     }
 
     //전체 문의 조회
-    public List<RequestDTO> findAll(Integer itemId){
+    public List<RequestDTO> findAll(Long itemId){
         Item item  = itemRepository.findById(itemId).get();
         List<Request> requestList = requestRepository.findAllByItemOrderByIdAsc(item);
         List<RequestDTO> requestDTOList = new ArrayList<>();

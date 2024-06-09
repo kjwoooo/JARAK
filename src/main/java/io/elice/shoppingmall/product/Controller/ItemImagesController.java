@@ -25,7 +25,7 @@ public class ItemImagesController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable Integer id){
+    public ResponseEntity delete(@PathVariable Long id){
         itemImagesService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

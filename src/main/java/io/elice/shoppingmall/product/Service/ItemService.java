@@ -3,8 +3,8 @@ package io.elice.shoppingmall.product.Service;
 import io.elice.shoppingmall.product.DTO.ItemDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
-import io.elice.shoppingmall.product.Entity.Option.Brand;
 import io.elice.shoppingmall.product.Entity.Option.Gender;
+import io.elice.shoppingmall.product.Entity.Option.brand.entity.Brand;
 import io.elice.shoppingmall.product.Repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
     }
 
     //특정 상품 조회
-    public ItemDTO findById(Integer id){
+    public ItemDTO findById(Long id){
         Optional<Item> optionalItem =  itemRepository.findById(id);
         if(optionalItem.isPresent()){
             Item item = optionalItem.get();
@@ -60,7 +60,7 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
     }
 
     //상품 삭제
-    public void delete(Integer id){
+    public void delete(Long id){
         itemRepository.deleteById(id);
     }
 }

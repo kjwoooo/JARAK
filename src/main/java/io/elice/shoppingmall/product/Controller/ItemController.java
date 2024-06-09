@@ -37,7 +37,7 @@ public class ItemController {
 
     //상품 상세 페이지 조회
     @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable Integer id, Model model){
+    public ResponseEntity findById(@PathVariable Long id, Model model){
         ItemDTO itemdto = itemService.findById(id);
 //        List<ReviewDTO> reviewDTOList = reviewService.findAll(id);
 //        List<RequestDTO> requestDTOList = requestService.findAll(id);
@@ -46,7 +46,7 @@ public class ItemController {
 
 //    //상품 수정 페이지
 //    @GetMapping("/{id}/modify")
-//    public String updateForm(@PathVariable Integer id, Model model){
+//    public String updateForm(@PathVariable Long id, Model model){
 //        ItemDTO itemDTO = itemService.findById(id);
 //        model.addAttribute("itemModify", itemDTO);
 //        return "modify";
@@ -61,7 +61,7 @@ public class ItemController {
 
     //상품 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Integer id){
+    public ResponseEntity delete(@PathVariable Long id){
         itemService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

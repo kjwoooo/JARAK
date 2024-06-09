@@ -11,17 +11,17 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class ItemDTO {
-    private Integer id;
-    private Integer memberId;
-    private Integer categoryId;
-    private Integer genderId;
-    private Integer itemImagesId;
-    private Integer brandId;
+    private Long id;
+    private Long memberId;
+    private Long categoryId;
+    private Long genderId;
+    private Long itemImagesId;
+    private Long brandId;
     private String itemName;
     private Integer price;
     private LocalDateTime createdAt;
 
-    public static ItemDTO toItemDTO(Item item, Integer genderId, Integer itemImagesId, Integer brandId) {
+    public static ItemDTO toItemDTO(Item item, Long genderId, Long itemImagesId, Long brandId) {
         ItemDTO itemDTO = new ItemDTO();
         itemDTO.setId(item.getId());
         itemDTO.setItemName(item.getItemName());
