@@ -2,7 +2,7 @@ package io.elice.shoppingmall.cart.domain.cart.Entity;
 
 import io.elice.shoppingmall.cart.domain.cart.DTO.CartResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
-import io.elice.shoppingmall.entity.base.BaseEntity;
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
