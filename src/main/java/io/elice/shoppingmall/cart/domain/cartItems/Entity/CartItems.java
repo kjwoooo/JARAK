@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.cart.domain.cartItems.Entity;
 
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
+import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
 import io.elice.shoppingmall.entity.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -37,5 +38,6 @@ public class CartItems extends BaseEntity {
 
     private boolean selected;
     private int quantity;
+
 
 }

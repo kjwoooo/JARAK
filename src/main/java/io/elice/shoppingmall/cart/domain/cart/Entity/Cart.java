@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.cart.domain.cart.Entity;
 
+import io.elice.shoppingmall.cart.domain.cart.DTO.CartResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.entity.base.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -13,11 +14,13 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,5 +40,7 @@ public class Cart extends BaseEntity {
     @OneToMany(mappedBy = "cart_id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItems> cartItems = new ArrayList<>();
 
-
+    public CartResponseDto toCartResponseDto() {
+        return new CartResponseDto(getId(), getCreatedAt());
+    }
 }
