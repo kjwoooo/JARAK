@@ -15,6 +15,7 @@ import io.elice.shoppingmall.security.JwtTokenUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,15 @@ public class MemberService {
     private final PasswordEncoder encoder;
     private final JwtTokenUtil util;
 
+    /**
+     * 이메일 형식 검증
+     * @param email
+     */
+    private void validEmail(String email){
+        String EMAIL_REGEX = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
+        if(!Pattern.matches(EMAIL_REGEX, email))
+            throw new CustomException(ErrorCode.NOT_MATCH_EMAIL);
+    }
 
     public List<MemberResponseDTO> findAll(){
         return memberRepository.findAll().stream().map(MemberResponseDTO::new).toList();
@@ -98,12 +108,16 @@ public class MemberService {
         return "회원 정보 삭제";
     }
 
-    public void existUsername(String username){
+    private void existUsername(String username){
         if(memberRepository.existsByUsername(username))
             throw new CustomException(ErrorCode.EXIST_USERNAME);
     }
 
-    public void existEmail(String email){
+    /**
+     * 이메일 중복검사
+     * @param email
+     */
+    private void existEmail(String email){
         if(loginInfoRepository.existsByEmail(email))
             throw new CustomException(ErrorCode.EXIST_EMAIL);
     }
@@ -120,6 +134,7 @@ public class MemberService {
      */
     public MemberResponseDTO save(MemberRegister memberRegister){
         existUsername(memberRegister.getUsername());
+        validEmail(memberRegister.getEmail());
         existEmail(memberRegister.getEmail());
 
         memberRegister.setPassword(encoder.encode(memberRegister.getPassword()));
