@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.elice.shoppingmall.security.JwtTokenUtil;
@@ -45,6 +46,11 @@ public class MemberController {
         return new ResponseEntity<>(memberService.save(jwtToken, memberModify), HttpStatus.OK);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<MemberResponseDTO> register(@RequestBody MemberRegister memberRegister){
+        return new ResponseEntity<>(memberService.save(memberRegister), HttpStatus.CREATED);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
         memberService.login(memberLogin, response);
@@ -65,18 +71,5 @@ public class MemberController {
     @DeleteMapping("/unregister")
     public ResponseEntity<String> delete(@CookieValue String jwtToken, HttpServletResponse response){
         return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody MemberRegister memberRegister){
-        if(memberService.isExistUsername(memberRegister.getUsername()))
-            return new ResponseEntity<>("이미 존재하는 ID 입니다.", HttpStatus.BAD_REQUEST);
-
-        if(memberService.isExistEmail(memberRegister.getEmail()))
-            return new ResponseEntity<>("이미 존재하는 Email 입니다.", HttpStatus.BAD_REQUEST);
-
-        memberService.save(memberRegister);
-
-        return new ResponseEntity<>("회원 등록 완료.", HttpStatus.CREATED);
     }
 }

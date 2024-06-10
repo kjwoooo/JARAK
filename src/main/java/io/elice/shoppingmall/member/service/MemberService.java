@@ -99,12 +99,14 @@ public class MemberService {
         return "회원 정보 삭제";
     }
 
-    public boolean isExistUsername(String username){
-        return memberRepository.existsByUsername(username);
+    public void existUsername(String username){
+        if(memberRepository.existsByUsername(username))
+            throw new CustomException(ErrorCode.EXIST_USERNAME);
     }
 
-    public boolean isExistEmail(String email){
-        return loginInfoRepository.existsByEmail(email);
+    public void existEmail(String email){
+        if(loginInfoRepository.existsByEmail(email))
+            throw new CustomException(ErrorCode.EXIST_EMAIL);
     }
 
     private void memberMatchPassword(Member member, String password){
@@ -112,7 +114,15 @@ public class MemberService {
             throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
     }
 
-    public Optional<MemberResponseDTO> save(MemberRegister memberRegister){
+    /**
+     * 회원가입
+     * @param memberRegister
+     * @return 해당 회원정보
+     */
+    public MemberResponseDTO save(MemberRegister memberRegister){
+        existUsername(memberRegister.getUsername());
+        existEmail(memberRegister.getEmail());
+
         memberRegister.setPassword(encoder.encode(memberRegister.getPassword()));
 
         LoginInfo loginInfo = new LoginInfo(memberRegister);
@@ -123,20 +133,15 @@ public class MemberService {
 
         member = memberRepository.save(member);
 
-        return Optional.of(new MemberResponseDTO(member));
+        return new MemberResponseDTO(member);
     }
 
-//    public MemberResponseDTO save(Long id, MemberModifyInfo memberModifyInfo){
-//        Member oldMember = findByIdToMember(id);
-//        memberMatchPassword(oldMember, memberModifyInfo.getPassword());
-//
-//        memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
-//
-//        oldMember.modifyMember(memberModifyInfo);
-//
-//        return new MemberResponseDTO(memberRepository.save(oldMember));
-//    }
-
+    /**
+     * 회원정보 수정
+     * @param jwtToken
+     * @param memberModifyInfo
+     * @return 변경된 회원정보
+     */
     public MemberResponseDTO save(String jwtToken, MemberModifyInfo memberModifyInfo){
         String username = util.getUsername(jwtToken);
         Member oldMember = findByUsername(username);
