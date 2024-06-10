@@ -67,12 +67,6 @@ public class MemberController {
         return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
     }
 
-    private void jwtTokenDestroy(HttpServletResponse response){
-        Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-    }
-
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody MemberRegister memberRegister){
         if(memberService.isExistUsername(memberRegister.getUsername()))
