@@ -43,26 +43,26 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    public String getUsername(String token, String secretKey) {
-        return extractClaims(token, secretKey).get(JWT_USERNAME).toString();
+    public String getUsername(String token) {
+        return extractClaims(token).get(JWT_USERNAME).toString();
     }
 
-    public Authentication getAuthentication(String token, String secretKey){
-        Claims claims = extractClaims(token, secretKey);
+    public Authentication getAuthentication(String token){
+        Claims claims = extractClaims(token);
         UserDetails userDetails = principalDetailsService.loadUserByUsername(claims.get(JWT_USERNAME).toString());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getAuthenticationInToken(String token, String secretKey) {
-        return extractClaims(token, secretKey).get(JWT_AUTHORITY).toString();
+    public String getAuthenticationInToken(String token) {
+        return extractClaims(token).get(JWT_AUTHORITY).toString();
     }
 
-    public boolean isExpired(String token, String secretKey) {
-        Date expiredDate = extractClaims(token, secretKey).getExpiration();
+    public boolean isExpired(String token) {
+        Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
     }
 
-    private Claims extractClaims(String token, String secretKey) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    private Claims extractClaims(String token) {
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 }

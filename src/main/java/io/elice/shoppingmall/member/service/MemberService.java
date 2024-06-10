@@ -11,6 +11,7 @@ import io.elice.shoppingmall.member.entity.MemberRegister;
 import io.elice.shoppingmall.member.entity.MemberResponseDTO;
 import io.elice.shoppingmall.member.repository.LoginInfoRepository;
 import io.elice.shoppingmall.member.repository.MemberRepository;
+import io.elice.shoppingmall.security.JwtTokenUtil;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +24,27 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final LoginInfoRepository loginInfoRepository;
     private final PasswordEncoder encoder;
+    private final JwtTokenUtil util;
 
 
     public List<MemberResponseDTO> findAll(){
         return memberRepository.findAll().stream().map(MemberResponseDTO::new).toList();
     }
 
-    public MemberResponseDTO findById(Long id){
-        Member member = memberRepository.findById(id).orElseThrow(()->
-                new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    public Member findByIdToMember(Long id){
+        return memberRepository.findById(id).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    public MemberResponseDTO findByIdToMemberResponseDTO(Long id){
+        Member member = findByIdToMember(id);
 
         return new MemberResponseDTO(member);
     }
 
-    public Optional<Member> findByUsername(String username){
-        return memberRepository.findByUsername(username);
+    public Member findByUsername(String username){
+        return memberRepository.findByUsername(username).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
     public Optional<Member> login(MemberLogin loginInfo){
@@ -65,16 +72,9 @@ public class MemberService {
         return loginInfoRepository.existsByEmail(email);
     }
 
-    public boolean isMatchPassword(Long id, String password){
-        Optional<Member> memberOptional = memberRepository.findById(id);
-
-        if(memberOptional.isEmpty())
-            return false;
-
-        if(!encoder.matches(password, memberOptional.get().getLoginInfo().getPassword()))
-            return false;
-
-        return true;
+    private void memberMatchPassword(Member member, String password){
+        if(!encoder.matches(password, member.getLoginInfo().getPassword()))
+            throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
     }
 
     public Optional<MemberResponseDTO> save(MemberRegister memberRegister){
@@ -91,19 +91,25 @@ public class MemberService {
         return Optional.of(new MemberResponseDTO(member));
     }
 
-    public MemberResponseDTO save(Long id, MemberModifyInfo memberModifyInfo){
-        if(isMatchPassword(id, memberModifyInfo.getPassword()))
-            throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
+//    public MemberResponseDTO save(Long id, MemberModifyInfo memberModifyInfo){
+//        Member oldMember = findByIdToMember(id);
+//        memberMatchPassword(oldMember, memberModifyInfo.getPassword());
+//
+//        memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
+//
+//        oldMember.modifyMember(memberModifyInfo);
+//
+//        return new MemberResponseDTO(memberRepository.save(oldMember));
+//    }
 
-        Member oldMember = memberRepository.findById(id).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    public MemberResponseDTO save(String jwtToken, MemberModifyInfo memberModifyInfo){
+        String username = util.getUsername(jwtToken);
+        Member oldMember = findByUsername(username);
 
+        memberMatchPassword(oldMember, memberModifyInfo.getPassword());
         memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
-
         oldMember.modifyMember(memberModifyInfo);
 
-        oldMember = memberRepository.save(oldMember);
-
-        return new MemberResponseDTO(oldMember);
+        return new MemberResponseDTO(memberRepository.save(oldMember));
     }
 }

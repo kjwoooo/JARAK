@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.security;
 
+import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import jakarta.servlet.FilterChain;
@@ -59,28 +60,32 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String token = authorizationHeader.split(" ")[1];
 
-        if(util.isExpired(token, util.getSECRET_KEY())){
+        if(util.isExpired(token)){
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = util.getUsername(token, util.getSECRET_KEY());
-        Member member = memberService.findByUsername(username).orElse(null);
+        String username = util.getUsername(token);
+        try{
+            Member member = memberService.findByUsername(username);
 
-        if(member == null){
+            User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAothority())));
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                user, null, List.of(new SimpleGrantedAuthority(member.getAothority())));
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
             filterChain.doFilter(request, response);
-            return;
+
+        } catch(CustomException e){
+            filterChain.doFilter(request, response);
         }
 
-
-        User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAothority())));
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            user, null, List.of(new SimpleGrantedAuthority(member.getAothority())));
-
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-        filterChain.doFilter(request, response);
+//        if(member == null){
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
     }
 }

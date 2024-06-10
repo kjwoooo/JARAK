@@ -37,12 +37,12 @@ public class MemberController {
 
     @GetMapping("/members/{id}")
     public ResponseEntity<MemberResponseDTO> getMember(@PathVariable Long id){
-        return new ResponseEntity<>(memberService.findById(id), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findByIdToMemberResponseDTO(id), HttpStatus.OK);
     }
 
-    @PostMapping("/members/{id}")
-    public ResponseEntity<MemberResponseDTO> postMember(@PathVariable Long id, @RequestBody MemberModifyInfo memberModify){
-        return new ResponseEntity<>(memberService.save(id, memberModify), HttpStatus.OK);
+    @PostMapping("/members")
+    public ResponseEntity<MemberResponseDTO> postMember(@CookieValue("jwtToken") String jwtToken, @RequestBody MemberModifyInfo memberModify){
+        return new ResponseEntity<>(memberService.save(jwtToken, memberModify), HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -66,9 +66,9 @@ public class MemberController {
     }
 
     @GetMapping("/token-refresh")
-    public ResponseEntity<String> tokenRefresh(@CookieValue("jwtToken") String cookie, HttpServletResponse response){
-        String username = util.getUsername(cookie, util.getSECRET_KEY());
-        String authority = util.getAuthenticationInToken(cookie, util.getSECRET_KEY());
+    public ResponseEntity<String> tokenRefresh(@CookieValue String jwtToken, HttpServletResponse response){
+        String username = util.getUsername(jwtToken);
+        String authority = util.getAuthenticationInToken(jwtToken);
         String newJwtToken = util.createToken(username, authority, util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
 
         Cookie newCookie = new Cookie(util.getJWT_COOKIE_NAME(), newJwtToken);
