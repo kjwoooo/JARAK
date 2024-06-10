@@ -7,6 +7,8 @@ import io.elice.shoppingmall.order.entity.OrderDetail;
 import io.elice.shoppingmall.order.mapper.OrderDetailMapper;
 import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
+import io.elice.shoppingmall.security.JwtTokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +22,21 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
     private final OrderDetailMapper orderDetailMapper = OrderDetailMapper.INSTANCE;
+    private final JwtTokenUtil jwtUtil;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, JwtTokenUtil jwtUtil) {
         this.orderRepository = orderRepository;
+        this.jwtUtil = jwtUtil;
     }
 
-    // 주문 조회
-    public List<OrderDTO> getOrdersByMemberId(Long memberId, int page, int size) {
+    // 주문 내역 조회 (페이징 적용)
+    public Page<OrderDTO> getOrdersByMemberId(Long memberId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(memberId, pageable);
-        return OrderMapper.INSTANCE.ordersToOrderDTOs(orders.getContent());
+        return orders.map(orderMapper::orderToOrderDTO);
     }
+
 
     // 주문 생성
     public OrderDTO createOrder(OrderDTO orderDTO, List<OrderDetailDTO> orderDetailDTOs) {
