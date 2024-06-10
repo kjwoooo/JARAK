@@ -12,16 +12,16 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class ReviewDTO {
-    private Integer id;
-    private Integer itemId;
-    private Integer memberId;
+    private Long id;
+    private Long itemId;
+    private Long memberId;
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private String img;
     private Double rate;
 
-    public static ReviewDTO toReviewDTO(Review review, Integer memberId, Integer itemId) {
+    public static ReviewDTO toReviewDTO(Review review, Long memberId, Long itemId) {
         ReviewDTO reviewDTO = new ReviewDTO();
         reviewDTO.setId(review.getId());
         reviewDTO.setItemId(itemId);

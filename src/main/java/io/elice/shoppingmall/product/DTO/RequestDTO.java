@@ -12,16 +12,16 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class RequestDTO {
-    private Integer id;
-    private Integer itemId;
-    private Integer memberId;
+    private Long id;
+    private Long itemId;
+    private Long memberId;
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private String img;
     private String commnet;
 
-    public static RequestDTO toRequestDTO(Request request, Integer memberId, Integer itemId) {
+    public static RequestDTO toRequestDTO(Request request, Long memberId, Long itemId) {
         RequestDTO requestDTO = new RequestDTO();
         requestDTO.setId(request.getId());
         requestDTO.setItemId(itemId);

@@ -1,8 +1,10 @@
 package io.elice.shoppingmall.product.Entity.Review;
 
-import io.elice.shoppingmall.entity.base.BaseEntity;
+
+import io.elice.shoppingmall.product.DTO.RequestDTO;
+import io.elice.shoppingmall.product.DTO.ReviewDTO;
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.Entity.Item.Item;
-import io.elice.shoppingmall.product.Entity.Option.Brand;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,10 +17,10 @@ import lombok.*;
 public class Request extends BaseEntity { //Member Entity 받으면 연관관계 매핑 마무리
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column
-    private String memberId;
+    private Long memberId;
 
     @Column(nullable = false)
     private String title;
@@ -36,4 +38,13 @@ public class Request extends BaseEntity { //Member Entity 받으면 연관관계
     @JoinColumn(name = "item_id")
     private Item item;
 
+    public static Request toSaveEntity(RequestDTO requestDTO,Item item){
+        Request request = new Request();
+        request.setMemberId(requestDTO.getMemberId());
+        request.setTitle(requestDTO.getTitle());
+        request.setContent(requestDTO.getContent());
+        request.setImg(requestDTO.getImg());
+        request.setComment(requestDTO.getCommnet());
+        return request;
+    }
 }

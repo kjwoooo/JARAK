@@ -1,7 +1,9 @@
 package io.elice.shoppingmall.order.entity;
 
+import io.elice.shoppingmall.product.Entity.Item.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,12 +25,13 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "id")
     private Order order;
 
-    @Column(name = "item_id", nullable = false)
-    private Integer itemId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = false, referencedColumnName = "id")
+    private Item item;
 
     @Column(nullable = false)
     private Integer price;

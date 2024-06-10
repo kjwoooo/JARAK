@@ -1,15 +1,12 @@
 package io.elice.shoppingmall.member.entity;
 
-import io.elice.shoppingmall.member.entity.address.Address;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,21 +28,26 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
-    private String email;
+    @OneToOne
+    @JoinColumn(name="loginInfo_id", nullable = false)
+    private LoginInfo loginInfo;
 
     @Column(nullable = false)
-    private String password;
+    private String phone;
 
     @Column(nullable = false)
-    private String phoneNumber;
-
-    @Column(nullable = false)
-    private Integer gender;
+    private String gender;
 
     @Column(nullable = false)
     private String admin;
 
     @Column(nullable = false)
     private String membership;
+
+    public void modifyMember(MemberModifyInfo memberModify){
+        this.displayName = memberModify.getDisplayName();
+        this.loginInfo.setPassword(memberModify.getModifyPassword());
+        this.phone = memberModify.getPhone();
+        this.gender = memberModify.getGender();
+    }
 }

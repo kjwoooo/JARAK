@@ -17,16 +17,16 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(() ->{
-            return member.getAdmin();
-        });
+        collection.add(() ->
+            member.getAdmin()
+        );
 
         return collection;
     }
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return member.getLoginInfo().getPassword();
     }
 
     @Override
