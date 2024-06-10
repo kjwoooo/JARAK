@@ -12,4 +12,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // 특정 사용자에 대한 주문 조회
     Page<Order> findByMemberIdOrderByIdDesc(Long memberId, Pageable pageable);
 
+    // 주문 상세 내역 조회
+    Optional<Order> findByIdAndMemberId(Long id, Long memberId);
 }
