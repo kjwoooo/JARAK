@@ -42,14 +42,14 @@ public class MemberRegister {
 
     public Member toUserEntity(){
         Member member = toEntity();
-        member.setAdmin(MemberAuthority.USER.name());
+        member.setAothority(MemberAuthority.USER.name());
 
         return member;
     }
 
     public Member toAdminEntity(){
         Member member = toEntity();
-        member.setAdmin(MemberAuthority.ADMIN.name());
+        member.setAothority(MemberAuthority.ADMIN.name());
 
         return member;
     }

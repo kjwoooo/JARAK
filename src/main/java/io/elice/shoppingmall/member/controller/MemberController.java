@@ -14,12 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.elice.shoppingmall.security.JwtTokenUtil;
 
@@ -69,15 +69,30 @@ public class MemberController {
 
         Member member = memberOptional.get();
 
-        String jwtToken = JwtTokenUtil.createToken(member.getUsername(), member.getAdmin(), util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
+        String jwtToken = util.createToken(member.getUsername(), member.getAothority(), util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
 
         Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);
         cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
 
         response.addCookie(cookie);
-        response.addHeader(HttpHeaders.AUTHORIZATION, member.getAdmin());
+        response.addHeader(HttpHeaders.AUTHORIZATION, member.getAothority());
 
         return new ResponseEntity<>("로그인 완료.", HttpStatus.OK);
+    }
+
+    @GetMapping("/token-refresh")
+    public ResponseEntity<String> tokenRefresh(@CookieValue String cookie, HttpServletResponse response){
+        String username = util.getUsername(cookie, util.getSECRET_KEY());
+        String authority = util.getAuthenticationInToken(cookie, util.getSECRET_KEY());
+        String newJwtToken = util.createToken(username, authority, util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
+
+        Cookie newCookie = new Cookie(util.getJWT_COOKIE_NAME(), newJwtToken);
+        newCookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
+
+        response.addCookie(newCookie);
+        response.addHeader(HttpHeaders.AUTHORIZATION, authority);
+
+        return new ResponseEntity<>("토큰 재발급", HttpStatus.OK);
     }
 
     @GetMapping("/logout")

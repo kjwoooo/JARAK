@@ -18,7 +18,7 @@ public class PrincipalDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
         collection.add(() ->
-            member.getAdmin()
+            member.getAothority()
         );
 
         return collection;

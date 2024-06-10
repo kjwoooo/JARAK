@@ -59,12 +59,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String token = authorizationHeader.split(" ")[1];
 
-        if(JwtTokenUtil.isExpired(token, util.getSECRET_KEY())){
+        if(util.isExpired(token, util.getSECRET_KEY())){
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = JwtTokenUtil.getUsername(token, util.getSECRET_KEY());
+        String username = util.getUsername(token, util.getSECRET_KEY());
         Member member = memberService.findByUsername(username).orElse(null);
 
         if(member == null){
@@ -73,10 +73,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
 
-        User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAdmin())));
+        User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAothority())));
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            user, null, List.of(new SimpleGrantedAuthority(member.getAdmin())));
+            user, null, List.of(new SimpleGrantedAuthority(member.getAothority())));
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
