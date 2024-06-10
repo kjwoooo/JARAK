@@ -1,6 +1,8 @@
 package io.elice.shoppingmall.member.service;
 
 
+import io.elice.shoppingmall.exception.CustomException;
+import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.LoginInfo;
 import io.elice.shoppingmall.member.entity.MemberLogin;
 import io.elice.shoppingmall.member.entity.Member;
@@ -23,12 +25,15 @@ public class MemberService {
     private final PasswordEncoder encoder;
 
 
-    public List<Member> findAll(){
-        return memberRepository.findAll();
+    public List<MemberResponseDTO> findAll(){
+        return memberRepository.findAll().stream().map(MemberResponseDTO::new).toList();
     }
 
-    public Optional<Member> findById(Long id){
-        return memberRepository.findById(id);
+    public MemberResponseDTO findById(Long id){
+        Member member = memberRepository.findById(id).orElseThrow(()->
+                new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+
+        return new MemberResponseDTO(member);
     }
 
     public Optional<Member> findByUsername(String username){
@@ -61,7 +66,7 @@ public class MemberService {
     }
 
     public boolean isMatchPassword(Long id, String password){
-        Optional<Member> memberOptional = findById(id);
+        Optional<Member> memberOptional = memberRepository.findById(id);
 
         if(memberOptional.isEmpty())
             return false;
@@ -86,20 +91,19 @@ public class MemberService {
         return Optional.of(new MemberResponseDTO(member));
     }
 
-    public Optional<MemberResponseDTO> save(Long id, MemberModifyInfo memberModifyInfo){
-        Optional<Member> oldMemberOptional = findById(id);
-        if(oldMemberOptional.isEmpty()){
-            return Optional.empty();
-        }
+    public MemberResponseDTO save(Long id, MemberModifyInfo memberModifyInfo){
+        if(isMatchPassword(id, memberModifyInfo.getPassword()))
+            throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
+
+        Member oldMember = memberRepository.findById(id).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
 
-        Member oldMember = oldMemberOptional.get();
         oldMember.modifyMember(memberModifyInfo);
 
         oldMember = memberRepository.save(oldMember);
-        MemberResponseDTO memberResponseDTO = new MemberResponseDTO(oldMember);
 
-        return Optional.of(memberResponseDTO);
+        return new MemberResponseDTO(oldMember);
     }
 }

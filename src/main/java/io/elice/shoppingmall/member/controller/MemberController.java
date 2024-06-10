@@ -32,32 +32,17 @@ public class MemberController {
 
     @GetMapping("/members")
     public ResponseEntity<List<MemberResponseDTO>> getMembers(){
-        List<MemberResponseDTO> members = memberService.findAll().stream().map(
-            MemberResponseDTO::new).toList();
-
-        return new ResponseEntity<>(members, HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/members/{id}")
-    public ResponseEntity<?> getMember(@PathVariable Long id){
-        Optional<Member> member = memberService.findById(id);
-
-        if(member.isEmpty())
-            return new ResponseEntity<>("해당 회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
-
-        return new ResponseEntity<>(new MemberResponseDTO(member.get()), HttpStatus.OK);
+    public ResponseEntity<MemberResponseDTO> getMember(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping("/members/{id}")
-    public ResponseEntity<?> postMember(@PathVariable Long id, @RequestBody MemberModifyInfo memberModify){
-        if(!memberService.isMatchPassword(id, memberModify.getPassword()))
-            return new ResponseEntity<>("현재 비밀번호가 잘못되었습니다.", HttpStatus.BAD_REQUEST);
-
-        Optional<MemberResponseDTO> memberResponseDTO = memberService.save(id, memberModify);
-        if(memberResponseDTO.isEmpty())
-            return new ResponseEntity<>("해당 회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
-
-        return new ResponseEntity<>(memberResponseDTO.get(), HttpStatus.OK);
+    public ResponseEntity<MemberResponseDTO> postMember(@PathVariable Long id, @RequestBody MemberModifyInfo memberModify){
+        return new ResponseEntity<>(memberService.save(id, memberModify), HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -81,7 +66,7 @@ public class MemberController {
     }
 
     @GetMapping("/token-refresh")
-    public ResponseEntity<String> tokenRefresh(@CookieValue String cookie, HttpServletResponse response){
+    public ResponseEntity<String> tokenRefresh(@CookieValue("jwtToken") String cookie, HttpServletResponse response){
         String username = util.getUsername(cookie, util.getSECRET_KEY());
         String authority = util.getAuthenticationInToken(cookie, util.getSECRET_KEY());
         String newJwtToken = util.createToken(username, authority, util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
