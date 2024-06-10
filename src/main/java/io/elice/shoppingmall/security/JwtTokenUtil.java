@@ -28,7 +28,7 @@ public class JwtTokenUtil {
     private final String JWT_USERNAME = "username";
     private final String JWT_AUTHORITY = "authority";
 
-    public String createToken(String username, String authority, String key, long expireTimeMs){
+    public String createToken(String username, String authority){
 
         Claims claims = Jwts.claims();
         claims.put(JWT_USERNAME, username);
@@ -38,8 +38,8 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
-                .signWith(SignatureAlgorithm.HS256, key)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_TIME_MS))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
 

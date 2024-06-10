@@ -12,6 +12,8 @@ import io.elice.shoppingmall.member.entity.MemberResponseDTO;
 import io.elice.shoppingmall.member.repository.LoginInfoRepository;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.security.JwtTokenUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -47,16 +49,32 @@ public class MemberService {
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public Optional<Member> login(MemberLogin loginInfo){
-        Optional<Member> memberOptional = memberRepository.findByUsername(loginInfo.getUsername());
+    public String login(MemberLogin loginInfo, HttpServletResponse response){
+        Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
-        if(memberOptional.isEmpty())
-            return Optional.empty();
+        memberMatchPassword(member, loginInfo.getPassword());
+        createJwtTokenCookie(member, response);
 
-        if(!encoder.matches(loginInfo.getPassword(), memberOptional.get().getLoginInfo().getPassword()))
-            return Optional.empty();
+        return "로그인 성공";
+    }
 
-        return memberOptional;
+    public String tokenRefresh(String jwtToken, HttpServletResponse response){
+        String username = util.getUsername(jwtToken);
+        Member member = memberRepository.findByUsername(username).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+
+        createJwtTokenCookie(member, response);
+        return "토큰 재발급 성공";
+    }
+
+    private void createJwtTokenCookie(Member member, HttpServletResponse response){
+        String jwtToken = util.createToken(member.getUsername(), member.getAothority());
+
+        Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);
+        cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
+
+        response.addCookie(cookie);
     }
 
     public void delete(Long id){

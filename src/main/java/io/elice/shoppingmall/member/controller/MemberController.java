@@ -47,37 +47,14 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
-        Optional<Member> memberOptional = memberService.login(memberLogin);
+        memberService.login(memberLogin, response);
 
-        if(memberOptional.isEmpty())
-            return new ResponseEntity<>("아이디 또는 비밀번호가 잘못되었습니다.", HttpStatus.NOT_FOUND);
-
-        Member member = memberOptional.get();
-
-        String jwtToken = util.createToken(member.getUsername(), member.getAothority(), util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
-
-        Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);
-        cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
-
-        response.addCookie(cookie);
-        response.addHeader(HttpHeaders.AUTHORIZATION, member.getAothority());
-
-        return new ResponseEntity<>("로그인 완료.", HttpStatus.OK);
+        return new ResponseEntity<>(memberService.login(memberLogin, response), HttpStatus.OK);
     }
 
     @GetMapping("/token-refresh")
     public ResponseEntity<String> tokenRefresh(@CookieValue String jwtToken, HttpServletResponse response){
-        String username = util.getUsername(jwtToken);
-        String authority = util.getAuthenticationInToken(jwtToken);
-        String newJwtToken = util.createToken(username, authority, util.getSECRET_KEY(), util.getEXPIRE_TIME_MS());
-
-        Cookie newCookie = new Cookie(util.getJWT_COOKIE_NAME(), newJwtToken);
-        newCookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
-
-        response.addCookie(newCookie);
-        response.addHeader(HttpHeaders.AUTHORIZATION, authority);
-
-        return new ResponseEntity<>("토큰 재발급", HttpStatus.OK);
+        return new ResponseEntity<>(memberService.tokenRefresh(jwtToken, response), HttpStatus.OK);
     }
 
     @GetMapping("/logout")
