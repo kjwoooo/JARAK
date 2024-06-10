@@ -51,22 +51,12 @@ public class OrderService {
     }
 
     // 주문 생성
-    public OrderDTO createOrder(OrderDTO orderDTO, List<OrderDetailDTO> orderDetailDTOs) {
-        // OrderDTO를 Order 엔티티로 변환
+    public OrderDTO createOrder(OrderDTO orderDTO) {
         Order order = orderMapper.orderDTOToOrder(orderDTO);
-
-        // OrderDetailDTO 리스트를 OrderDetail 엔티티 리스트로 변환
-        List<OrderDetail> orderDetails = orderDetailDTOs.stream()
+        order.setOrderDetails(orderDTO.getOrderDetails().stream()
                 .map(orderDetailMapper::orderDetailDTOToOrderDetail)
-                .collect(Collectors.toList());
-
-        // Order와 OrderDetail 관계 설정
-        order.setOrderDetails(orderDetails);
-
-        // 주문 저장
+                .collect(Collectors.toList()));
         Order savedOrder = orderRepository.save(order);
-
-        // 저장된 주문을 OrderDTO로 변환하여 반환
         return orderMapper.orderToOrderDTO(savedOrder);
     }
 }

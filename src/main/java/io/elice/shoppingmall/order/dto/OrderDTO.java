@@ -2,6 +2,7 @@ package io.elice.shoppingmall.order.dto;
 
 import io.elice.shoppingmall.order.entity.OrderState;
 import java.util.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,5 @@ public class OrderDTO {
     private Integer totalQuantity;
     private String repItemName;
     private String repItemImage;
+    private List<OrderDetailDTO> orderDetails;
 }
