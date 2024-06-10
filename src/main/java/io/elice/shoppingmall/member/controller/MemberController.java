@@ -41,7 +41,7 @@ public class MemberController {
     }
 
     @PostMapping("/members")
-    public ResponseEntity<MemberResponseDTO> postMember(@CookieValue("jwtToken") String jwtToken, @RequestBody MemberModifyInfo memberModify){
+    public ResponseEntity<MemberResponseDTO> postMember(@CookieValue String jwtToken, @RequestBody MemberModifyInfo memberModify){
         return new ResponseEntity<>(memberService.save(jwtToken, memberModify), HttpStatus.OK);
     }
 
@@ -59,15 +59,12 @@ public class MemberController {
 
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response){
-        jwtTokenDestroy(response);
-
-        return new ResponseEntity<>("로그아웃 완료.", HttpStatus.OK);
+        return new ResponseEntity<>(memberService.logout(response), HttpStatus.OK);
     }
 
-    @DeleteMapping("/unregister/{id}")
-    public void delete(HttpServletResponse response, @PathVariable Long id){
-        jwtTokenDestroy(response);
-        memberService.delete(id);
+    @DeleteMapping("/unregister")
+    public ResponseEntity<String> delete(@CookieValue String jwtToken, HttpServletResponse response){
+        return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
     }
 
     private void jwtTokenDestroy(HttpServletResponse response){

@@ -77,9 +77,26 @@ public class MemberService {
         response.addCookie(cookie);
     }
 
-    public void delete(Long id){
-        Optional<Member> memberOptional = memberRepository.findById(id);
-        memberOptional.ifPresent(memberRepository::delete);
+    public String logout(HttpServletResponse response){
+        jwtTokenDestroy(response);
+        return "로그아웃";
+    }
+
+    private void jwtTokenDestroy(HttpServletResponse response){
+        Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
+
+    public String delete(String jwtToken, HttpServletResponse response){
+        String username = util.getUsername(jwtToken);
+        Member member = memberRepository.findByUsername(username).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+
+        memberRepository.delete(member);
+        jwtTokenDestroy(response);
+
+        return "회원 정보 삭제";
     }
 
     public boolean isExistUsername(String username){
