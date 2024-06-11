@@ -34,6 +34,6 @@ public class AddressController {
 
     @PostMapping("/addresses/{id}")
     public ResponseEntity<?> postMemberAddress(@CookieValue String jwtToken, @PathVariable Long id, @RequestBody AddressDTO addressDto){
-        return new ResponseEntity<>(addressService.save(jwtToken, id, addressDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, id, addressDto), HttpStatus.CREATED);
     }
 }

@@ -30,7 +30,7 @@ public class LoginInfoService {
     }
 
     public void matchPassword(LoginInfo loginInfo, String password){
-        if(!encoder.matches(loginInfo.getPassword(), password))
+        if(!encoder.matches(password, loginInfo.getPassword()))
             throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
     }
 }

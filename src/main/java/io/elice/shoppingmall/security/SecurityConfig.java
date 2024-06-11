@@ -61,8 +61,6 @@ public class SecurityConfig{
             .anyRequest().permitAll()
         );
 
-        http.user
-
         http.logout(logout -> logout
             .logoutUrl("logout"));
 
