@@ -83,8 +83,7 @@ public class OrderService {
                     orderDTO.getDeliveryReq(),
                     "Y" // 기본 배송지 설정 여부
             );
-            addressService.save(jwtToken, newAddressDTO);
-            address = newAddressDTO.toEntity();
+            address = addressService.save(jwtToken, newAddressDTO);
         } else {
             // 기존 배송지 정보 가져오기
             List<AddressResponseDTO> addresses = addressService.findAllByJwtToken(jwtToken);
@@ -145,8 +144,7 @@ public class OrderService {
                     orderDTO.getDeliveryReq(),
                     "Y" // 기본 배송지 설정 여부
             );
-            AddressResponseDTO savedAddressResponse = addressService.save(jwtToken, newAddressDTO);
-            Address address = savedAddressResponse.toEntity();
+            Address address = addressService.save(jwtToken, newAddressDTO);
             order.setRecipientName(address.getRecipientName());
             order.setZipcode(address.getZipcode());
             order.setAddr(address.getAddr());

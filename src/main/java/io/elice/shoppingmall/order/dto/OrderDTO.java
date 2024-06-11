@@ -4,7 +4,6 @@ import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.entity.OrderState;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

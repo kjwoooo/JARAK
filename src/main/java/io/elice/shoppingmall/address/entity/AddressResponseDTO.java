@@ -25,16 +25,4 @@ public class AddressResponseDTO {
         this.deliveryReq = address.getDeliveryReq();
         this.defDestination = address.getDefDestination();
     }
-
-    public Address toEntity() {
-        Address address = new Address();
-        address.setRecipientName(this.recipientName);
-        address.setZipcode(this.zipcode);
-        address.setAddr(this.addr);
-        address.setAddrDetail(this.addrDetail);
-        address.setRecipientTel(this.recipientTel);
-        address.setDeliveryReq(this.deliveryReq);
-        address.setDefDestination(this.defDestination);
-        return address;
-    }
 }
