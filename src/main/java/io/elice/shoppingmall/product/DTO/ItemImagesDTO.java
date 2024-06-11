@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ItemImagesDTO {
-    private Integer id;
+    private Long id;
     private String mainImage;
     private String detailImage;
 

@@ -19,7 +19,7 @@ public class RequestController {
 
     @PostMapping("/request/save")
     public ResponseEntity save(@RequestBody RequestDTO requestDTO){
-        Integer saveResult = requestService.save(requestDTO);
+        Long saveResult = requestService.save(requestDTO);
         if(saveResult != null){
             List<RequestDTO> requestDTOList = requestService.findAll(requestDTO.getItemId());
             return new ResponseEntity<>(requestDTOList, HttpStatus.OK);

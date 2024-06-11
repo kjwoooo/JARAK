@@ -17,10 +17,10 @@ import java.util.Optional;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
-    Integer memeberId = 1;
+    Long memeberId = 1L;
 
     //댓글 생성
-    public Integer save(ReviewDTO reviewDTO){
+    public Long save(ReviewDTO reviewDTO){
         Optional<Item> optionalItem = itemRepository.findById(reviewDTO.getId());
         if(optionalItem.isPresent()){
             Item item = optionalItem.get();
@@ -33,7 +33,7 @@ public class ReviewService {
     }
 
     //전체 댓글 조회
-    public List<ReviewDTO> findAll(Integer itemId){
+    public List<ReviewDTO> findAll(Long itemId){
         Item item = itemRepository.findById(itemId).get();
         List<Review> reviewList = reviewRepository.findAllByItemOrderByIdAsc(item);
         List<ReviewDTO> reviewDTOList = new ArrayList<>();

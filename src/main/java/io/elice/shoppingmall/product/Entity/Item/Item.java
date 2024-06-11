@@ -4,8 +4,9 @@ package io.elice.shoppingmall.product.Entity.Item;
 //import io.elice.shoppingmall.category.controller.CategoryController;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.DTO.ItemDTO;
-import io.elice.shoppingmall.product.Entity.Option.Brand;
+//import io.elice.shoppingmall.product.Entity.Option.brand;
 import io.elice.shoppingmall.product.Entity.Option.Gender;
+import io.elice.shoppingmall.product.Entity.Option.brand.entity.Brand;
 import io.elice.shoppingmall.product.Entity.Review.Request;
 import io.elice.shoppingmall.product.Entity.Review.Review;
 import jakarta.persistence.*;
@@ -27,13 +28,13 @@ import java.util.List;
 public class Item extends BaseEntity {//    Member,Category entity 받으면 연관관계 매핑 마무리
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column
-    private Integer memberId;
+    private Long memberId;
 
     @Column
-    private Integer categoryId;
+    private Long categoryId;
 
     @Column(nullable = false)
     private String itemName;

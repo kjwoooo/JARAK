@@ -18,7 +18,7 @@ public class ItemImagesService {
         itemImagesRepository.save(itemImages);
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         itemImagesRepository.deleteById(id);
     }
 }

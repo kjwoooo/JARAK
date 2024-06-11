@@ -16,10 +16,10 @@ import lombok.*;
 public class Review extends BaseEntity { //member entity 받으면 연관관계 매핑 마무리
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column
-    private Integer memberId;
+    private Long memberId;
 
     @Column(nullable = false, length = 20)
     private String title;

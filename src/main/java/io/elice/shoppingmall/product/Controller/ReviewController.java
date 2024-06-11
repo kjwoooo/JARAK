@@ -21,7 +21,7 @@ public class ReviewController {
     //댓글 등록
     @PostMapping("/comment/save")
     public ResponseEntity save(@RequestBody ReviewDTO reviewDTO){
-        Integer saveResult = reviewService.save(reviewDTO);
+        Long saveResult = reviewService.save(reviewDTO);
         if(saveResult != null){
             List<ReviewDTO> reviewDTOList = reviewService.findAll(reviewDTO.getItemId());
             return new ResponseEntity<>(reviewDTOList, HttpStatus.OK);
