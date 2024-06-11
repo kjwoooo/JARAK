@@ -138,6 +138,12 @@ public class MemberService {
         response.addCookie(cookie);
     }
 
+    /**
+     * 인증된 사용자가 직접 회원 탈퇴
+     * @param jwtToken
+     * @param response
+     * @return
+     */
     public String delete(String jwtToken, HttpServletResponse response){
         String username = util.getUsername(jwtToken);
         Member member = memberRepository.findByUsername(username).orElseThrow(()->
@@ -146,6 +152,17 @@ public class MemberService {
         memberRepository.delete(member);
         jwtTokenDestroy(response);
 
+        return "회원 탈퇴";
+    }
+
+    /**
+     * 관리자가 특정 회원 삭제
+     * @param id
+     * @return
+     */
+    public String delete(Long id){
+        Member member = findByIdToMember(id);
+        memberRepository.delete(member);
         return "회원 정보 삭제";
     }
 

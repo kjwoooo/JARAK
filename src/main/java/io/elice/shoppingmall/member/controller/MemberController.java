@@ -77,7 +77,12 @@ public class MemberController {
     }
 
     @DeleteMapping("/unregister")
-    public ResponseEntity<String> delete(@CookieValue String jwtToken, HttpServletResponse response){
+    public ResponseEntity<String> unregister(@CookieValue String jwtToken, HttpServletResponse response){
         return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/members/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.delete(id), HttpStatus.OK);
     }
 }
