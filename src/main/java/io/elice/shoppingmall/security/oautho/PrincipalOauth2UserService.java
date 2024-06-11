@@ -55,7 +55,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
             Member member = new Member();
             member.setDisplayName(oAuth2User.getAttribute("name"));
-            member.setAothority(MemberAuthority.USER.name());
+            member.setAuthority(MemberAuthority.USER.name());
             member.setMembership(Membership.BRONZE.name());
             member.setLoginInfo(loginInfo);
 

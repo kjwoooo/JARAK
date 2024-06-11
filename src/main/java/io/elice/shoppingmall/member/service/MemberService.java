@@ -120,7 +120,7 @@ public class MemberService {
     }
 
     private void createJwtTokenCookie(Member member, HttpServletResponse response){
-        String jwtToken = util.createToken(member.getUsername(), member.getAothority());
+        String jwtToken = util.createToken(member.getUsername(), member.getAuthority());
 
         Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);
         cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());

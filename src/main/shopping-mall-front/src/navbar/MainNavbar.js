@@ -93,9 +93,15 @@ function NavigationBar() {
             }
             </Navbar.Text>
             <Navbar.Text>
-              <Link to={LINKS.ADMIN_PAGE.path}>
-                <Button variant="outline-dark">관리자</Button>
-              </Link>
+            {
+              user && user.authority === 'ADMIN' && (
+                <Navbar.Text>
+                  <Link to={LINKS.ADMIN_PAGE.path}>
+                    <Button variant="outline-dark">관리자</Button>
+                  </Link>
+                </Navbar.Text>
+              )
+            }
             </Navbar.Text>
             <Navbar.Text>
               {

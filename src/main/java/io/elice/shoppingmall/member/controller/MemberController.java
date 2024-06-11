@@ -33,7 +33,7 @@ public class MemberController {
 
 
     //NOTE: ADMIN API
-    @GetMapping("admin/members")
+    @GetMapping("/admin/members")
     public ResponseEntity<List<MemberResponseDTO>> getMembersForAdmin(){
         return new ResponseEntity<>(memberService.findAll(), HttpStatus.OK);
     }
