@@ -63,8 +63,8 @@ public class AddressService {
      * @param address
      * @return
      */
-    private AddressResponseDTO save(Address address){
-        return new AddressResponseDTO(addressRepository.save(address));
+    private Address save(Address address){
+        return addressRepository.save(address);
     }
 
     /**
@@ -73,13 +73,17 @@ public class AddressService {
      * @param addressDto
      * @return
      */
-    public AddressResponseDTO save(String jwtToken,AddressDTO addressDto){
+    public Address save(String jwtToken,AddressDTO addressDto){
         Member member = memberService.findByJwtToken(jwtToken);
 
         Address address = addressDto.toEntity();
         address.setMember(member);
 
         return save(address);
+    }
+
+    public AddressResponseDTO saveAndReturnResponseDTO(String jwtToken, AddressDTO addressDTO){
+        return new AddressResponseDTO(save(jwtToken, addressDTO));
     }
 
     /**
@@ -89,7 +93,7 @@ public class AddressService {
      * @param addressDTO
      * @return
      */
-    public AddressResponseDTO save(String jwtToken, Long id, AddressDTO addressDTO){
+    public Address save(String jwtToken, Long id, AddressDTO addressDTO){
         try{
             Address oldAddress = findById(id);
             Address newAddress = addressDTO.toEntity();
@@ -107,5 +111,9 @@ public class AddressService {
             else
                 throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
+    }
+
+    public AddressResponseDTO saveAndReturnResponseDTO(String jwtToken, Long id, AddressDTO addressDTO){
+        return new AddressResponseDTO(save(jwtToken, addressDTO));
     }
 }

@@ -31,14 +31,22 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtTokenUtil util;
 
-    @GetMapping("/members")
-    public ResponseEntity<List<MemberResponseDTO>> getMembers(){
+
+    //NOTE: ADMIN API
+    @GetMapping("admin/members")
+    public ResponseEntity<List<MemberResponseDTO>> getMembersForAdmin(){
         return new ResponseEntity<>(memberService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/members/{id}")
-    public ResponseEntity<MemberResponseDTO> getMember(@PathVariable Long id){
-        return new ResponseEntity<>(memberService.findByIdToMemberResponseDTO(id), HttpStatus.OK);
+    @GetMapping("/admin/members/{id}")
+    public ResponseEntity<MemberResponseDTO> getMemberForAdmin(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.findByIdToResponseDTO(id), HttpStatus.OK);
+    }
+
+    //NOTE: USER API
+    @GetMapping("/members/info")
+    public ResponseEntity<MemberResponseDTO> getMember(@CookieValue String jwtToken){
+        return new ResponseEntity<>(memberService.findByJwtTokenToResponseDTO(jwtToken), HttpStatus.OK);
     }
 
     @PostMapping("/members")
@@ -69,7 +77,12 @@ public class MemberController {
     }
 
     @DeleteMapping("/unregister")
-    public ResponseEntity<String> delete(@CookieValue String jwtToken, HttpServletResponse response){
+    public ResponseEntity<String> unregister(@CookieValue String jwtToken, HttpServletResponse response){
         return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/members/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.delete(id), HttpStatus.OK);
     }
 }
