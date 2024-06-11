@@ -70,10 +70,23 @@ public class OrderController {
     // 주문 생성
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@CookieValue String jwtToken, @RequestBody OrderDTO orderDTO) {
-        Member member = memberService.findByJwtToken(jwtToken);
-
-        orderDTO.setMemberId(member.getId());
-        OrderDTO createdOrder = orderService.createOrder(member.getUsername(), orderDTO);
+        OrderDTO createdOrder = orderService.createOrder(jwtToken, orderDTO);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    }
+
+    // 주문 수정 페이지 호출
+    @GetMapping("/update/{orderId}")
+    public ResponseEntity<OrderDTO> getUpdateOrderPage(@CookieValue String jwtToken, @PathVariable Long orderId) {
+        Member member = memberService.findByJwtToken(jwtToken);
+        OrderDTO orderDTO = orderService.getUpdateOrderPage(orderId, member.getId());
+        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
+    }
+
+    // 주문 수정
+    @PutMapping("/update/{orderId}")
+    public ResponseEntity<OrderDTO> updateOrder(@CookieValue String jwtToken, @PathVariable Long orderId,
+                                                @RequestBody OrderDTO orderDTO) {
+        OrderDTO updatedOrder = orderService.updateOrder(jwtToken, orderId, orderDTO);
+        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }
 }

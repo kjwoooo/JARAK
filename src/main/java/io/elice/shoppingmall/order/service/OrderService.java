@@ -106,6 +106,55 @@ public class OrderService {
 
         // DTO에서 엔티티로 변환
         Order order = orderDTO.toEntity();
+        order.setMember(member);  // member 설정
+
+        // OrderDetail 설정
+        List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
+                .map(orderDetailDTO -> {
+                    Item item = itemRepository.findById(orderDetailDTO.getItemId())
+                            .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+                    return orderDetailDTO.toEntity(order, item);
+                })
+                .collect(Collectors.toList());
+        order.setOrderDetails(orderDetails);
+
+        Order savedOrder = orderRepository.save(order);
+        return orderMapper.orderToOrderDTO(savedOrder);
+    }
+
+    // 주문 수정 페이지 호출
+    public OrderDTO getUpdateOrderPage(Long orderId, Long memberId) {
+        Order order = orderRepository.findByIdAndMemberId(orderId, memberId)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+        return orderMapper.orderToOrderDTO(order);
+    }
+
+    // 주문 수정
+    public OrderDTO updateOrder(String jwtToken, Long orderId, OrderDTO orderDTO) {
+        Member member = memberService.findByJwtToken(jwtToken);
+        Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+
+        if (orderDTO.isUseNewAddress()) {
+            // 새로운 배송지 정보 입력받기
+            AddressDTO newAddressDTO = new AddressDTO(
+                    orderDTO.getRecipientName(),
+                    orderDTO.getZipcode(),
+                    orderDTO.getAddr(),
+                    orderDTO.getAddrDetail(),
+                    orderDTO.getRecipientTel(),
+                    orderDTO.getDeliveryReq(),
+                    "Y" // 기본 배송지 설정 여부
+            );
+            AddressResponseDTO savedAddressResponse = addressService.save(jwtToken, newAddressDTO);
+            Address address = savedAddressResponse.toEntity();
+            order.setRecipientName(address.getRecipientName());
+            order.setZipcode(address.getZipcode());
+            order.setAddr(address.getAddr());
+            order.setAddrDetail(address.getAddrDetail());
+            order.setRecipientTel(address.getRecipientTel());
+            order.setDeliveryReq(address.getDeliveryReq());
+        }
 
         // OrderDetail 설정
         List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
