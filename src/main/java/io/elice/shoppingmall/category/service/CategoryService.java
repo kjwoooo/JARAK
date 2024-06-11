@@ -3,6 +3,8 @@ package io.elice.shoppingmall.category.service;
 import io.elice.shoppingmall.category.dto.CategoryDto;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.repository.CategoryRepository;
+import io.elice.shoppingmall.exception.CustomException;
+import io.elice.shoppingmall.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +38,7 @@ public class CategoryService {
     // 특정상위 카테고리의 하위 카테고리 조회
     public List<CategoryDto> getSubCategories(Long parentId) {
         Category parentCategory = categoryRepository.findById(parentId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상위 카테고리입니다: " + parentId));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PARENT_CATEGORY));
 
         List<CategoryDto> subcategories = new ArrayList<>();
         for (Category subCategory : parentCategory.getSubCategories()) {
@@ -49,7 +51,7 @@ public class CategoryService {
     //  하나의 카테고리 조회
     public CategoryDto getCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
+                new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         return entityToDto(category);
     }
 
@@ -58,7 +60,7 @@ public class CategoryService {
     public CategoryDto createCategory(CategoryDto categoryDto) {
 
         if (categoryRepository.existsByName(categoryDto.getName())) {
-            throw new IllegalArgumentException("이미 존재하는 카테고리입니다: " + categoryDto.getName());
+            throw new CustomException(ErrorCode.EXIST_CATEGORY_NAME);
         }
 
         Category categoryEntity = categoryDto.toEntity();
@@ -73,14 +75,15 @@ public class CategoryService {
        @Transactional(readOnly = false)
        public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
     Category category = categoryRepository.findById(id).orElseThrow(() ->
-                     new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
+                     new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
+
 
            category.setName(categoryDto.getName());
 
               if (categoryDto.getParentId() != null) {
                 Category parentCategory = categoryRepository.findById(categoryDto
                         .getParentId()).orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 상위 카테고리입니다: " + categoryDto.getParentId()));
+                        new CustomException(ErrorCode.NOT_FOUND_PARENT_CATEGORY));
                 category.setParent(parentCategory);
             } else {
                 category.setParent(null);
@@ -95,7 +98,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 카테고리입니다: " + id));
+                new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
 
         deleteSubCategories(category);
         categoryRepository.deleteById(id);
