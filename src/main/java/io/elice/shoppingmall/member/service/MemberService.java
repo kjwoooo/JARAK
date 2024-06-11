@@ -9,7 +9,6 @@ import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.entity.MemberModifyInfo;
 import io.elice.shoppingmall.member.entity.MemberRegister;
 import io.elice.shoppingmall.member.entity.MemberResponseDTO;
-import io.elice.shoppingmall.member.repository.LoginInfoRepository;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.security.JwtTokenUtil;
 import jakarta.servlet.http.Cookie;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final LoginInfoRepository loginInfoRepository;
+    private final LoginInfoService loginInfoService;
     private final PasswordEncoder encoder;
     private final JwtTokenUtil util;
 
@@ -104,7 +103,7 @@ public class MemberService {
         Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
-        memberMatchPassword(member, loginInfo.getPassword());
+        loginInfoService.matchPassword(member.getLoginInfo(), loginInfo.getPassword());
         createJwtTokenCookie(member, response);
 
         return "로그인 성공";
@@ -155,18 +154,13 @@ public class MemberService {
             throw new CustomException(ErrorCode.EXIST_USERNAME);
     }
 
-    /**
-     * 이메일 중복검사
-     * @param email
-     */
-    private void existEmail(String email){
-        if(loginInfoRepository.existsByEmail(email))
-            throw new CustomException(ErrorCode.EXIST_EMAIL);
+    public Member findByLoginInfo(LoginInfo loginInfo){
+        return memberRepository.findByLoginInfo(loginInfo).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
-    private void memberMatchPassword(Member member, String password){
-        if(!encoder.matches(password, member.getLoginInfo().getPassword()))
-            throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
+    public Member save(Member member){
+        return memberRepository.save(member);
     }
 
     /**
@@ -177,12 +171,12 @@ public class MemberService {
     public MemberResponseDTO save(MemberRegister memberRegister){
         existUsername(memberRegister.getUsername());
         validEmail(memberRegister.getEmail());
-        existEmail(memberRegister.getEmail());
+        loginInfoService.existsEmail(memberRegister.getEmail());
 
         memberRegister.setPassword(encoder.encode(memberRegister.getPassword()));
 
         LoginInfo loginInfo = new LoginInfo(memberRegister);
-        loginInfo = loginInfoRepository.save(loginInfo);
+        loginInfo = loginInfoService.save(loginInfo);
 
         Member member = memberRegister.toUserEntity();
         member.setLoginInfo(loginInfo);
@@ -202,9 +196,16 @@ public class MemberService {
         String username = util.getUsername(jwtToken);
         Member oldMember = findByUsername(username);
 
-        memberMatchPassword(oldMember, memberModifyInfo.getPassword());
+        loginInfoService.matchPassword(oldMember.getLoginInfo(), memberModifyInfo.getPassword());
+
         memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
         oldMember.modifyMember(memberModifyInfo);
+
+        LoginInfo loginInfo = oldMember.getLoginInfo();
+        loginInfo.setPassword(memberModifyInfo.getPassword());
+
+        loginInfo = loginInfoService.save(loginInfo);
+        oldMember.setLoginInfo(loginInfo);
 
         return new MemberResponseDTO(memberRepository.save(oldMember));
     }
