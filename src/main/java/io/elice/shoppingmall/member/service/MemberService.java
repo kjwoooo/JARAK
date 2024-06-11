@@ -63,14 +63,14 @@ public class MemberService {
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public String login(MemberLogin loginInfo, HttpServletResponse response){
+    public Member login(MemberLogin loginInfo, HttpServletResponse response){
         Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         memberMatchPassword(member, loginInfo.getPassword());
         createJwtTokenCookie(member, response);
-
-        return "로그인 성공";
+        System.out.println(member.getUsername());
+        return member;
     }
 
     public String tokenRefresh(String jwtToken, HttpServletResponse response){

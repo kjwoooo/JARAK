@@ -52,10 +52,10 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
+    public ResponseEntity<Member> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
         memberService.login(memberLogin, response);
 
-        return new ResponseEntity<>(memberService.login(memberLogin, response), HttpStatus.OK);
+        return new ResponseEntity<Member>(memberService.login(memberLogin, response), HttpStatus.OK);
     }
 
     @GetMapping("/token-refresh")

@@ -82,6 +82,17 @@ function NavigationBar() {
             }
             </Navbar.Text>
             <Navbar.Text>
+            {
+              user && (
+                <>
+                  <Link to={LINKS.MYPAGE.path}>
+                    <Button variant="outline-dark">마이페이지</Button>
+                  </Link>
+                </>
+              )
+            }
+            </Navbar.Text>
+            <Navbar.Text>
               <Link to={LINKS.ADMIN_PAGE.path}>
                 <Button variant="outline-dark">관리자</Button>
               </Link>
