@@ -92,6 +92,8 @@ public class MemberService {
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
+
+    public Member login(MemberLogin loginInfo, HttpServletResponse response){
     /**
      * 회원이 입력한 ID, Password를 바탕으로
      * 해당 회원이 존재하는지 검증
@@ -99,14 +101,13 @@ public class MemberService {
      * @param response
      * @return
      */
-    public String login(MemberLogin loginInfo, HttpServletResponse response){
         Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         loginInfoService.matchPassword(member.getLoginInfo(), loginInfo.getPassword());
         createJwtTokenCookie(member, response);
-
-        return "로그인 성공";
+        System.out.println(member.getUsername());
+        return member;
     }
 
     public String tokenRefresh(String jwtToken, HttpServletResponse response){
@@ -119,7 +120,7 @@ public class MemberService {
     }
 
     private void createJwtTokenCookie(Member member, HttpServletResponse response){
-        String jwtToken = util.createToken(member.getUsername(), member.getAothority());
+        String jwtToken = util.createToken(member.getUsername(), member.getAuthority());
 
         Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);
         cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
