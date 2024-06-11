@@ -1,6 +1,5 @@
-package io.elice.shoppingmall.product.Entity.Option;
+package io.elice.shoppingmall.option.entity;
 
-import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,11 +9,11 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Gender extends BaseEntity {
+public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String genderName;
+    private String colorName;
 }

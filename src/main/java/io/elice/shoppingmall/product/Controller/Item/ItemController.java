@@ -1,11 +1,7 @@
-package io.elice.shoppingmall.product.Controller;
+package io.elice.shoppingmall.product.Controller.Item;
 
-import io.elice.shoppingmall.product.DTO.ItemDTO;
-import io.elice.shoppingmall.product.DTO.RequestDTO;
-import io.elice.shoppingmall.product.DTO.ReviewDTO;
-import io.elice.shoppingmall.product.Entity.Item.Item;
-import io.elice.shoppingmall.product.Entity.Review.Review;
-import io.elice.shoppingmall.product.Service.ItemService;
+import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
+import io.elice.shoppingmall.product.Service.Item.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,7 +26,7 @@ public class ItemController {
 
     //상품 등록
     @PostMapping("/upload")
-    public ResponseEntity<ItemDTO> save(@ModelAttribute ItemDTO itemDTO){
+    public ResponseEntity<ItemDTO> save(@ModelAttribute ItemDTO itemDTO) throws IOException {
         itemService.save(itemDTO);
         return new ResponseEntity(itemDTO, HttpStatus.OK);
     }
@@ -45,7 +41,7 @@ public class ItemController {
     }
 
 //    //상품 수정 페이지
-//    @GetMapping("/{id}/modify")
+//    @GetMapping("/{id}")
 //    public String updateForm(@PathVariable Long id, Model model){
 //        ItemDTO itemDTO = itemService.findById(id);
 //        model.addAttribute("itemModify", itemDTO);
@@ -53,7 +49,7 @@ public class ItemController {
 //    }
 
     //상품 수정
-    @PutMapping("/{id}/modify")
+    @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody ItemDTO itemDTO){
         itemService.update(itemDTO);
         return new ResponseEntity(HttpStatus.OK);

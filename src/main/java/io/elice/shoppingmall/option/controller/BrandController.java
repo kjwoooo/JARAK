@@ -1,11 +1,10 @@
-package io.elice.shoppingmall.product.Entity.Option.brand.controller;
+package io.elice.shoppingmall.option.controller;
 
-import io.elice.shoppingmall.product.Entity.Option.brand.dto.BrandDto;
-import io.elice.shoppingmall.product.Entity.Option.brand.service.BrandService;
+import io.elice.shoppingmall.option.service.BrandService;
+import io.elice.shoppingmall.option.dto.BrandDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public class BrandController {
     @GetMapping
     public ResponseEntity<List<BrandDto>> getAllBrands() {
         List<BrandDto> brands = brandService.getAllBrands();
-        return new ResponseEntity<>(brands, HttpStatus.OK);
+        return new ResponseEntity<>(brandService.getAllBrands(), HttpStatus.OK);
     }
 
     /**하나의 브랜드 조회*/

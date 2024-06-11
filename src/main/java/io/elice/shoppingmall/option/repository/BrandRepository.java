@@ -1,6 +1,6 @@
-package io.elice.shoppingmall.product.Entity.Option.brand.repository;
+package io.elice.shoppingmall.option.repository;
 
-import io.elice.shoppingmall.product.Entity.Option.brand.entity.Brand;
+import io.elice.shoppingmall.option.entity.Brand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

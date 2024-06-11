@@ -1,8 +1,8 @@
-package io.elice.shoppingmall.product.Entity.Option.brand.service;
+package io.elice.shoppingmall.option.service;
 
-import io.elice.shoppingmall.product.Entity.Option.brand.dto.BrandDto;
-import io.elice.shoppingmall.product.Entity.Option.brand.entity.Brand;
-import io.elice.shoppingmall.product.Entity.Option.brand.repository.BrandRepository;
+import io.elice.shoppingmall.option.repository.BrandRepository;
+import io.elice.shoppingmall.option.dto.BrandDto;
+import io.elice.shoppingmall.option.entity.Brand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

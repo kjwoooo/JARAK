@@ -1,10 +1,8 @@
-package io.elice.shoppingmall.product.Service;
+package io.elice.shoppingmall.product.Service.Item;
 
-import io.elice.shoppingmall.product.DTO.ItemDTO;
-import io.elice.shoppingmall.product.DTO.ItemImagesDTO;
-import io.elice.shoppingmall.product.Entity.Item.Item;
+import io.elice.shoppingmall.product.DTO.Item.ItemImagesDTO;
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
-import io.elice.shoppingmall.product.Repository.ItemImagesRepository;
+import io.elice.shoppingmall.product.Repository.Item.ItemImagesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

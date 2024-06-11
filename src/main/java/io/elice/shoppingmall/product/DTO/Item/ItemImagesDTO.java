@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.product.DTO;
+package io.elice.shoppingmall.product.DTO.Item;
 
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import lombok.Getter;

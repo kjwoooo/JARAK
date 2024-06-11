@@ -1,15 +1,12 @@
-package io.elice.shoppingmall.product.Entity.Option.brand.entity;
+package io.elice.shoppingmall.option.entity;
 
-import io.elice.shoppingmall.product.Entity.Option.brand.dto.BrandDto;
+import io.elice.shoppingmall.option.dto.BrandDto;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
-import io.elice.shoppingmall.product.Entity.Item.Item;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Getter @Setter
