@@ -5,7 +5,6 @@ import io.elice.shoppingmall.address.entity.AddressDTO;
 import io.elice.shoppingmall.address.entity.AddressResponseDTO;
 import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.member.entity.Member;
-import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.dto.OrderDetailDTO;
@@ -168,5 +167,13 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
         return orderMapper.orderToOrderDTO(savedOrder);
+    }
+
+    // 주문 삭제
+    public void deleteOrder(String jwtToken, Long orderId) {
+        Member member = memberService.findByJwtToken(jwtToken);
+        Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+        orderRepository.delete(order);
     }
 }

@@ -4,19 +4,14 @@ import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.dto.OrderDetailDTO;
-import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.service.OrderService;
-import io.elice.shoppingmall.security.JwtTokenUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -88,5 +83,12 @@ public class OrderController {
                                                 @RequestBody OrderDTO orderDTO) {
         OrderDTO updatedOrder = orderService.updateOrder(jwtToken, orderId, orderDTO);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+    }
+
+    // 주문 삭제
+    @DeleteMapping("/delete/{orderId}")
+    public ResponseEntity<String> deleteOrder(@CookieValue String jwtToken, @PathVariable Long orderId) {
+        orderService.deleteOrder(jwtToken, orderId);
+        return new ResponseEntity<>("주문이 성공적으로 삭제되었습니다.", HttpStatus.OK);
     }
 }
