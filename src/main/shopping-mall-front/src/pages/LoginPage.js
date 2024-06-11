@@ -22,38 +22,23 @@ function LoginPage(){
           ...prevState,
           [name]: value
         }));
-      };
+    };
 
-//    const handleSubmit = async (e) => {
-//        e.preventDefault();
-//        try {
-//            const response = await axios.post('/login', credentials);
-//            if(response.data){
-//                login(response.data)
-//                navigate('/');
-//                console.log(response.data);
-//            }
-//        } catch (error) {
-//            console.error('에러터졌어요', error);
-//        }
-//    }; 여기까진 단순로직
-
-        const handleSubmit = async (e) => {
-          e.preventDefault();
-          try {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
             const response = await axios.post('/login', credentials);
             if (response.data) {
-              localStorage.setItem('user', JSON.stringify(response.data)); // 사용자 정보 로컬 스토리지에 저장
-              login(response.data); // Zustand 상태 업데이트
-              navigate('/');
+                sessionStorage.setItem('user', JSON.stringify(response.data)); // 사용자 정보 세션 스토리지에 저장
+                login(response.data); // Zustand 상태 업데이트
+                navigate('/');
             }
-          } catch (error) {
+        } catch (error) {
             console.error("Login failed:", error);
-          }
-        };
+        }
+    };
 
-
-    return(
+    return (
         <div className='LoginPage'>
             <div>로그인 페이지 뭐 그런 느낌적인 느낌이에요</div>
             <Form onSubmit={handleSubmit}>
@@ -83,8 +68,6 @@ function LoginPage(){
                     로그인
                 </Button>
             </Form>
-
-
         </div>
     );
 }

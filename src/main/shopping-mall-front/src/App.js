@@ -13,16 +13,18 @@ import Products from './products/Products.js';
 import Members from './Members.js';
 import MemberEdit from './MemberEdit.js';
 import MyPage from './pages/MyPage.js';
-
+import AdminMain from './adminpage/AdminMain.js';
+import useBannerStore from './stores/useBannerStore';
 
 function App() {
+const { mainBanner } = useBannerStore();
   return (
     <div className="App">
       <NavigationBar />
       <Routes>
         <Route path={LINKS.HOME.path} element={
           <>
-            <div className='main-bg' style={{ backgroundImage: 'url(' + BgImg + ')' }}></div>
+            <div className='main-bg' style={{ backgroundImage: 'url(' + mainBanner + ')' }}></div>
             <div>전체상품목록</div>
             <Container>
               <Products />
@@ -32,7 +34,7 @@ function App() {
         <Route path='/detail/:itemId' element={<Detail />} />
 
         <Route path={LINKS.ADMIN_PAGE.path} element={<AdminPage />}>
-          <Route path='main' element={<div>여긴 관리자 메인이 있어야할거같고</div>} />
+          <Route path='main' element={<AdminMain/>} />
           <Route path='member' element={<Members></Members>} />
           <Route path='category' element={<div>여긴 카테고리관리가 있어야할거같고</div>} />
           <Route path='item' element={<div>여긴 상품관리를 해야할거같고</div>} />

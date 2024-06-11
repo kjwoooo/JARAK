@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ListGroup, Button, Pagination } from 'react-bootstrap/';
 import useUserStore from './stores/useUserStore';
+import './Members.css';
 
 const ITEMS_PER_PAGE = 10;
 
