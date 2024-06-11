@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDTO {
-    private Long memberId;
     private String recipientName;
     private String zipcode;
     private String addr;
