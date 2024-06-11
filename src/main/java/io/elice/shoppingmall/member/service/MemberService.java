@@ -42,6 +42,11 @@ public class MemberService {
         return memberRepository.findAll().stream().map(MemberResponseDTO::new).toList();
     }
 
+    public Member findByJwtToken(String jwtToken){
+        String username = util.getUsername(jwtToken);
+        return findByUsername(username);
+    }
+
     public Member findByIdToMember(Long id){
         return memberRepository.findById(id).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
