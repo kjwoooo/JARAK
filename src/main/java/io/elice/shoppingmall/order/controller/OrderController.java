@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,21 +79,8 @@ public class OrderController {
 
     // 주문 생성 페이지 호출
     @GetMapping("/create")
-    public ResponseEntity<OrderDTO> getCreateOrderPage(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("JWT 토큰이 존재하지 않습니다.");
-        }
-
-        String token = authorizationHeader.substring(7);
-        if (jwtTokenUtil.isExpired(token, jwtTokenUtil.getSECRET_KEY())) {
-            throw new RuntimeException("JWT 토큰이 만료되었습니다.");
-        }
-
-        String username = jwtTokenUtil.getUsername(token, jwtTokenUtil.getSECRET_KEY());
-        Member member = memberService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    public ResponseEntity<OrderDTO> getCreateOrderPage(@CookieValue String jwtToken) {
+        Member member = memberService.findByJwtToken(jwtToken);
 
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setMemberId(member.getId());
@@ -101,24 +89,11 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(HttpServletRequest request, @RequestBody OrderDTO orderDTO) {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("JWT 토큰이 존재하지 않습니다.");
-        }
-
-        String token = authorizationHeader.substring(7);
-        if (jwtTokenUtil.isExpired(token, jwtTokenUtil.getSECRET_KEY())) {
-            throw new RuntimeException("JWT 토큰이 만료되었습니다.");
-        }
-
-        String username = jwtTokenUtil.getUsername(token, jwtTokenUtil.getSECRET_KEY());
-        Member member = memberService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    public ResponseEntity<OrderDTO> createOrder(@CookieValue String jwtToken, @RequestBody OrderDTO orderDTO) {
+        Member member = memberService.findByJwtToken(jwtToken);
 
         orderDTO.setMemberId(member.getId());
-        OrderDTO createdOrder = orderService.createOrder(orderDTO);
+        OrderDTO createdOrder = orderService.createOrder(member.getUsername(), orderDTO);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 }

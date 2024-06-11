@@ -6,6 +6,7 @@ import io.elice.shoppingmall.address.entity.AddressResponseDTO;
 import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.repository.MemberRepository;
+import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.dto.OrderDetailDTO;
 import io.elice.shoppingmall.order.entity.Order;
@@ -14,7 +15,7 @@ import io.elice.shoppingmall.order.mapper.OrderDetailMapper;
 import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
-import io.elice.shoppingmall.product.Repository.ItemRepository;
+import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import io.elice.shoppingmall.security.JwtTokenUtil;
 import java.util.List;
 import java.util.Optional;
@@ -31,16 +32,18 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final AddressService addressService;
+    private final MemberService memberService;
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
     private final OrderDetailMapper orderDetailMapper = OrderDetailMapper.INSTANCE;
 
     @Autowired
     public OrderService(OrderRepository orderRepository, MemberRepository memberRepository,
-                        ItemRepository itemRepository, AddressService addressService) {
+                        ItemRepository itemRepository, AddressService addressService, MemberService memberService) {
         this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
         this.itemRepository = itemRepository;
         this.addressService = addressService;
+        this.memberService = memberService;
     }
 
     // 주문 내역 조회 (페이징 적용)
@@ -69,16 +72,14 @@ public class OrderService {
     }
 
     // 주문 생성
-    public OrderDTO createOrder(OrderDTO orderDTO) {
-        Member member = memberRepository.findById(orderDTO.getMemberId())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    public OrderDTO createOrder(String jwtToken, OrderDTO orderDTO) {
+        Member member = memberService.findByJwtToken(jwtToken);
 
         Address address;
 
         if (orderDTO.isUseNewAddress()) {
             // 새로운 배송지 정보 입력받기
             AddressDTO newAddressDTO = new AddressDTO(
-                    member.getId(),
                     orderDTO.getRecipientName(),
                     orderDTO.getZipcode(),
                     orderDTO.getAddr(),
@@ -87,16 +88,16 @@ public class OrderService {
                     orderDTO.getDeliveryReq(),
                     "Y" // 기본 배송지 설정 여부
             );
-            addressService.save(newAddressDTO)
-                    .orElseThrow(() -> new RuntimeException("배송지 저장에 실패했습니다."));
+            addressService.save(jwtToken, newAddressDTO);
             address = newAddressDTO.toEntity();
         } else {
             // 기존 배송지 정보 가져오기
-            List<Address> addresses = addressService.findByMemberId(member.getId());
-            address = addresses.stream()
+            List<AddressResponseDTO> addresses = addressService.findAllByJwtToken(jwtToken);
+            AddressResponseDTO addressResponse = addresses.stream()
                     .filter(addr -> "Y".equals(addr.getDefDestination()))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("기본 배송지 정보가 없습니다. 새로운 배송지를 입력해주세요."));
+            address = addressResponse.toEntity();
         }
 
         // 주소 정보를 OrderDTO에 설정
