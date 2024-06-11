@@ -28,53 +28,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/orders")
-@RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-    private final JwtTokenUtil jwtTokenUtil;
     private final MemberService memberService;
+
+    @Autowired
+    public OrderController(OrderService orderService, MemberService memberService) {
+        this.orderService = orderService;
+        this.memberService = memberService;
+    }
 
     // 주문 내역 조회
     @GetMapping
-    public Page<OrderDTO> getOrders(HttpServletRequest request,
-                                    @RequestParam(defaultValue = "0") int page,
-                                    @RequestParam(defaultValue = "10") int size) {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("JWT 토큰이 존재하지 않습니다.");
-        }
-
-        String token = authorizationHeader.substring(7);
-        if (jwtTokenUtil.isExpired(token, jwtTokenUtil.getSECRET_KEY())) {
-            throw new RuntimeException("JWT 토큰이 만료되었습니다.");
-        }
-
-        String username = jwtTokenUtil.getUsername(token, jwtTokenUtil.getSECRET_KEY());
-        Member member = memberService.findByUsername(username).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        return orderService.getOrdersByMemberId(member.getId(), page, size);
+    public ResponseEntity<Page<OrderDTO>> getOrders(@CookieValue String jwtToken,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
+        Member member = memberService.findByJwtToken(jwtToken);
+        Page<OrderDTO> orders = orderService.getOrdersByMemberId(member.getId(), page, size);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     // 주문 상세 내역 조회
     @GetMapping("/{orderId}")
-    public List<OrderDetailDTO> getOrderDetails(HttpServletRequest request, @PathVariable Long orderId) {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("JWT 토큰이 존재하지 않습니다.");
-        }
-
-        String token = authorizationHeader.substring(7);
-        if (jwtTokenUtil.isExpired(token, jwtTokenUtil.getSECRET_KEY())) {
-            throw new RuntimeException("JWT 토큰이 만료되었습니다.");
-        }
-
-        String username = jwtTokenUtil.getUsername(token, jwtTokenUtil.getSECRET_KEY());
-        Member member = memberService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        return orderService.getOrderDetailsByOrderId(orderId, member.getId());
+    public ResponseEntity<List<OrderDetailDTO>> getOrderDetails(@CookieValue String jwtToken,
+                                                                @PathVariable Long orderId) {
+        Member member = memberService.findByJwtToken(jwtToken);
+        List<OrderDetailDTO> orderDetails = orderService.getOrderDetailsByOrderId(orderId, member.getId());
+        return new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 
     // 주문 생성 페이지 호출

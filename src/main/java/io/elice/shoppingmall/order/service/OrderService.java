@@ -16,7 +16,6 @@ import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
-import io.elice.shoppingmall.security.JwtTokenUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final AddressService addressService;
     private final MemberService memberService;
@@ -37,16 +35,14 @@ public class OrderService {
     private final OrderDetailMapper orderDetailMapper = OrderDetailMapper.INSTANCE;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, MemberRepository memberRepository,
-                        ItemRepository itemRepository, AddressService addressService, MemberService memberService) {
+    public OrderService(OrderRepository orderRepository, ItemRepository itemRepository, AddressService addressService, MemberService memberService) {
         this.orderRepository = orderRepository;
-        this.memberRepository = memberRepository;
         this.itemRepository = itemRepository;
         this.addressService = addressService;
         this.memberService = memberService;
     }
 
-    // 주문 내역 조회 (페이징 적용)
+    // 주문 조회 (페이징 적용)
     public Page<OrderDTO> getOrdersByMemberId(Long memberId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(memberId, pageable);
