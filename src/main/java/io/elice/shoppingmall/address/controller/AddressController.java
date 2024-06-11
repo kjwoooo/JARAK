@@ -27,9 +27,9 @@ public class AddressController {
         return new ResponseEntity<>(addressService.findAllByJwtToken(jwtToken), HttpStatus.OK);
     }
 
-    @GetMapping("/addresses/{addressId}")
-    public ResponseEntity<AddressResponseDTO> getMemberAddress(@CookieValue String jwtToken, @PathVariable Long addressId){
-        return new ResponseEntity<>(addressService.findByJwtTokenAndAddressId(jwtToken, addressId), HttpStatus.OK);
+    @GetMapping("/addresses/{id}")
+    public ResponseEntity<AddressResponseDTO> getMemberAddress(@CookieValue String jwtToken, @PathVariable Long id){
+        return new ResponseEntity<>(addressService.findByJwtTokenAndAddressId(jwtToken, id), HttpStatus.OK);
     }
 
     @PostMapping("/addresses/{id}")

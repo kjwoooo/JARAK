@@ -38,31 +38,68 @@ public class MemberService {
             throw new CustomException(ErrorCode.NOT_MATCH_EMAIL);
     }
 
+    /**
+     * 모든 회원 검색
+     * @return MemberResponseDTO List
+     */
     public List<MemberResponseDTO> findAll(){
         return memberRepository.findAll().stream().map(MemberResponseDTO::new).toList();
     }
 
+    /**
+     * 현재 인증된 회원 검색
+     * @param jwtToken
+     * @return Member
+     */
     public Member findByJwtToken(String jwtToken){
         String username = util.getUsername(jwtToken);
         return findByUsername(username);
     }
 
+    /**
+     * 현재 인증된 회원을 검색 후
+     * MemberResponseDTO 반환
+     * @param jwtToken
+     * @return MemberResponseDTO
+     */
+    public MemberResponseDTO findByJwtTokenToResponseDTO(String jwtToken){
+        return new MemberResponseDTO(findByJwtToken(jwtToken));
+    }
+
+    /**
+     * id로 회원 검색
+     * @param id
+     * @return Member
+     */
     public Member findByIdToMember(Long id){
         return memberRepository.findById(id).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public MemberResponseDTO findByIdToMemberResponseDTO(Long id){
-        Member member = findByIdToMember(id);
+    public MemberResponseDTO findByIdToResponseDTO(Long id){
+        Member member = memberRepository.findById(id).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         return new MemberResponseDTO(member);
     }
 
+    /**
+     * username(ID)로 회원 검색
+     * @param username
+     * @return
+     */
     public Member findByUsername(String username){
         return memberRepository.findByUsername(username).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
+    /**
+     * 회원이 입력한 ID, Password를 바탕으로
+     * 해당 회원이 존재하는지 검증
+     * @param loginInfo 로그인할 때, 회원이 입력한 ID, Password 정보
+     * @param response
+     * @return
+     */
     public String login(MemberLogin loginInfo, HttpServletResponse response){
         Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
