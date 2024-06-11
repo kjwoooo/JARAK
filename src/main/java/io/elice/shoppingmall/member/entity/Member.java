@@ -39,7 +39,7 @@ public class Member {
     private String gender;
 
     @Column(nullable = false)
-    private String admin;
+    private String aothority;
 
     @Column(nullable = false)
     private String membership;

@@ -4,11 +4,13 @@ import io.elice.shoppingmall.address.entity.Address;
 import io.elice.shoppingmall.address.entity.AddressDTO;
 import io.elice.shoppingmall.address.entity.AddressResponseDTO;
 import io.elice.shoppingmall.address.repository.AddressRepository;
+import io.elice.shoppingmall.exception.CustomException;
+import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.repository.MemberRepository;
+import io.elice.shoppingmall.member.service.MemberService;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,73 +19,93 @@ import org.springframework.stereotype.Service;
 public class AddressService {
     private final AddressRepository addressRepository;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public List<Address> findAll(){
         return addressRepository.findAll();
     }
 
-    public Optional<Address> findById(Long id){
-        return addressRepository.findById(id);
+    public Address findById(Long id){
+        return addressRepository.findById(id).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
     }
 
-    public List<Address> findByMemberId(Long memberId){
-        Member member = memberRepository.findById(memberId).orElse(null);
-        if(member == null){
-            return null;
-        }
+    /**
+     * jwtToken으로 인증된 회원의 모든 주소 검색
+     * @param jwtToken
+     * @return
+     */
+    public List<AddressResponseDTO> findAllByJwtToken(String jwtToken){
+        Member member = memberService.findByJwtToken(jwtToken);
 
-        return addressRepository.findByMember(member);
+        return addressRepository.findByMember(member).stream().map(AddressResponseDTO::new).toList();
     }
 
-    public Optional<Address> findByAddressIdAndMemberId(Long memberId, Long addressId){
-        Optional<Member> memberOptional = memberRepository.findById(memberId);
-        if(memberOptional.isEmpty()){
-            return Optional.empty();
-        }
-
-        return addressRepository.findByIdAndMember(addressId, memberOptional.get());
+    /**
+     * jwtToken으로 인증된 회원의 특정 주소 검색
+     * @param jwtToken
+     * @param addressId
+     * @return
+     */
+    public AddressResponseDTO findByJwtTokenAndAddressId(String jwtToken, Long addressId){
+        Member member = memberService.findByJwtToken(jwtToken);
+        Address address = addressRepository.findByIdAndMember(addressId, member).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
+        return new AddressResponseDTO(address);
     }
 
     public void delete(Long id){
-        Optional<Address> addressOptional = addressRepository.findById(id);
-
-        if(addressOptional.isEmpty())
-            return;
-
-        addressRepository.delete(addressOptional.get());
+        addressRepository.delete(findById(id));
     }
 
-    private Optional<AddressResponseDTO> save(Address address){
-        AddressResponseDTO addressResponseDTO = new AddressResponseDTO(addressRepository.save(address));
-        return Optional.of(addressResponseDTO);
+    /**
+     * DB에 주소 저장
+     * @param address
+     * @return
+     */
+    private AddressResponseDTO save(Address address){
+        return new AddressResponseDTO(addressRepository.save(address));
     }
 
-    public Optional<AddressResponseDTO> save(AddressDTO addressDto){
-        Optional<Member> memberOptional = memberRepository.findById(addressDto.getMemberId());
-
-        if(memberOptional.isEmpty()){
-            return Optional.empty();
-        }
+    /**
+     * 인증받은 회원의 새로운 주소 등록
+     * @param jwtToken
+     * @param addressDto
+     * @return
+     */
+    public AddressResponseDTO save(String jwtToken,AddressDTO addressDto){
+        Member member = memberService.findByJwtToken(jwtToken);
 
         Address address = addressDto.toEntity();
-        address.setMember(memberOptional.get());
+        address.setMember(member);
 
         return save(address);
     }
 
-    public Optional<AddressResponseDTO> save(Long id, AddressDTO addressDTO){
-        Optional<Address> addressOptional = addressRepository.findById(id);
+    /**
+     * 인증받은 회원의 특정 주소 수정
+     * @param jwtToken
+     * @param id
+     * @param addressDTO
+     * @return
+     */
+    public AddressResponseDTO save(String jwtToken, Long id, AddressDTO addressDTO){
+        try{
+            Address oldAddress = findById(id);
+            Address newAddress = addressDTO.toEntity();
 
-        if(addressOptional.isEmpty()){
-            return save(addressDTO);
+            Member member = memberService.findByJwtToken(jwtToken);
+
+            newAddress.setMember(member);
+            newAddress.setId(oldAddress.getId());
+
+            return save(newAddress);
+
+        } catch(CustomException e){
+            if(e.getCode() == ErrorCode.NOT_FOUND_ADDRESS)
+                return save(jwtToken, addressDTO);
+            else
+                throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
-
-        Address address = addressOptional.get();
-        Address newAddress = addressDTO.toEntity();
-
-        newAddress.setMember(address.getMember());
-        newAddress.setId(address.getId());
-
-        return save(newAddress);
     }
 }
