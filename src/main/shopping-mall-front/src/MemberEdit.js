@@ -5,13 +5,13 @@ import useUserStore from './stores/useUserStore';
 
 function MemberEdit() {
   const user = useUserStore(state => state.user);
-  
+
   const [formData, setFormData] = useState({
-    username: user.username,
     displayName: user.displayName,
     password: '',
     modifyPassword: '',
-    phone: user.phone
+    phone: user.phone,
+    gender:user.gender
   });
 
   const handleChange = (e) => {
@@ -36,10 +36,6 @@ function MemberEdit() {
   return (
     <div className="MemberEdit">
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formUsername">
-          <Form.Label>아이디</Form.Label>
-          <Form.Control type="text" value={formData.username} readOnly />
-        </Form.Group>
         <Form.Group controlId="formDisplayName">
           <Form.Label>이름</Form.Label>
           <Form.Control type="text" name="displayName" value={formData.displayName} onChange={handleChange} />
@@ -55,6 +51,10 @@ function MemberEdit() {
         <Form.Group controlId="formPhone">
           <Form.Label>휴대폰번호</Form.Label>
           <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
+        </Form.Group>
+        <Form.Group controlId="formGender">
+          <Form.Label>성별값</Form.Label>
+          <Form.Control type="text" name="gender" value={formData.gender} onChange={handleChange} />
         </Form.Group>
         <Button variant="primary" type="submit">
           수정하기

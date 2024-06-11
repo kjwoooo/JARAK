@@ -106,7 +106,6 @@ public class MemberService {
 
         loginInfoService.matchPassword(member.getLoginInfo(), loginInfo.getPassword());
         createJwtTokenCookie(member, response);
-        System.out.println(member.getUsername());
         return member;
     }
 
