@@ -1,33 +1,38 @@
 import { Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useUserStore from '../stores/useUserStore';
 import axios from 'axios';
 import './LoginPage.css';
 
 function LoginPage(){
 
-    let [credentials, setCredentials] = useState({
+    const [credentials, setCredentials] = useState({
         username: '',
         password: ''
     });
 
-    let navigate = useNavigate();
+    const login = useUserStore(state => state.login);
 
-    let handleChange = (e) => {
-      const {name, value} = e.target;
-      setCredentials({
-        ...credentials,
-        [name]: value
-      });  
-    };
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setCredentials((prevState) => ({
+          ...prevState,
+          [name]: value
+        }));
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post('/login', credentials);
-            console.log(response.data);
-            // 로그인 성공 시 "/" 경로로 리다이렉트
-            navigate('/');
+            if(response.data){
+                login(response.data)
+                navigate('/');
+                console.log(response.data);
+            }
         } catch (error) {
             console.error('에러터졌어요', error);
         }
