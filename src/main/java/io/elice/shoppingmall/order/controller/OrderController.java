@@ -63,7 +63,7 @@ public class OrderController {
     }
 
     // 주문 생성
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<OrderDTO> createOrder(@CookieValue String jwtToken, @RequestBody OrderDTO orderDTO) {
         OrderDTO createdOrder = orderService.createOrder(jwtToken, orderDTO);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
