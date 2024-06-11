@@ -40,7 +40,7 @@ public class Member extends BaseEntity {
     private String gender;
 
     @Column(nullable = false)
-    private String aothority;
+    private String authority;
 
     @Column(nullable = false)
     private String membership;

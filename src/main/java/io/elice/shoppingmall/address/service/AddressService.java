@@ -35,10 +35,15 @@ public class AddressService {
      * @param jwtToken
      * @return
      */
-    public List<AddressResponseDTO> findAllByJwtToken(String jwtToken){
+    public List<Address> findAllByJwtToken(String jwtToken){
         Member member = memberService.findByJwtToken(jwtToken);
 
-        return addressRepository.findByMember(member).stream().map(AddressResponseDTO::new).toList();
+        return addressRepository.findByMember(member);
+    }
+
+    public List<AddressResponseDTO> findAllByJwtTokenAndReturnResponseDTO(String jwtToken){
+        return findAllByJwtToken(jwtToken).stream().map(AddressResponseDTO::new).toList();
+
     }
 
     /**

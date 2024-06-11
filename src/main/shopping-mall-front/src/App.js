@@ -10,6 +10,10 @@ import './App.css';
 import LINKS from './links/links.js';
 import NavigationBar from './navbar/MainNavbar.js';
 import Products from './products/Products.js';
+import Members from './Members.js';
+import MemberEdit from './MemberEdit.js';
+import MyPage from './pages/MyPage.js';
+
 
 function App() {
   return (
@@ -26,13 +30,20 @@ function App() {
           </>
         } />
         <Route path='/detail/:itemId' element={<Detail />} />
+
         <Route path={LINKS.ADMIN_PAGE.path} element={<AdminPage />}>
           <Route path='main' element={<div>여긴 관리자 메인이 있어야할거같고</div>} />
-          <Route path='member' element={<div>여긴 사용자관리가 있어야할거같고</div>} />
+          <Route path='member' element={<Members></Members>} />
           <Route path='category' element={<div>여긴 카테고리관리가 있어야할거같고</div>} />
           <Route path='item' element={<div>여긴 상품관리를 해야할거같고</div>} />
           <Route path='order' element={<div>여긴 주문을 관리해야할거같아요</div>} />
         </Route>
+
+        <Route path={LINKS.MYPAGE.path} element={<MyPage/>}>
+          <Route path='edit' element={<MemberEdit/>}/>
+          <Route path='orders' element={<div>내 주문내역 보는 영역</div>}/>
+        </Route>
+
         <Route path={LINKS.REGISTER.path} element={<RegisterPage />} />
         <Route path={LINKS.LOGIN.path} element={<LoginPage />} />
         <Route path='/about' element={<About />}>

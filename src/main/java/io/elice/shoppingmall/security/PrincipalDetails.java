@@ -32,7 +32,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
         collection.add(() ->
-            member.getAothority()
+            member.getAuthority()
         );
 
         return collection;
