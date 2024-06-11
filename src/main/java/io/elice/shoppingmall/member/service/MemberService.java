@@ -9,7 +9,6 @@ import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.entity.MemberModifyInfo;
 import io.elice.shoppingmall.member.entity.MemberRegister;
 import io.elice.shoppingmall.member.entity.MemberResponseDTO;
-import io.elice.shoppingmall.member.repository.LoginInfoRepository;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.security.JwtTokenUtil;
 import jakarta.servlet.http.Cookie;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final LoginInfoRepository loginInfoRepository;
+    private final LoginInfoService loginInfoService;
     private final PasswordEncoder encoder;
     private final JwtTokenUtil util;
 
@@ -38,36 +37,73 @@ public class MemberService {
             throw new CustomException(ErrorCode.NOT_MATCH_EMAIL);
     }
 
+    /**
+     * 모든 회원 검색
+     * @return MemberResponseDTO List
+     */
     public List<MemberResponseDTO> findAll(){
         return memberRepository.findAll().stream().map(MemberResponseDTO::new).toList();
     }
 
+    /**
+     * 현재 인증된 회원 검색
+     * @param jwtToken
+     * @return Member
+     */
     public Member findByJwtToken(String jwtToken){
         String username = util.getUsername(jwtToken);
         return findByUsername(username);
     }
 
+    /**
+     * 현재 인증된 회원을 검색 후
+     * MemberResponseDTO 반환
+     * @param jwtToken
+     * @return MemberResponseDTO
+     */
+    public MemberResponseDTO findByJwtTokenToResponseDTO(String jwtToken){
+        return new MemberResponseDTO(findByJwtToken(jwtToken));
+    }
+
+    /**
+     * id로 회원 검색
+     * @param id
+     * @return Member
+     */
     public Member findByIdToMember(Long id){
         return memberRepository.findById(id).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public MemberResponseDTO findByIdToMemberResponseDTO(Long id){
-        Member member = findByIdToMember(id);
+    public MemberResponseDTO findByIdToResponseDTO(Long id){
+        Member member = memberRepository.findById(id).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         return new MemberResponseDTO(member);
     }
 
+    /**
+     * username(ID)로 회원 검색
+     * @param username
+     * @return
+     */
     public Member findByUsername(String username){
         return memberRepository.findByUsername(username).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
+    /**
+     * 회원이 입력한 ID, Password를 바탕으로
+     * 해당 회원이 존재하는지 검증
+     * @param loginInfo 로그인할 때, 회원이 입력한 ID, Password 정보
+     * @param response
+     * @return
+     */
     public String login(MemberLogin loginInfo, HttpServletResponse response){
         Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
-        memberMatchPassword(member, loginInfo.getPassword());
+        loginInfoService.matchPassword(member.getLoginInfo(), loginInfo.getPassword());
         createJwtTokenCookie(member, response);
 
         return "로그인 성공";
@@ -102,6 +138,12 @@ public class MemberService {
         response.addCookie(cookie);
     }
 
+    /**
+     * 인증된 사용자가 직접 회원 탈퇴
+     * @param jwtToken
+     * @param response
+     * @return
+     */
     public String delete(String jwtToken, HttpServletResponse response){
         String username = util.getUsername(jwtToken);
         Member member = memberRepository.findByUsername(username).orElseThrow(()->
@@ -110,6 +152,17 @@ public class MemberService {
         memberRepository.delete(member);
         jwtTokenDestroy(response);
 
+        return "회원 탈퇴";
+    }
+
+    /**
+     * 관리자가 특정 회원 삭제
+     * @param id
+     * @return
+     */
+    public String delete(Long id){
+        Member member = findByIdToMember(id);
+        memberRepository.delete(member);
         return "회원 정보 삭제";
     }
 
@@ -118,18 +171,13 @@ public class MemberService {
             throw new CustomException(ErrorCode.EXIST_USERNAME);
     }
 
-    /**
-     * 이메일 중복검사
-     * @param email
-     */
-    private void existEmail(String email){
-        if(loginInfoRepository.existsByEmail(email))
-            throw new CustomException(ErrorCode.EXIST_EMAIL);
+    public Member findByLoginInfo(LoginInfo loginInfo){
+        return memberRepository.findByLoginInfo(loginInfo).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
-    private void memberMatchPassword(Member member, String password){
-        if(!encoder.matches(password, member.getLoginInfo().getPassword()))
-            throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
+    public Member save(Member member){
+        return memberRepository.save(member);
     }
 
     /**
@@ -140,12 +188,12 @@ public class MemberService {
     public MemberResponseDTO save(MemberRegister memberRegister){
         existUsername(memberRegister.getUsername());
         validEmail(memberRegister.getEmail());
-        existEmail(memberRegister.getEmail());
+        loginInfoService.existsEmail(memberRegister.getEmail());
 
         memberRegister.setPassword(encoder.encode(memberRegister.getPassword()));
 
         LoginInfo loginInfo = new LoginInfo(memberRegister);
-        loginInfo = loginInfoRepository.save(loginInfo);
+        loginInfo = loginInfoService.save(loginInfo);
 
         Member member = memberRegister.toUserEntity();
         member.setLoginInfo(loginInfo);
@@ -165,9 +213,16 @@ public class MemberService {
         String username = util.getUsername(jwtToken);
         Member oldMember = findByUsername(username);
 
-        memberMatchPassword(oldMember, memberModifyInfo.getPassword());
+        loginInfoService.matchPassword(oldMember.getLoginInfo(), memberModifyInfo.getPassword());
+
         memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
         oldMember.modifyMember(memberModifyInfo);
+
+        LoginInfo loginInfo = oldMember.getLoginInfo();
+        loginInfo.setPassword(memberModifyInfo.getPassword());
+
+        loginInfo = loginInfoService.save(loginInfo);
+        oldMember.setLoginInfo(loginInfo);
 
         return new MemberResponseDTO(memberRepository.save(oldMember));
     }

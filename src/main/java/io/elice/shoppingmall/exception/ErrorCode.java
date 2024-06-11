@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
     NOT_FOUND_MEMBER(400, "회원 정보를 찾을 수 없습니다."),
+    NOT_FOUND_PROVIDER_ID(400, "해당 기간의 정보로 가입된 회원을 찾을 수 없습니다."),
     NOT_MATCH_EMAIL(400, "이메일 형식이 잘못되었습니다."),
     NOT_FOUND_ADDRESS(400, "주소 정보를 찾을 수 없습니다."),
 

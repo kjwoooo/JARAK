@@ -27,13 +27,13 @@ public class AddressController {
         return new ResponseEntity<>(addressService.findAllByJwtToken(jwtToken), HttpStatus.OK);
     }
 
-    @GetMapping("/addresses/{addressId}")
-    public ResponseEntity<AddressResponseDTO> getMemberAddress(@CookieValue String jwtToken, @PathVariable Long addressId){
-        return new ResponseEntity<>(addressService.findByJwtTokenAndAddressId(jwtToken, addressId), HttpStatus.OK);
+    @GetMapping("/addresses/{id}")
+    public ResponseEntity<AddressResponseDTO> getMemberAddress(@CookieValue String jwtToken, @PathVariable Long id){
+        return new ResponseEntity<>(addressService.findByJwtTokenAndAddressId(jwtToken, id), HttpStatus.OK);
     }
 
     @PostMapping("/addresses/{id}")
     public ResponseEntity<?> postMemberAddress(@CookieValue String jwtToken, @PathVariable Long id, @RequestBody AddressDTO addressDto){
-        return new ResponseEntity<>(addressService.save(jwtToken, id, addressDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, id, addressDto), HttpStatus.CREATED);
     }
 }
