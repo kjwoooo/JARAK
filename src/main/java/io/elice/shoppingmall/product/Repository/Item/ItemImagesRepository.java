@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.product.Repository;
+package io.elice.shoppingmall.product.Repository.Item;
 
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,9 +1,7 @@
-package io.elice.shoppingmall.product.Controller;
+package io.elice.shoppingmall.product.Controller.Item;
 
-import io.elice.shoppingmall.product.DTO.ItemDTO;
-import io.elice.shoppingmall.product.DTO.ItemImagesDTO;
-import io.elice.shoppingmall.product.Entity.Item.ItemImages;
-import io.elice.shoppingmall.product.Service.ItemImagesService;
+import io.elice.shoppingmall.product.DTO.Item.ItemImagesDTO;
+import io.elice.shoppingmall.product.Service.Item.ItemImagesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

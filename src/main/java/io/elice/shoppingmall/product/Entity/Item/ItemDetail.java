@@ -1,11 +1,11 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
-import io.elice.shoppingmall.product.Entity.Option.Color;
-import io.elice.shoppingmall.product.Entity.Option.Size;
+import io.elice.shoppingmall.option.entity.Color;
+import io.elice.shoppingmall.option.entity.Size;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,11 +23,11 @@ public class ItemDetail {
 
     @OneToMany
     @JoinColumn(name = "color_id")
-    private Collection<Color> colors;
+    private List<Color> colors;
 
     @OneToMany
     @JoinColumn(name = "size_id")
-    private Collection<Size> sizes;
+    private List<Size> sizes;
 
     @ManyToOne
     @JoinColumn(name = "item_id")

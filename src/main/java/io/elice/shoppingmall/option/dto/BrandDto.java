@@ -1,6 +1,6 @@
-package io.elice.shoppingmall.product.Entity.Option.brand.dto;
+package io.elice.shoppingmall.option.dto;
 
-import io.elice.shoppingmall.product.Entity.Option.brand.entity.Brand;
+import io.elice.shoppingmall.option.entity.Brand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
