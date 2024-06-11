@@ -2,7 +2,6 @@ package io.elice.shoppingmall.order.service;
 
 import io.elice.shoppingmall.address.entity.Address;
 import io.elice.shoppingmall.address.entity.AddressDTO;
-import io.elice.shoppingmall.address.entity.AddressResponseDTO;
 import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
@@ -14,6 +13,7 @@ import io.elice.shoppingmall.order.mapper.OrderDetailMapper;
 import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
+import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import java.util.List;
 import java.util.Optional;
@@ -86,12 +86,11 @@ public class OrderService {
             address = addressService.save(jwtToken, newAddressDTO);
         } else {
             // 기존 배송지 정보 가져오기
-            List<AddressResponseDTO> addresses = addressService.findAllByJwtToken(jwtToken);
-            AddressResponseDTO addressResponse = addresses.stream()
+            List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
+            address = addresses.stream()
                     .filter(addr -> "Y".equals(addr.getDefDestination()))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("기본 배송지 정보가 없습니다. 새로운 배송지를 입력해주세요."));
-            address = addressResponse.toEntity();
         }
 
         // 주소 정보를 OrderDTO에 설정
@@ -107,6 +106,7 @@ public class OrderService {
         order.setMember(member);  // member 설정
 
         // OrderDetail 설정
+        // OrderDetail 없을 때의 예외 처리 구현 필요
         List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
                 .map(orderDetailDTO -> {
                     Item item = itemRepository.findById(orderDetailDTO.getItemId())
@@ -115,6 +115,23 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
         order.setOrderDetails(orderDetails);
+
+        // 가격, 총 개수, 대표 상품 이름, 대표 상품 이미지 설정
+        int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
+        int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
+        // repItemName, repItemImage에 null 값이 저장되지 않도록 기본값 할당
+        // 해당 코드는 어떻게 리팩토링할지 고려해야 할 사항
+        String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
+        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
+                .findFirst()
+                .map(ItemImages::getStoredFileName)
+                .orElse("No Image");
+
+        // 필수 필드에 값 설정
+        order.setTotalQuantity(totalQuantity);
+        order.setRepItemName(repItemName);
+        order.setRepItemImage(repItemImage);
+        order.setPrice(totalPrice);
 
         Order savedOrder = orderRepository.save(order);
         return orderMapper.orderToOrderDTO(savedOrder);
@@ -144,16 +161,17 @@ public class OrderService {
                     orderDTO.getDeliveryReq(),
                     "Y" // 기본 배송지 설정 여부
             );
-            Address address = addressService.save(jwtToken, newAddressDTO);
-            order.setRecipientName(address.getRecipientName());
-            order.setZipcode(address.getZipcode());
-            order.setAddr(address.getAddr());
-            order.setAddrDetail(address.getAddrDetail());
-            order.setRecipientTel(address.getRecipientTel());
-            order.setDeliveryReq(address.getDeliveryReq());
+            Address savedAddress = addressService.save(jwtToken, newAddressDTO);
+            order.setRecipientName(savedAddress.getRecipientName());
+            order.setZipcode(savedAddress.getZipcode());
+            order.setAddr(savedAddress.getAddr());
+            order.setAddrDetail(savedAddress.getAddrDetail());
+            order.setRecipientTel(savedAddress.getRecipientTel());
+            order.setDeliveryReq(savedAddress.getDeliveryReq());
         }
 
         // OrderDetail 설정
+        // OrderDetail 없을 때의 예외 처리 구현 필요
         List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
                 .map(orderDetailDTO -> {
                     Item item = itemRepository.findById(orderDetailDTO.getItemId())
@@ -162,6 +180,23 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
         order.setOrderDetails(orderDetails);
+
+        // 가격, 총 개수, 대표 상품 이름, 대표 상품 이미지 설정
+        int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
+        int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
+        // repItemName, repItemImage에 null 값이 저장되지 않도록 기본값 할당
+        // 해당 코드는 어떻게 리팩토링할지 고려해야 할 사항
+        String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
+        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
+                .findFirst()
+                .map(ItemImages::getStoredFileName)
+                .orElse("No Image");
+
+        // 필수 필드에 값 설정
+        order.setTotalQuantity(totalQuantity);
+        order.setRepItemName(repItemName);
+        order.setRepItemImage(repItemImage);
+        order.setPrice(totalPrice);
 
         Order savedOrder = orderRepository.save(order);
         return orderMapper.orderToOrderDTO(savedOrder);
