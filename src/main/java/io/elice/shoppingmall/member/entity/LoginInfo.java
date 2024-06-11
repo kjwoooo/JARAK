@@ -25,8 +25,14 @@ public class LoginInfo {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
+
+    @Column
+    private String provider;
+
+    @Column
+    private String providerId;
 
     public LoginInfo(MemberRegister memberRegister){
         this.email = memberRegister.getEmail();

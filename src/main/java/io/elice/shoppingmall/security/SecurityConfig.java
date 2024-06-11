@@ -43,9 +43,25 @@ public class SecurityConfig{
 //            .anyRequest().permitAll());
 
         http.authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/unregister/{id}").hasAuthority(MemberAuthority.USER.name())
+
+            //NOTE: 일반회원, 관리자 모두 접근 가능
+            .requestMatchers("/unregister", "/logout", "/token-refresh")
+                .hasAnyAuthority(MemberAuthority.USER.name(), MemberAuthority.ADMIN.name())
+
+            //NOTE: 일반회원만 접근 가능
+            .requestMatchers(HttpMethod.POST, "/members")
+                .hasAuthority(MemberAuthority.USER.name())
+            .requestMatchers("/members/info", "/addresses/**", "")
+                .hasAuthority(MemberAuthority.USER.name())
+
+            //NOTE: 관리자만 접근 가능
+            .requestMatchers(HttpMethod.GET, "/admin/**")
+                .hasAuthority(MemberAuthority.ADMIN.name())
+
             .anyRequest().permitAll()
         );
+
+        http.user
 
         http.logout(logout -> logout
             .logoutUrl("logout"));
