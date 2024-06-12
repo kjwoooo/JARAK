@@ -76,6 +76,11 @@ public class OrderService {
         return Optional.of(orderMapper.orderToOrderDTO(order));
     }
 
+    // 전체 주문 수 조회
+    public long getTotalOrderCount() {
+        return orderRepository.count();
+    }
+
     // 주문 생성
     public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
