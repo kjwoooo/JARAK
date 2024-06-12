@@ -38,9 +38,9 @@ public class Category extends BaseEntity {
     private List<Category> subCategories = new ArrayList<>();
 
     // Entity를 DTO로 변환하는 메서드
-    public CategoryDto entityToDto(Category category) {
-        return new CategoryDto(category.getName(),
-                Optional.ofNullable(category.getParent())
+    public CategoryDto entityToDto() {
+        return new CategoryDto(this.id, this.name,
+                Optional.ofNullable(this.parent)
                         .map(Category::getId)
                         .orElse(null));
     }

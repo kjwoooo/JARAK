@@ -3,19 +3,17 @@ package io.elice.shoppingmall.product.Entity.Item;
 
 //import io.elice.shoppingmall.category.controller.CategoryController;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
-import io.elice.shoppingmall.product.DTO.ItemDTO;
+import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 //import io.elice.shoppingmall.product.Entity.Option.brand;
-import io.elice.shoppingmall.product.Entity.Option.Gender;
-import io.elice.shoppingmall.product.Entity.Option.brand.entity.Brand;
+import io.elice.shoppingmall.option.entity.Gender;
+import io.elice.shoppingmall.option.entity.Brand;
+import io.elice.shoppingmall.product.DTO.Item.ItemImagesDTO;
 import io.elice.shoppingmall.product.Entity.Review.Request;
 import io.elice.shoppingmall.product.Entity.Review.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -42,9 +40,8 @@ public class Item extends BaseEntity {//    Member,Category entity 받으면 연
     @Column(nullable = false)
     private Integer price;
 
-    @OneToOne
-    @JoinColumn(name = "item_images_id")
-    private ItemImages itemImages;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ItemImages> itemImagesList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
@@ -67,7 +64,7 @@ public class Item extends BaseEntity {//    Member,Category entity 받으면 연
         Item item = new Item();
         item.setItemName(itemDTO.getItemName());
         item.setPrice(itemDTO.getPrice());
-        item.setItemImages(itemImages);
+//        item.setItemImages(itemImages);
         item.setBrand(brand);
         item.setGender(gender);
         return item;
@@ -78,9 +75,10 @@ public class Item extends BaseEntity {//    Member,Category entity 받으면 연
         item.setId(itemDTO.getId());
         item.setItemName(itemDTO.getItemName());
         item.setPrice(itemDTO.getPrice());
-        item.setItemImages(itemImages);
+//        item.setItemImages(itemImages);
         item.setBrand(brand);
         item.setGender(gender);
         return item;
     }
+
 }

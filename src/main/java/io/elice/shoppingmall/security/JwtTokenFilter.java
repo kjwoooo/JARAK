@@ -69,10 +69,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try{
             Member member = memberService.findByUsername(username);
 
-            User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAothority())));
+            User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAuthority())));
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                user, null, List.of(new SimpleGrantedAuthority(member.getAothority())));
+                user, null, List.of(new SimpleGrantedAuthority(member.getAuthority())));
 
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
