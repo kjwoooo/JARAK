@@ -41,18 +41,18 @@ function MemberEdit() {
           <Form.Control type="text" name="displayName" value={formData.displayName} onChange={handleChange} />
         </Form.Group>
         <Form.Group controlId="formPassword">
-          <Form.Label>비밀번호</Form.Label>
+          <Form.Label>현재 비밀번호</Form.Label>
           <Form.Control type="password" name="password" value={formData.password} onChange={handleChange} />
         </Form.Group>
         <Form.Group controlId="formModifyPassword">
-          <Form.Label>비밀번호 확인</Form.Label>
+          <Form.Label>변경할 비밀번호</Form.Label>
           <Form.Control type="password" name="modifyPassword" value={formData.modifyPassword} onChange={handleChange} />
         </Form.Group>
         <Form.Group controlId="formPhone">
           <Form.Label>휴대폰번호</Form.Label>
           <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
         </Form.Group>
-        <Form.Group controlId="formGender">
+        <Form.Group controlId="formGender" style={{ display: 'none' }}>
           <Form.Label>성별값</Form.Label>
           <Form.Control type="text" name="gender" value={formData.gender} onChange={handleChange} />
         </Form.Group>
