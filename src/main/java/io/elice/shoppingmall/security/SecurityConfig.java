@@ -66,11 +66,11 @@ public class SecurityConfig{
             .anyRequest().permitAll()
         );
 
-        http.oauth2Login()
-                .userInfoEndpoint()
-                    .userService(principalOauth2UserService)
-                        .and()
-                            .successHandler(oAuth2AuthenticationSuccessHandler);
+//        http.oauth2Login()
+//                .userInfoEndpoint()
+//                    .userService(principalOauth2UserService)
+//                        .and()
+//                            .successHandler(oAuth2AuthenticationSuccessHandler);
 
 //        http.logout(logout -> logout
 //            .logoutUrl("/members-logout"));
