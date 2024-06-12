@@ -1,5 +1,7 @@
 package io.elice.shoppingmall.option.service;
 
+import io.elice.shoppingmall.exception.CustomException;
+import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.option.repository.BrandRepository;
 import io.elice.shoppingmall.option.dto.BrandDto;
 import io.elice.shoppingmall.option.entity.Brand;
@@ -31,14 +33,14 @@ public class BrandService {
     //  한개의 브랜드 조회
     public BrandDto getBrand(Long id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 브랜드입니다: " + id));
+                new CustomException(ErrorCode.NOT_FOUND_BRAND));
         return brand.entityToDto();
     }
 
     //  브랜드 생성
     public BrandDto createBrand(BrandDto brandDto) {
         if (brandRepository.existsByName(brandDto.getName())) {
-            throw new IllegalArgumentException("이미 존재하는 브랜드입니다: " + brandDto.getName());
+            throw new CustomException(ErrorCode.EXIST_BRAND_NAME);
         }
         Brand brand = brandDto.dtoToEntity();
         brandRepository.save(brand);
@@ -48,15 +50,16 @@ public class BrandService {
     //  브랜드 업데이트(수정)
     public BrandDto updateBrand(Long id, BrandDto brandDto) {
         Brand brand = brandRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 브랜드입니다: " + id));
+                new CustomException(ErrorCode.NOT_FOUND_BRAND));
         brand.setName(brandDto.getName());
-        return brand.entityToDto();
+        Brand updatedBrand = brandRepository.save(brand);
+        return updatedBrand.entityToDto();
     }
 
     //  브렌드 삭제
     public void deleteBrand(Long id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 브랜드입니다: " + id));
+                new CustomException(ErrorCode.NOT_FOUND_BRAND));
         brandRepository.delete(brand);
     }
 }
