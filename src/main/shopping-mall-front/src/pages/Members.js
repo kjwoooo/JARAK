@@ -5,6 +5,10 @@ import './Members.css';
 
 const ITEMS_PER_PAGE = 10;
 
+/** 
+ * 관리자 페이지에서 전체 회원이 로드되고 삭제기능까지 탑재된 페이지 
+ */
+
 function Members() {
   const [members, setMembers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
