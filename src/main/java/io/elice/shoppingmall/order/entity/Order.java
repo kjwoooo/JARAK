@@ -17,11 +17,17 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -74,7 +80,7 @@ public class Order {
     @Column(name = "rep_item_name", length = 255, nullable = false)
     private String repItemName;
 
-    @Column(name = "rep_item_image", length = 255)
+    @Column(name = "rep_item_image", length = 255, nullable = false)
     private String repItemImage;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
