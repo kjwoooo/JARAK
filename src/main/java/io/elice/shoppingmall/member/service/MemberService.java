@@ -216,10 +216,11 @@ public class MemberService {
         loginInfoService.matchPassword(oldMember.getLoginInfo(), memberModifyInfo.getPassword());
 
         memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
+        memberModifyInfo.setPassword(encoder.encode(memberModifyInfo.getPassword()));
         oldMember.modifyMember(memberModifyInfo);
 
         LoginInfo loginInfo = oldMember.getLoginInfo();
-        loginInfo.setPassword(memberModifyInfo.getPassword());
+        loginInfo.setPassword(memberModifyInfo.getModifyPassword());
 
         loginInfo = loginInfoService.save(loginInfo);
         oldMember.setLoginInfo(loginInfo);
