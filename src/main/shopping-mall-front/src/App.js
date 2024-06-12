@@ -10,11 +10,12 @@ import './App.css';
 import LINKS from './links/links.js';
 import NavigationBar from './navbar/MainNavbar.js';
 import Products from './products/Products.js';
-import Members from './Members.js';
-import MemberEdit from './MemberEdit.js';
+import Members from './pages/Members.js';
+import MemberEdit from './pages/MemberEdit.js';
 import MyPage from './pages/MyPage.js';
 import AdminMain from './adminpage/AdminMain.js';
 import useBannerStore from './stores/useBannerStore';
+import Order from './pages/Order.js';
 
 function App() {
 const { mainBanner } = useBannerStore();
@@ -51,6 +52,9 @@ const { mainBanner } = useBannerStore();
         <Route path='/about' element={<About />}>
           <Route path='team6' element={<div>안녕하세요 6팀이에요</div>} />
         </Route>
+
+        <Route path='/order' element={<Order />} />
+
         <Route path='*' element={<div>404</div>} />
       </Routes>
     </div>
