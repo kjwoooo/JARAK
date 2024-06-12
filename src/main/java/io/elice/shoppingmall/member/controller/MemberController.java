@@ -71,7 +71,7 @@ public class MemberController {
         return new ResponseEntity<>(memberService.tokenRefresh(jwtToken, response), HttpStatus.OK);
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/members-logout")
     public ResponseEntity<String> logout(HttpServletResponse response){
         return new ResponseEntity<>(memberService.logout(response), HttpStatus.OK);
     }

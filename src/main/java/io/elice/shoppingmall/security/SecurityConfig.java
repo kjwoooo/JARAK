@@ -36,6 +36,7 @@ public class SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
+        http.formLogin(AbstractHttpConfigurer::disable);
 
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -67,8 +68,8 @@ public class SecurityConfig{
                 .userInfoEndpoint()
                     .userService(principalOauth2UserService);
 
-        http.logout(logout -> logout
-            .logoutUrl("logout"));
+//        http.logout(logout -> logout
+//            .logoutUrl("/members-logout"));
 
         http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JwtExceptionFilter(), JwtTokenFilter.class);
