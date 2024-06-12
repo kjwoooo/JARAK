@@ -3,6 +3,9 @@ package io.elice.shoppingmall.order.service;
 import io.elice.shoppingmall.address.entity.Address;
 import io.elice.shoppingmall.address.entity.AddressDTO;
 import io.elice.shoppingmall.address.service.AddressService;
+import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
+import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
+import io.elice.shoppingmall.cart.service.CartService;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
@@ -30,15 +33,19 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final AddressService addressService;
     private final MemberService memberService;
+    private final CartService cartService;
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
     private final OrderDetailMapper orderDetailMapper = OrderDetailMapper.INSTANCE;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, ItemRepository itemRepository, AddressService addressService, MemberService memberService) {
+    public OrderService(OrderRepository orderRepository, ItemRepository itemRepository,
+                        AddressService addressService, MemberService memberService,
+                        CartService cartService) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
         this.addressService = addressService;
         this.memberService = memberService;
+        this.cartService = cartService;
     }
 
     // 주문 조회 (페이징 적용)
@@ -70,69 +77,36 @@ public class OrderService {
     public OrderDTO createOrder(String jwtToken, OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
 
-        Address address;
-
-        if (orderDTO.isUseNewAddress()) {
-            // 새로운 배송지 정보 입력받기
-            AddressDTO newAddressDTO = new AddressDTO(
-                    orderDTO.getRecipientName(),
-                    orderDTO.getZipcode(),
-                    orderDTO.getAddr(),
-                    orderDTO.getAddrDetail(),
-                    orderDTO.getRecipientTel(),
-                    orderDTO.getDeliveryReq(),
-                    "Y" // 기본 배송지 설정 여부
-            );
-            address = addressService.save(jwtToken, newAddressDTO);
-        } else {
-            // 기존 배송지 정보 가져오기
-            List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
-            address = addresses.stream()
-                    .filter(addr -> "Y".equals(addr.getDefDestination()))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("기본 배송지 정보가 없습니다. 새로운 배송지를 입력해주세요."));
-        }
-
-        // 주소 정보를 OrderDTO에 설정
-        orderDTO.setRecipientName(address.getRecipientName());
-        orderDTO.setZipcode(address.getZipcode());
-        orderDTO.setAddr(address.getAddr());
-        orderDTO.setAddrDetail(address.getAddrDetail());
-        orderDTO.setRecipientTel(address.getRecipientTel());
-        orderDTO.setDeliveryReq(address.getDeliveryReq());
+        // 배송지 정보를 결정하고 주소를 가져옴
+        Address address = resolveAddress(jwtToken, orderDTO);
 
         // DTO에서 엔티티로 변환
         Order order = orderDTO.toEntity();
-        order.setMember(member);  // member 설정
+        order.setMember(member);
+        order.setRecipientName(address.getRecipientName());
+        order.setZipcode(address.getZipcode());
+        order.setAddr(address.getAddr());
+        order.setAddrDetail(address.getAddrDetail());
+        order.setRecipientTel(address.getRecipientTel());
+
+        // 장바구니에서 상품 정보 가져오기
+        // 현재 CartService는 cartId로 장바구니를 가져오도록 되어 있으나,
+        // 이를 memberId로 가져오도록 변경 요청 예정
+        Cart cart = cartService.getCartByMemberId(member.getId());
+        List<CartItems> cartItems = cart.getCartItems();
+
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("장바구니에 상품이 없습니다.");
+        }
 
         // OrderDetail 설정
-        // OrderDetail 없을 때의 예외 처리 구현 필요
-        List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
-                .map(orderDetailDTO -> {
-                    Item item = itemRepository.findById(orderDetailDTO.getItemId())
-                            .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-                    return orderDetailDTO.toEntity(order, item);
-                })
-                .collect(Collectors.toList());
+        List<OrderDetail> orderDetails = createOrderDetailsFromCartItems(cartItems, order);
         order.setOrderDetails(orderDetails);
 
         // 가격, 총 개수, 대표 상품 이름, 대표 상품 이미지 설정
-        int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
-        int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
-        // repItemName, repItemImage에 null 값이 저장되지 않도록 기본값 할당
-        // 해당 코드는 어떻게 리팩토링할지 고려해야 할 사항
-        String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
-        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
-                .findFirst()
-                .map(ItemImages::getStoredFileName)
-                .orElse("No Image");
+        setOrderSummary(order, orderDetails);
 
-        // 필수 필드에 값 설정
-        order.setTotalQuantity(totalQuantity);
-        order.setRepItemName(repItemName);
-        order.setRepItemImage(repItemImage);
-        order.setPrice(totalPrice);
-
+        // 주문 저장 및 반환
         Order savedOrder = orderRepository.save(order);
         return orderMapper.orderToOrderDTO(savedOrder);
     }
@@ -171,32 +145,11 @@ public class OrderService {
         }
 
         // OrderDetail 설정
-        // OrderDetail 없을 때의 예외 처리 구현 필요
-        List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
-                .map(orderDetailDTO -> {
-                    Item item = itemRepository.findById(orderDetailDTO.getItemId())
-                            .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-                    return orderDetailDTO.toEntity(order, item);
-                })
-                .collect(Collectors.toList());
+        List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
         order.setOrderDetails(orderDetails);
 
         // 가격, 총 개수, 대표 상품 이름, 대표 상품 이미지 설정
-        int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
-        int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
-        // repItemName, repItemImage에 null 값이 저장되지 않도록 기본값 할당
-        // 해당 코드는 어떻게 리팩토링할지 고려해야 할 사항
-        String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
-        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
-                .findFirst()
-                .map(ItemImages::getStoredFileName)
-                .orElse("No Image");
-
-        // 필수 필드에 값 설정
-        order.setTotalQuantity(totalQuantity);
-        order.setRepItemName(repItemName);
-        order.setRepItemImage(repItemImage);
-        order.setPrice(totalPrice);
+        setOrderSummary(order, orderDetails);
 
         Order savedOrder = orderRepository.save(order);
         return orderMapper.orderToOrderDTO(savedOrder);
@@ -208,5 +161,78 @@ public class OrderService {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
         orderRepository.delete(order);
+    }
+
+    // 새로운 배송지 저장 및 변환
+    // 기존 배송지 검색 및 변환
+    private Address resolveAddress(String jwtToken, OrderDTO orderDTO) {
+        if (orderDTO.isUseNewAddress()) {
+            // 새로운 배송지 정보 입력받기
+            AddressDTO newAddressDTO = new AddressDTO(
+                    orderDTO.getRecipientName(),
+                    orderDTO.getZipcode(),
+                    orderDTO.getAddr(),
+                    orderDTO.getAddrDetail(),
+                    orderDTO.getRecipientTel(),
+                    orderDTO.getDeliveryReq(),
+                    "Y" // 기본 배송지 설정 여부
+            );
+            return addressService.save(jwtToken, newAddressDTO);
+        } else {
+            // 기존 배송지 정보 가져오기
+            List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
+            return addresses.stream()
+                    .filter(addr -> "Y".equals(addr.getDefDestination()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("기본 배송지 정보가 없습니다. 새로운 배송지를 입력해주세요."));
+        }
+    }
+
+    // CartItems로부터 OrderDetail 생성
+    private List<OrderDetail> createOrderDetailsFromCartItems(List<CartItems> cartItems, Order order) {
+        return cartItems.stream()
+                .map(cartItem -> {
+                    // CartItems 필드에 Item이 없음
+                    // Cart 담당자와 상의 필요
+                    Item item = cartItem.getItem();
+                    int price = item.getPrice(); // Item의 가격을 직접 가져옴
+
+                    return OrderDetail.builder()
+                            .order(order)
+                            .item(item)
+                            .price(price)
+                            .quantity(cartItem.getQuantity())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    // OrderDTO로부터 OrderDetail 생성
+    private List<OrderDetail> createOrderDetailsFromOrderDTO(OrderDTO orderDTO, Order order) {
+        return orderDTO.getOrderDetails().stream()
+                .map(orderDetailDTO -> {
+                    Item item = itemRepository.findById(orderDetailDTO.getItemId())
+                            .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+                    return orderDetailDTO.toEntity(order, item);
+                })
+                .collect(Collectors.toList());
+    }
+
+    // 주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
+    private void setOrderSummary(Order order, List<OrderDetail> orderDetails) {
+        int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
+        int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
+        String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
+        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
+                .findFirst()
+                .map(ItemImages::getStoredFileName)
+                .orElse("No Image");
+
+        // 필수 필드에 값 설정
+        order.setTotalQuantity(totalQuantity);
+        order.setRepItemName(repItemName);
+        order.setRepItemImage(repItemImage);
+        order.setPrice(totalPrice);
     }
 }
