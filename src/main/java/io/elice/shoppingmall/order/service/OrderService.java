@@ -20,6 +20,7 @@ import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
@@ -74,13 +77,14 @@ public class OrderService {
     }
 
     // 주문 생성
-    public OrderDTO createOrder(String jwtToken, OrderDTO orderDTO) {
+    public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
 
         // 배송지 정보를 결정하고 주소를 가져옴
         Address address = resolveAddress(jwtToken, orderDTO);
 
         // DTO에서 엔티티로 변환
+        // Order order = orderDTO.toEntity();
         Order order = orderMapper.orderDTOToOrder(orderDTO);
         order.setMember(member);
         order.setOrderDate(LocalDateTime.now());
@@ -102,7 +106,7 @@ public class OrderService {
     }
 
     // 주문 수정 페이지 호출
-    public OrderDTO getUpdateOrderPage(Long orderId, Long memberId) {
+    public OrderDTO getUpdateOrderPage(Long orderId, @Valid Long memberId) {
         Order order = orderRepository.findByIdAndMemberId(orderId, memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
         return orderMapper.orderToOrderDTO(order);

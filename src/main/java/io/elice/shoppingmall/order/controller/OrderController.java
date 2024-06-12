@@ -6,6 +6,7 @@ import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.dto.OrderDetailDTO;
 import io.elice.shoppingmall.order.service.OrderService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -81,7 +82,7 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping("/create")
-    public ResponseEntity<OrderDTO> createOrder(@CookieValue String jwtToken, @RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<OrderDTO> createOrder(@CookieValue String jwtToken, @Valid @RequestBody OrderDTO orderDTO) {
         try {
             OrderDTO createdOrder = orderService.createOrder(jwtToken, orderDTO);
             return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
@@ -105,7 +106,7 @@ public class OrderController {
     // 주문 수정
     @PutMapping("/update/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@CookieValue String jwtToken, @PathVariable Long orderId,
-                                                @RequestBody OrderDTO orderDTO) {
+                                                @Valid @RequestBody OrderDTO orderDTO) {
         try {
             OrderDTO updatedOrder = orderService.updateOrder(jwtToken, orderId, orderDTO);
             return new ResponseEntity<>(updatedOrder, HttpStatus.OK);

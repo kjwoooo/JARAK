@@ -23,7 +23,10 @@ public enum ErrorCode {
 
     NOT_FOUND_ORDER(400, "주문을 찾을 수 없습니다."),
     EMPTY_CART(400, "장바구니에 상품이 없습니다."),
-    NOT_FOUND_ITEM(400, "상품을 찾을 수 없습니다.");
+    NOT_FOUND_ITEM(400, "상품을 찾을 수 없습니다."),
+
+    // 유효성 검사(Validation) error codes
+    INVALID_ORDER_DETAILS(400, "주문 세부 정보가 유효하지 않습니다.");
 
     private final int state;
     private final String message;
