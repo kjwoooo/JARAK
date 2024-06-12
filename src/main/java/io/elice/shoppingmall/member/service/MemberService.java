@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -93,7 +94,7 @@ public class MemberService {
     }
 
 
-    public Member login(MemberLogin loginInfo, HttpServletResponse response){
+    public Member login(MemberLogin memberLogin, HttpServletResponse response){
     /**
      * 회원이 입력한 ID, Password를 바탕으로
      * 해당 회원이 존재하는지 검증
@@ -101,10 +102,20 @@ public class MemberService {
      * @param response
      * @return
      */
-        Member member = memberRepository.findByUsername(loginInfo.getUsername()).orElseThrow(()->
+        Member member = memberRepository.findByUsername(memberLogin.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
-        loginInfoService.matchPassword(member.getLoginInfo(), loginInfo.getPassword());
+        loginInfoService.matchPassword(member.getLoginInfo(), memberLogin.getPassword());
+        createJwtTokenCookie(member, response);
+        return member;
+    }
+
+    public Member OAuthLogin(OAuth2User user, HttpServletResponse response){
+        String providerId = user.getName();
+
+        LoginInfo loginInfo = loginInfoService.findByProviderId(providerId);
+        Member member = findByLoginInfo(loginInfo);
+
         createJwtTokenCookie(member, response);
         return member;
     }
@@ -118,7 +129,7 @@ public class MemberService {
         return "토큰 재발급 성공";
     }
 
-    private void createJwtTokenCookie(Member member, HttpServletResponse response){
+    public void createJwtTokenCookie(Member member, HttpServletResponse response){
         String jwtToken = util.createToken(member.getUsername(), member.getAuthority());
 
         Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);

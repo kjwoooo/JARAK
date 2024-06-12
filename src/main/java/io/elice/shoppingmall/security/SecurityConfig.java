@@ -2,6 +2,7 @@ package io.elice.shoppingmall.security;
 
 import io.elice.shoppingmall.member.MemberAuthority;
 import io.elice.shoppingmall.member.service.MemberService;
+import io.elice.shoppingmall.security.oautho.OAuth2AuthenticationSuccessHandler;
 import io.elice.shoppingmall.security.oautho.PrincipalOauth2UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class SecurityConfig{
     private final JwtTokenUtil util;
     private final MemberService memberService;
     private final PrincipalOauth2UserService principalOauth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -66,7 +68,9 @@ public class SecurityConfig{
 
         http.oauth2Login()
                 .userInfoEndpoint()
-                    .userService(principalOauth2UserService);
+                    .userService(principalOauth2UserService)
+                        .and()
+                            .successHandler(oAuth2AuthenticationSuccessHandler);
 
 //        http.logout(logout -> logout
 //            .logoutUrl("/members-logout"));
