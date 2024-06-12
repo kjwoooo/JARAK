@@ -18,6 +18,8 @@ import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -83,6 +85,7 @@ public class OrderService {
         // DTO에서 엔티티로 변환
         Order order = orderDTO.toEntity();
         order.setMember(member);
+        order.setOrderDate(LocalDateTime.now());
         setOrderAddress(order, address);
 
         // 장바구니에서 상품 정보 가져오기
@@ -104,6 +107,7 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
         return orderMapper.orderToOrderDTO(savedOrder);
     }
+
 
     // 주문 수정 페이지 호출
     public OrderDTO getUpdateOrderPage(Long orderId, Long memberId) {

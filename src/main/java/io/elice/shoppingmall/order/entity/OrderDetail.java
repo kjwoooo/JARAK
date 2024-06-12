@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.order.entity;
 
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +24,7 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "order_detail")
-public class OrderDetail {
+public class OrderDetail extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
