@@ -12,7 +12,7 @@ function NavigationBar() {
 
   const handleLogout = async () => {
     try {
-      await axios.get('/logout'); // 로그아웃 API 요청
+      await axios.post('/members-logout'); // 로그아웃 API 요청
       logout(); // 상태 초기화
       navigate(LINKS.HOME.path); // 메인 페이지로 리다이렉션
     } catch (error) {
