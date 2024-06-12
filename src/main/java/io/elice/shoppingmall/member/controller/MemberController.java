@@ -43,6 +43,11 @@ public class MemberController {
         return new ResponseEntity<>(memberService.findByIdToResponseDTO(id), HttpStatus.OK);
     }
 
+    @DeleteMapping("/admin/members/{id}")
+    public ResponseEntity<String> deleteMemberForAdmin(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.delete(id), HttpStatus.OK);
+    }
+
     //NOTE: USER API
     @GetMapping("/members/info")
     public ResponseEntity<MemberResponseDTO> getMember(@CookieValue String jwtToken){
