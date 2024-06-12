@@ -83,15 +83,9 @@ public class OrderService {
         // DTO에서 엔티티로 변환
         Order order = orderDTO.toEntity();
         order.setMember(member);
-        order.setRecipientName(address.getRecipientName());
-        order.setZipcode(address.getZipcode());
-        order.setAddr(address.getAddr());
-        order.setAddrDetail(address.getAddrDetail());
-        order.setRecipientTel(address.getRecipientTel());
+        setOrderAddress(order, address);
 
         // 장바구니에서 상품 정보 가져오기
-        // 현재 CartService는 cartId로 장바구니를 가져오도록 되어 있으나,
-        // 이를 memberId로 가져오도록 변경 요청 예정
         Cart cart = cartService.getCartByMemberId(member.getId());
         List<CartItems> cartItems = cart.getCartItems();
 
@@ -128,11 +122,7 @@ public class OrderService {
         Address address = resolveAddress(jwtToken, orderDTO);
 
         // 기존 주문의 주소 정보 업데이트
-        order.setRecipientName(address.getRecipientName());
-        order.setZipcode(address.getZipcode());
-        order.setAddr(address.getAddr());
-        order.setAddrDetail(address.getAddrDetail());
-        order.setRecipientTel(address.getRecipientTel());
+        setOrderAddress(order, address);
 
         // OrderDetail 설정
         List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
@@ -197,7 +187,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-
     // OrderDTO로부터 OrderDetail 생성
     private List<OrderDetail> createOrderDetailsFromOrderDTO(OrderDTO orderDTO, Order order) {
         return orderDTO.getOrderDetails().stream()
@@ -224,5 +213,14 @@ public class OrderService {
         order.setRepItemName(repItemName);
         order.setRepItemImage(repItemImage);
         order.setPrice(totalPrice);
+    }
+
+    // 주문 객체에 주소 정보 설정
+    private void setOrderAddress(Order order, Address address) {
+        order.setRecipientName(address.getRecipientName());
+        order.setZipcode(address.getZipcode());
+        order.setAddr(address.getAddr());
+        order.setAddrDetail(address.getAddrDetail());
+        order.setRecipientTel(address.getRecipientTel());
     }
 }
