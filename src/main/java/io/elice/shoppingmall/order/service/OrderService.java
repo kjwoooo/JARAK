@@ -124,25 +124,15 @@ public class OrderService {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
 
-        if (orderDTO.isUseNewAddress()) {
-            // 새로운 배송지 정보 입력받기
-            AddressDTO newAddressDTO = new AddressDTO(
-                    orderDTO.getRecipientName(),
-                    orderDTO.getZipcode(),
-                    orderDTO.getAddr(),
-                    orderDTO.getAddrDetail(),
-                    orderDTO.getRecipientTel(),
-                    orderDTO.getDeliveryReq(),
-                    "Y" // 기본 배송지 설정 여부
-            );
-            Address savedAddress = addressService.save(jwtToken, newAddressDTO);
-            order.setRecipientName(savedAddress.getRecipientName());
-            order.setZipcode(savedAddress.getZipcode());
-            order.setAddr(savedAddress.getAddr());
-            order.setAddrDetail(savedAddress.getAddrDetail());
-            order.setRecipientTel(savedAddress.getRecipientTel());
-            order.setDeliveryReq(savedAddress.getDeliveryReq());
-        }
+        // 배송지 정보를 결정하고 주소를 가져옴
+        Address address = resolveAddress(jwtToken, orderDTO);
+
+        // 기존 주문의 주소 정보 업데이트
+        order.setRecipientName(address.getRecipientName());
+        order.setZipcode(address.getZipcode());
+        order.setAddr(address.getAddr());
+        order.setAddrDetail(address.getAddrDetail());
+        order.setRecipientTel(address.getRecipientTel());
 
         // OrderDetail 설정
         List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
