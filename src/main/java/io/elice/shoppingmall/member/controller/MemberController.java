@@ -43,7 +43,7 @@ public class MemberController {
         return new ResponseEntity<>(memberService.findByIdToResponseDTO(id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/members/{id}")
+    @DeleteMapping("/admin/delete/members/{id}")
     public ResponseEntity<String> deleteMemberForAdmin(@PathVariable Long id){
         return new ResponseEntity<>(memberService.delete(id), HttpStatus.OK);
     }
