@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.order.controller;
 
+import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
@@ -47,7 +48,7 @@ public class OrderController {
             Member member = getMemberFromJwtToken(jwtToken);
             Page<OrderDTO> orders = orderService.getOrdersByMemberId(member.getId(), page, size);
             return new ResponseEntity<>(orders, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -60,7 +61,7 @@ public class OrderController {
             Member member = getMemberFromJwtToken(jwtToken);
             List<OrderDetailDTO> orderDetails = orderService.getOrderDetailsByOrderId(orderId, member.getId());
             return new ResponseEntity<>(orderDetails, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -73,7 +74,7 @@ public class OrderController {
             OrderDTO orderDTO = new OrderDTO();
             orderDTO.setMemberId(member.getId());
             return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -84,7 +85,7 @@ public class OrderController {
         try {
             OrderDTO createdOrder = orderService.createOrder(jwtToken, orderDTO);
             return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -96,7 +97,7 @@ public class OrderController {
             Member member = getMemberFromJwtToken(jwtToken);
             OrderDTO orderDTO = orderService.getUpdateOrderPage(orderId, member.getId());
             return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -108,7 +109,7 @@ public class OrderController {
         try {
             OrderDTO updatedOrder = orderService.updateOrder(jwtToken, orderId, orderDTO);
             return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -119,9 +120,8 @@ public class OrderController {
         try {
             orderService.deleteOrder(jwtToken, orderId);
             return new ResponseEntity<>("주문이 성공적으로 삭제되었습니다.", HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 }
-

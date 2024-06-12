@@ -2,7 +2,7 @@ package io.elice.shoppingmall.order.dto;
 
 import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.entity.OrderState;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +19,7 @@ public class OrderDTO {
     private Long id;
     private Long memberId;
     private Integer price;
-    private Date orderDate;
+    private LocalDateTime orderDate;
     private String payCard;
     private OrderState orderState;
     private String refundReason;
