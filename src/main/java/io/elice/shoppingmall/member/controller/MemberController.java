@@ -39,8 +39,8 @@ public class MemberController {
     }
 
     @GetMapping("/admin/members/{id}")
-    public ResponseEntity<MemberResponseDTO> getMemberForAdmin(@PathVariable Long id){
-        return new ResponseEntity<>(memberService.findByIdToResponseDTO(id), HttpStatus.OK);
+    public ResponseEntity<Member> getMemberForAdmin(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.findByIdToMember(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/members/{id}")
