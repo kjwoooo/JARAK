@@ -43,8 +43,8 @@ public class MemberController {
         return new ResponseEntity<>(memberService.findByIdToResponseDTO(id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/delete/members/{id}")
-    public ResponseEntity<String> deleteMemberForAdmin(@PathVariable Long id){
+    @DeleteMapping("/admin/members/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
         return new ResponseEntity<>(memberService.delete(id), HttpStatus.OK);
     }
 
@@ -84,10 +84,5 @@ public class MemberController {
     @DeleteMapping("/unregister")
     public ResponseEntity<String> unregister(@CookieValue String jwtToken, HttpServletResponse response){
         return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/admin/members/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id){
-        return new ResponseEntity<>(memberService.delete(id), HttpStatus.OK);
     }
 }
