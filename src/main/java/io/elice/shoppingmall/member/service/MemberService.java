@@ -42,8 +42,12 @@ public class MemberService {
      * 모든 회원 검색
      * @return MemberResponseDTO List
      */
-    public List<MemberResponseDTO> findAll(){
-        return memberRepository.findAll().stream().map(MemberResponseDTO::new).toList();
+    public List<MemberResponseDTO> findAllReturnMemberResponseDTOList(){
+        return findAll().stream().map(MemberResponseDTO::new).toList();
+    }
+
+    public List<Member> findAll(){
+        return memberRepository.findAll();
     }
 
     /**
