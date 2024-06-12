@@ -50,10 +50,10 @@ public class SecurityConfig{
             //NOTE: 일반회원, 관리자 모두 접근 가능
             .requestMatchers("/unregister", "/logout", "/token-refresh")
                 .hasAnyAuthority(MemberAuthority.USER.name(), MemberAuthority.ADMIN.name())
-
-            //NOTE: 일반회원만 접근 가능
             .requestMatchers(HttpMethod.POST, "/members")
                 .hasAuthority(MemberAuthority.USER.name())
+
+            //NOTE: 일반회원만 접근 가능
             .requestMatchers("/members/info", "/addresses/**", "")
                 .hasAuthority(MemberAuthority.USER.name())
 
