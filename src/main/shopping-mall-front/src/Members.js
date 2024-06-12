@@ -56,7 +56,7 @@ function Members() {
           <ListGroup.Item key={member.id}>
             <div className="row">
               <div className="col-md-2">{member.username}</div>
-              <div className="col-md-3">{member.email}</div>
+              <div className="col-md-3">{member.loginInfo.email}</div>
               <div className="col-md-2">{member.phone}</div>
               <div className="col-md-2">{member.membership}</div>
               <div className="col-md-3">
