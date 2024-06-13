@@ -17,6 +17,7 @@ import AdminMain from './adminpage/AdminMain.js';
 import useBannerStore from './stores/useBannerStore';
 import Order from './pages/Order.js';
 import Category from './Category.js';
+import Carts from './Carts.js';
 
 function App() {
 const { mainBanner } = useBannerStore();
@@ -55,6 +56,8 @@ const { mainBanner } = useBannerStore();
         </Route>
 
         <Route path='/order' element={<Order />} />
+
+        <Route path='/carts' element={<Carts/>} />
 
         <Route path='*' element={<div>404</div>} />
       </Routes>
