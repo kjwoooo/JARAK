@@ -16,12 +16,42 @@ function Detail() {
 
   const handleBuyNow = () => {
     if (user) {
-      navigate('/order', { state: { cartItems: [findId], productTotal: findId.price, shipping: 2500, total: findId.price + 2500 } });
+      const cartKey = `cart_${user.id}`;
+      const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+      const existingItemIndex = storedCartItems.findIndex(item => item.id === findId.id);
+
+      if (storedCartItems.length > 0) {
+        if (existingItemIndex >= 0) {
+          const confirmAddToCart = window.confirm("이미 장바구니에 담은 상품입니다 추가로 구매하시겠습니까?");
+          if (confirmAddToCart) {
+            storedCartItems[existingItemIndex].quantity += 1;
+            localStorage.setItem(cartKey, JSON.stringify(storedCartItems));
+          } else {
+            const confirmGoToCart = window.confirm("장바구니로 이동하시겠습니까?");
+            if (confirmGoToCart) {
+              navigate('/carts');
+              return;
+            }
+          }
+        } else {
+          const confirmAddToCart = window.confirm("장바구니에 있는 상품을 함께 구매하시겠습니까?");
+          if (confirmAddToCart) {
+            storedCartItems.push({ ...findId, quantity: 1 });
+            localStorage.setItem(cartKey, JSON.stringify(storedCartItems));
+            navigate('/order', { state: { cartItems: storedCartItems, productTotal: calculateTotal(storedCartItems), shipping: 2500, total: calculateTotal(storedCartItems) + 2500 } });
+            return;
+          } else {
+            navigate('/order', { state: { cartItems: [{ ...findId, quantity: 1 }], productTotal: findId.price, shipping: 2500, total: findId.price + 2500 } });
+            return;
+          }
+        }
+      } else {
+        navigate('/order', { state: { cartItems: [{ ...findId, quantity: 1 }], productTotal: findId.price, shipping: 2500, total: findId.price + 2500 } });
+      }
     } else {
       window.alert("지금 당장 로그인하고 쌈@뽕하게 주문하세요!");
     }
   };
-  
 
   const handleAddToCart = () => {
     if (user) {
@@ -30,7 +60,10 @@ function Detail() {
       const existingItemIndex = storedCartItems.findIndex(item => item.id === findId.id);
 
       if (existingItemIndex >= 0) {
-        storedCartItems[existingItemIndex].quantity += 1;
+        const confirmIncreaseQuantity = window.confirm("이미 장바구니에 있는 상품 입니다. 추가로 담으시겠습니까?");
+        if (confirmIncreaseQuantity) {
+          storedCartItems[existingItemIndex].quantity += 1;
+        }
       } else {
         storedCartItems.push({ ...findId, quantity: 1 });
       }
@@ -42,6 +75,10 @@ function Detail() {
     }
   };
 
+  const calculateTotal = (items) => {
+    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
   return (
     <div className="container detail-container">
       <div className="row">
@@ -50,9 +87,7 @@ function Detail() {
         </div>
         <div className="col-md-6 detail-info">
           <h2>{findId.title}</h2>
-          <p className="price">{findId.price}</p>
-
-        {/* 여기는 나중에 상품DB정보 뽑아오늘걸로 */}
+          <p className="price">{findId.price.toLocaleString()} 원</p>
 
           <DropdownButton id="size-dropdown" title="사이즈">
             <Dropdown.Item>Small</Dropdown.Item>
