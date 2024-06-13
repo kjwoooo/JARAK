@@ -20,12 +20,10 @@ public class ItemDetail {
     private String color;
     private String size;
     private Integer quantity;
-    private Long ItemId;
 
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name= "item_id")
     private Item item;
-
 
     public static ItemDetail toSaveItemDetail(ItemDetailDTO itemDetailDTO, Item item){
         ItemDetail itemDetail = new ItemDetail();
@@ -33,7 +31,7 @@ public class ItemDetail {
         itemDetail.setColor(itemDetail.getColor());
         itemDetail.setSize(itemDetailDTO.getSize());
         itemDetail.setQuantity(itemDetailDTO.getQuantity());
-        itemDetail.setItemId(item.getId());
+        itemDetail.setItem(item);
         return itemDetail;
     }
 }
