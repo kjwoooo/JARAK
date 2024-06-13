@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Nav, Button, DropdownButton, Dropdown } from 'react-bootstrap/';
 import useProductStore from '../stores/useProductStore.js';
+import useUserStore from '../stores/useUserStore.js'; // import useUserStore
 import './Detail.css';
 
 /** 
@@ -13,12 +14,17 @@ function Detail() {
   const { itemId } = useParams();
   const findId = items.find((x) => x.id == itemId);
   const navigate = useNavigate();
+  const user = useUserStore(state => state.user); // get user state
 
   const [alert, setAlert] = useState(true);
   const [modal, setModal] = useState('detail');
 
   const handleBuyNow = () => {
-    navigate('/order', { state: { item: findId } });
+    if (user) {
+      navigate('/order', { state: { item: findId } });
+    } else {
+      window.alert("지금 당장 로그인하고 쌈@뽕하게 주문하세요!");
+    }
   };
 
   return (

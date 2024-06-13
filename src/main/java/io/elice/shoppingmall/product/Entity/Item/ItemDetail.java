@@ -1,35 +1,37 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
-import io.elice.shoppingmall.option.entity.Color;
-import io.elice.shoppingmall.option.entity.Size;
+import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
+import io.elice.shoppingmall.product.DTO.ReviewDTO;
+import io.elice.shoppingmall.product.Entity.Review.Review;
+import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
+    private String color;
+    private String size;
     private Integer quantity;
 
-    @OneToMany
-    @JoinColumn(name = "color_id")
-    private List<Color> colors;
-
-    @OneToMany
-    @JoinColumn(name = "size_id")
-    private List<Size> sizes;
-
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name= "item_id")
     private Item item;
+
+    public static ItemDetail toSaveItemDetail(ItemDetailDTO itemDetailDTO, Item item){
+        ItemDetail itemDetail = new ItemDetail();
+        itemDetail.setId(itemDetail.getId());
+        itemDetail.setColor(itemDetail.getColor());
+        itemDetail.setSize(itemDetailDTO.getSize());
+        itemDetail.setQuantity(itemDetailDTO.getQuantity());
+        itemDetail.setItem(item);
+        return itemDetail;
+    }
 }

@@ -11,9 +11,9 @@ function Order() {
   const user = useUserStore(state => state.user);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showAddAddressModal, setShowAddAddressModal] = useState(false);
+
   const [formData, setFormData] = useState({
     orderCustomer: user ? user.displayName : '',
-    receiver: '',
     phone: '',
     address: ''
   });
@@ -81,10 +81,6 @@ function Order() {
               <Form.Label>주문고객</Form.Label>
               <Form.Control type="text" name="orderCustomer" value={formData.orderCustomer} onChange={handleChange} />
             </Form.Group>
-            <Form.Group controlId="formReceiver">
-              <Form.Label>받는 분</Form.Label>
-              <Form.Control type="text" name="receiver" value={formData.receiver} onChange={handleChange} />
-            </Form.Group>
             <Form.Group controlId="formPhone">
               <Form.Label>휴대폰 번호</Form.Label>
               <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
@@ -134,13 +130,13 @@ function Order() {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="formReceiverName">
-              <Form.Label>수령인 이름</Form.Label>
-              <Form.Control type="text" name="receiverName" value={newAddress.receiverName} onChange={handleNewAddressChange} />
-            </Form.Group>
             <Form.Group controlId="formAddressName">
               <Form.Label>배송지명</Form.Label>
               <Form.Control type="text" name="addressName" value={newAddress.addressName} onChange={handleNewAddressChange} />
+            </Form.Group>
+            <Form.Group controlId="formReceiverName">
+              <Form.Label>수령자</Form.Label>
+              <Form.Control type="text" name="receiverName" value={newAddress.receiverName} onChange={handleNewAddressChange} />
             </Form.Group>
             <Form.Group controlId="formPhoneNumber">
               <Form.Label>휴대전화 번호</Form.Label>
@@ -160,6 +156,10 @@ function Order() {
             <Form.Group controlId="formDetailAddress">
               <Form.Label>상세주소</Form.Label>
               <Form.Control type="text" name="detailAddress" value={newAddress.detailAddress} onChange={handleNewAddressChange} />
+            </Form.Group>
+            <Form.Group controlId="formDeliveryReq">
+              <Form.Label>배송시 요청사항</Form.Label>
+              <Form.Control type="text" name="formDeliveryReq" value={newAddress.formDeliveryReq} onChange={handleNewAddressChange} />
             </Form.Group>
           </Form>
         </Modal.Body>
