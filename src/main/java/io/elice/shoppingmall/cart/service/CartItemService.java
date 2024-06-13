@@ -1,14 +1,15 @@
 package io.elice.shoppingmall.cart.service;
 
-import io.elice.shoppingmall.cart.domain.cart.DTO.CartResponseDto;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
 import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemRequestDto;
+import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemAddResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.cart.repository.CartItemRepository;
 import io.elice.shoppingmall.cart.repository.CartRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,41 @@ public class CartItemService {
     }
 
     //cart 모든 item 조회(cartid)
-    public List<CartItemResponseDto> findItems(Long cartId) {
-        List<CartItems> cartItems = cartItemRepository.findByCartId(cartId);
-        return cartItems.stream().map(CartItems::toCartItemResponseDto).collect(Collectors.toList());
+
+    public List<CartItemResponseDto> findAllItemsByCartId(Long cartId) {
+        List<CartItemResponseDto> responseDtoList = new ArrayList<>();
+        List<Object[]> results = cartItemRepository.findAllItemsByCartId(cartId);
+
+        for (Object[] result : results) {
+            CartItemResponseDto responseDto = new CartItemResponseDto();
+            responseDto.setId((Long) result[0]);
+            responseDto.setSize((String) result[1]);
+            responseDto.setColor((String) result[2]);
+            responseDto.setQuantity((Integer) result[3]);
+            responseDto.setItem_id((Long) result[4]);
+            responseDto.setItem_name((String) result[5]);
+            responseDto.setPrice((Integer) result[6]);
+
+            responseDtoList.add(responseDto);
+        }
+
+        return responseDtoList;
     }
+
+    public List<CartItems> findItemsentityList(Long cartId) {
+        List<CartItemResponseDto> dtoList = findAllItemsByCartId(cartId);
+        Cart cart = cartRepository.findById(cartId).get();
+        List<CartItems> entityList = new ArrayList<>();
+
+        for (CartItemResponseDto dto : dtoList) {
+            Item item = itemRepository.findById(dto.getItem_id()).get();
+            entityList.add(dto.toEntity(cart, item));
+        }
+
+        return entityList;
+    }
+
+
 //
 //    //특정 item 조회
 //    public  CartItemResponseDto findItemById(Long cartItemId) {
@@ -41,7 +73,7 @@ public class CartItemService {
 
     //addCartitem
     //특정 item을 "장바구니에 추가" 했을 때 cartitemlist에 추가되는 로직
-    public CartItemResponseDto addCartItem(Long itemId, Long cartId, CartItemRequestDto cartItemRequestDto) {
+    public CartItemAddResponseDto addCartItem(Long itemId, Long cartId, CartItemRequestDto cartItemRequestDto) {
         //***id longtype으로 수정 요청
         Item item_id = itemRepository.findById(itemId).get();
         Cart cart_id = cartRepository.findById(cartId).get();
@@ -52,7 +84,7 @@ public class CartItemService {
             .build();
 
         cartItemRepository.save(cartitem);
-        return cartitem.toCartItemResponseDto();
+        return cartitem.toCartItemAddResponseDto();
 
     }
 

@@ -1,21 +1,18 @@
 package io.elice.shoppingmall.cart.domain.cartItems.Entity;
 
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
-import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
+import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemAddResponseDto;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 
 import io.elice.shoppingmall.product.Entity.Item.Item;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,10 +40,18 @@ public class CartItems extends BaseEntity {
     @JoinColumn(name="cart_id")
     private Cart cart_id;
 
+    //수정 필요
+    @Column(nullable = true)
     private boolean selected;
+
+    @Column(nullable = true)
     private int quantity;
 
-    public CartItemResponseDto toCartItemResponseDto() {
-        return new CartItemResponseDto(id, quantity, getCreatedAt());
+    private String color;
+
+    private String size;
+
+    public CartItemAddResponseDto toCartItemAddResponseDto() {
+        return new CartItemAddResponseDto(id, quantity, getCreatedAt());
     }
 }

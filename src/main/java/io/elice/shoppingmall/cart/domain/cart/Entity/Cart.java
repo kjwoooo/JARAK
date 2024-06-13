@@ -37,7 +37,7 @@ public class Cart extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name="member_id")
-    private Member member_id;
+    private Member member;
 
     @OneToMany(mappedBy = "cart_id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItems> cartItems = new ArrayList<>();
