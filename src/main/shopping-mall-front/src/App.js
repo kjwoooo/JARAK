@@ -16,6 +16,7 @@ import MyPage from './pages/MyPage.js';
 import AdminMain from './adminpage/AdminMain.js';
 import useBannerStore from './stores/useBannerStore';
 import Order from './pages/Order.js';
+import Category from './Category.js';
 
 function App() {
 const { mainBanner } = useBannerStore();
@@ -37,7 +38,7 @@ const { mainBanner } = useBannerStore();
         <Route path={LINKS.ADMIN_PAGE.path} element={<AdminPage />}>
           <Route path='main' element={<AdminMain/>} />
           <Route path='member' element={<Members></Members>} />
-          <Route path='category' element={<div>여긴 카테고리관리가 있어야할거같고</div>} />
+          <Route path='category' element={<Category/>} />
           <Route path='item' element={<div>여긴 상품관리를 해야할거같고</div>} />
           <Route path='order' element={<div>여긴 주문을 관리해야할거같아요</div>} />
         </Route>
