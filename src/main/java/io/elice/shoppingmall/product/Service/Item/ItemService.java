@@ -1,10 +1,13 @@
 package io.elice.shoppingmall.product.Service.Item;
 
 import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
+import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
+import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import io.elice.shoppingmall.option.entity.Gender;
 import io.elice.shoppingmall.option.entity.Brand;
+import io.elice.shoppingmall.product.Repository.Item.ItemDetailRepository;
 import io.elice.shoppingmall.product.Repository.Item.ItemImagesRepository;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import jakarta.mail.Multipart;
@@ -25,12 +28,14 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
 
     private final ItemRepository itemRepository;
     private final ItemImagesRepository itemImagesRepository;
+    private final ItemDetailRepository itemDetailRepository;
     private ItemImages itemImages;
     private Brand brand;
     private Gender gender;
 
 
     //item 생성
+    @Transactional
     public void save(ItemDTO itemDTO) throws IOException {
 //        Item item = Item.toSaveItem(itemDTO, itemImages, brand, gender);
 //        itemRepository.save(item);
@@ -47,6 +52,12 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
         }
     }
 
+    //ItemDetail 생성
+    @Transactional
+    public ItemDetail saveItemDetail(ItemDetail itemDetail) {
+        return itemDetailRepository.save(itemDetail);
+    }
+
     //전체 상품목록 조회
     @Transactional
     public List<ItemDTO> findAll(){
@@ -56,6 +67,16 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
             itemDTOList.add(ItemDTO.toItemDTO(item, itemImages.getId(), brand.getId(), gender.getId()));
         }
         return itemDTOList;
+    }
+
+    //한 상품의 모든 ItemDetail조회
+    public List<ItemDetailDTO> findItemDetailsByItemId(Long itemId) {
+        List<ItemDetail> itemDetailList = itemRepository.findbyItemId(itemId);
+        List<ItemDetailDTO> itemDetailDTOList = new ArrayList<>();
+        for(ItemDetail itemDetail: itemDetailList){
+            itemDetailDTOList.add(ItemDetailDTO.toItemDetailDTO(itemDetail, itemId));
+        }
+        return itemDetailDTOList;
     }
 
     //특정 상품 조회

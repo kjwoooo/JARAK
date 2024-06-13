@@ -51,14 +51,15 @@ public class Item extends BaseEntity {//    Member,Category entity 받으면 연
     @JoinColumn(name = "gender_id")
     private Gender gender;
 
-    @OneToMany(mappedBy = "item")
-    private List<ItemDetail> itemDetails = new ArrayList<>();
 
     @OneToMany(mappedBy = "item")
     private List<Request> requests = new ArrayList<>();
 
     @OneToMany(mappedBy = "item")
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemDetail> itemDetails;
 
     public static Item toSaveItem(ItemDTO itemDTO,ItemImages itemImages, Brand brand, Gender gender){
         Item item = new Item();
