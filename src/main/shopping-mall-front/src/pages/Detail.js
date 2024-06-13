@@ -14,9 +14,8 @@ function Detail() {
   const { itemId } = useParams();
   const findId = items.find((x) => x.id == itemId);
   const navigate = useNavigate();
-  const user = useUserStore(state => state.user); // get user state
+  const user = useUserStore(state => state.user);
 
-  const [alert, setAlert] = useState(true);
   const [modal, setModal] = useState('detail');
 
   const handleBuyNow = () => {
@@ -25,6 +24,24 @@ function Detail() {
     } else {
       window.alert("지금 당장 로그인하고 쌈@뽕하게 주문하세요!");
     }
+  };
+
+  const handleAddToCart = () => {
+    if (!user) {
+      window.alert("지금 당장 쌈@뽕하게 로그인하고 장바구니에 담으세요!");
+      return;
+    }
+
+    // 현재 localStorage에 저장된 장바구니를 가져오기
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // 현재 상품을 장바구니에 추가
+    const updatedCart = [...cart, { ...findId, quantity: 1 }];
+
+    // localStorage에 업데이트된 장바구니 저장
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+    window.alert("장바구니에 추가되었습니다.");
   };
 
   return (
@@ -36,6 +53,7 @@ function Detail() {
         <div className="col-md-6 detail-info">
           <h2>{findId.title}</h2>
           <p className="price">{findId.price}</p>
+          {/* 나중에 DB에있는정보 끌어오는걸로 변경하는걸로.. */}
           <DropdownButton id="size-dropdown" title="사이즈">
             <Dropdown.Item>Small</Dropdown.Item>
             <Dropdown.Item>Medium</Dropdown.Item>
@@ -48,7 +66,7 @@ function Detail() {
           </DropdownButton>
           <p className="total-price">총 상품 금액 <span>0</span></p>
           <div className="buttons">
-            <Button variant="outline-dark" className="add-to-cart">Add to cart</Button>
+            <Button variant="outline-dark" className="add-to-cart" onClick={handleAddToCart}>Add to cart</Button>
             <Button variant="outline-dark" className="buy-now" onClick={handleBuyNow}>Buy now</Button>
           </div>
         </div>
