@@ -1,5 +1,7 @@
 package io.elice.shoppingmall.product.Service.Item;
 
+import io.elice.shoppingmall.exception.CustomException;
+import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
@@ -29,6 +31,7 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
     private final ItemRepository itemRepository;
     private final ItemImagesRepository itemImagesRepository;
     private final ItemDetailRepository itemDetailRepository;
+
     private ItemImages itemImages;
     private Brand brand;
     private Gender gender;
@@ -71,12 +74,17 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
 
     //한 상품의 모든 ItemDetail조회
     public List<ItemDetailDTO> findItemDetailsByItemId(Long itemId) {
-        List<ItemDetail> itemDetailList = itemRepository.findbyItemId(itemId);
-        List<ItemDetailDTO> itemDetailDTOList = new ArrayList<>();
-        for(ItemDetail itemDetail: itemDetailList){
-            itemDetailDTOList.add(ItemDetailDTO.toItemDetailDTO(itemDetail, itemId));
-        }
-        return itemDetailDTOList;
+//        Item item = itemRepository.findById(itemId).orElseThrow(()->
+//            new CustomException(ErrorCode.NOT_FOUND_ITEM));
+//
+//        List<ItemDetail> itemDetailList = itemDetailRepository.findByItem(item);
+//        List<ItemDetailDTO> itemDetailDTOList = new ArrayList<>();
+//        for(ItemDetail itemDetail: itemDetailList){
+//            itemDetailDTOList.add(ItemDetailDTO.toItemDetailDTO(itemDetail, itemId));
+//        }
+//        return itemDetailDTOList;
+
+        return null;
     }
 
     //특정 상품 조회

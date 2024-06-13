@@ -16,13 +16,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/item")
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemDetail itemDetail;
+    //XXX: 수정 필요. Entity를 컨테이너에서 찾으려 해서 에러
+//    private final ItemDetail itemDetail;
+    //----------------------------------------
+
 //    private final ReviewService reviewService;
 //    private final RequestService requestService;
 
@@ -36,8 +39,9 @@ public class ItemController {
     //상품 사이즈, 색상, 수량 등록
     @PostMapping("/{itemId}/details")
     public ResponseEntity<ItemDetailDTO> saveItemDetail(@PathVariable Long itemId, @RequestBody ItemDetailDTO itemDetailDTO){
-        itemDetailDTO.setItemId(itemId);
-        itemService.saveItemDetail(itemDetail);
+        //XXX: 수정 필요.
+//        itemDetailDTO.setItemId(itemId);
+//        itemService.saveItemDetail(itemDetail);
         return new ResponseEntity(itemDetailDTO, HttpStatus.OK);
     }
 

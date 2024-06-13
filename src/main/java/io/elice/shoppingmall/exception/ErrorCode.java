@@ -8,6 +8,9 @@ public enum ErrorCode {
     NOT_FOUND_PROVIDER_ID(400, "해당 기간의 정보로 가입된 회원을 찾을 수 없습니다."),
     NOT_MATCH_EMAIL(400, "이메일 형식이 잘못되었습니다."),
     NOT_FOUND_ADDRESS(400, "주소 정보를 찾을 수 없습니다."),
+    NOT_FOUND_CATEGORY(400, "존재하지 않는 카테고리입니다."),
+    NOT_FOUND_PARENT_CATEGORY(400, "존재하지 않는 상위 카테고리입니다."),
+    NOT_FOUND_ITEM(400, "존재하지 않는 아이템 입니다."),
 
     MEMBER_PASSWROD_WRONG(400, "비밀번호가 잘못되었습니다."),
 
@@ -16,8 +19,6 @@ public enum ErrorCode {
 
     DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다."),
 
-    NOT_FOUND_CATEGORY(400, "존재하지 않는 카테고리입니다."),
-    NOT_FOUND_PARENT_CATEGORY(400, "존재하지 않는 상위 카테고리입니다."),
     EXIST_CATEGORY_NAME(400, "이미 존재하는 카테고리입니다."),
 
     NOT_FOUND_BRAND(400, "존재하지 않는 브랜드입니다."),
