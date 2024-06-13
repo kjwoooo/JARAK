@@ -69,7 +69,6 @@ function Detail() {
       }
 
       localStorage.setItem(cartKey, JSON.stringify(storedCartItems));
-      window.alert("장바구니에 추가되었습니다.");
     } else {
       window.alert("지금 당장 쌈@뽕하게 로그인하고 장바구니에 담으세요!");
     }
