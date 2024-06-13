@@ -3,6 +3,7 @@ package io.elice.shoppingmall.security;
 import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -77,11 +79,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            filterChain.doFilter(request, response);
+            String newToken = util.tokenExpireExtension(token);
+            Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), newToken);
+            cookie.setPath("/");
+            cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
+            response.addCookie(cookie);
 
-        } catch(CustomException e){
-            filterChain.doFilter(request, response);
+        } catch(CustomException | ExpiredJwtException e){
+            util.tokenDestroy(response);
         }
+
+        filterChain.doFilter(request, response);
 
 //        if(member == null){
 //            filterChain.doFilter(request, response);
