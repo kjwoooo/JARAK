@@ -15,7 +15,7 @@ function NavigationBar() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get('/categories');
-        console.log('전체 카테고리 로드:', response.data);  // 콘솔 로그 추가
+        // console.log('전체 카테고리 로드:', response.data);  // 콘솔 로그 추가
         setCategories(response.data);
       } catch (error) {
         console.error("Failed to fetch categories", error);
@@ -36,7 +36,7 @@ function NavigationBar() {
 
   const renderSubCategories = (parentId) => {
     const subCategories = categories.filter(category => category.parentId === parentId);
-    console.log(`자식카테고리 로드 ${parentId}:`, subCategories);  // 콘솔 로그 추가
+    // console.log(`자식카테고리 로드 ${parentId}:`, subCategories);  // 콘솔 로그 추가
     return subCategories.map(subCategory => (
       <NavDropdown.Item key={subCategory.id} href={`/categories/${subCategory.id}`}>
         {subCategory.name}
@@ -46,7 +46,7 @@ function NavigationBar() {
 
   const renderCategories = () => {
     const parentCategories = categories.filter(category => category.parentId === null);
-    console.log('부모카테고리 로드:', parentCategories);  // 콘솔 로그 추가
+    // console.log('부모카테고리 로드:', parentCategories);  // 콘솔 로그 추가
     return parentCategories.map(category => (
       <NavDropdown title={category.name} id={`navbarScrollingDropdown-${category.id}`} key={category.id}>
         {renderSubCategories(category.id)}
