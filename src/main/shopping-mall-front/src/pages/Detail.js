@@ -2,46 +2,44 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Nav, Button, DropdownButton, Dropdown } from 'react-bootstrap/';
 import useProductStore from '../stores/useProductStore.js';
-import useUserStore from '../stores/useUserStore.js'; // import useUserStore
+import useUserStore from '../stores/useUserStore.js';
 import './Detail.css';
-
-/** 
- * Product에서 상품눌렀을때 로드되는 상세페이지
- */
 
 function Detail() {
   const items = useProductStore(state => state.items);
   const { itemId } = useParams();
   const findId = items.find((x) => x.id == itemId);
   const navigate = useNavigate();
-  const user = useUserStore(state => state.user);
+  const user = useUserStore(state => state.user); 
 
   const [modal, setModal] = useState('detail');
 
   const handleBuyNow = () => {
     if (user) {
-      navigate('/order', { state: { item: findId } });
+      navigate('/order', { state: { cartItems: [findId], productTotal: findId.price, shipping: 2500, total: findId.price + 2500 } });
     } else {
       window.alert("지금 당장 로그인하고 쌈@뽕하게 주문하세요!");
     }
   };
+  
 
   const handleAddToCart = () => {
-    if (!user) {
+    if (user) {
+      const cartKey = `cart_${user.id}`;
+      const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+      const existingItemIndex = storedCartItems.findIndex(item => item.id === findId.id);
+
+      if (existingItemIndex >= 0) {
+        storedCartItems[existingItemIndex].quantity += 1;
+      } else {
+        storedCartItems.push({ ...findId, quantity: 1 });
+      }
+
+      localStorage.setItem(cartKey, JSON.stringify(storedCartItems));
+      window.alert("장바구니에 추가되었습니다.");
+    } else {
       window.alert("지금 당장 쌈@뽕하게 로그인하고 장바구니에 담으세요!");
-      return;
     }
-
-    // 현재 localStorage에 저장된 장바구니를 가져오기
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // 현재 상품을 장바구니에 추가
-    const updatedCart = [...cart, { ...findId, quantity: 1 }];
-
-    // localStorage에 업데이트된 장바구니 저장
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-
-    window.alert("장바구니에 추가되었습니다.");
   };
 
   return (
@@ -53,7 +51,9 @@ function Detail() {
         <div className="col-md-6 detail-info">
           <h2>{findId.title}</h2>
           <p className="price">{findId.price}</p>
-          {/* 나중에 DB에있는정보 끌어오는걸로 변경하는걸로.. */}
+
+        {/* 여기는 나중에 상품DB정보 뽑아오늘걸로 */}
+
           <DropdownButton id="size-dropdown" title="사이즈">
             <Dropdown.Item>Small</Dropdown.Item>
             <Dropdown.Item>Medium</Dropdown.Item>
