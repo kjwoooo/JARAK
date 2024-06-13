@@ -74,17 +74,15 @@ public class ItemService { //dev branch 가져와서 category, member 엔티티 
 
     //한 상품의 모든 ItemDetail조회
     public List<ItemDetailDTO> findItemDetailsByItemId(Long itemId) {
-//        Item item = itemRepository.findById(itemId).orElseThrow(()->
-//            new CustomException(ErrorCode.NOT_FOUND_ITEM));
-//
-//        List<ItemDetail> itemDetailList = itemDetailRepository.findByItem(item);
-//        List<ItemDetailDTO> itemDetailDTOList = new ArrayList<>();
-//        for(ItemDetail itemDetail: itemDetailList){
-//            itemDetailDTOList.add(ItemDetailDTO.toItemDetailDTO(itemDetail, itemId));
-//        }
-//        return itemDetailDTOList;
+        Item item = itemRepository.findById(itemId).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_ITEM));
 
-        return null;
+        List<ItemDetail> itemDetailList = itemDetailRepository.findByItem(item);
+        List<ItemDetailDTO> itemDetailDTOList = new ArrayList<>();
+        for(ItemDetail itemDetail: itemDetailList){
+            itemDetailDTOList.add(ItemDetailDTO.toItemDetailDTO(itemDetail, itemId));
+        }
+        return itemDetailDTOList;
     }
 
     //특정 상품 조회

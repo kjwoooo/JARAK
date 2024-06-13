@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ItemDetailRepository  extends JpaRepository<ItemDetail, Long> {
-//    List<ItemDetail> findByItem(Item item);
+    List<ItemDetail> findByItem(Item item);
 }
