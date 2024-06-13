@@ -11,8 +11,10 @@ import java.util.stream.Collectors;
 
 @Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CategoryDto {
 
+    private Long id;
     private String name;
     private Long parentId;
 

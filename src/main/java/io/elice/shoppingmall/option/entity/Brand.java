@@ -22,6 +22,6 @@ public class Brand extends BaseEntity {
     private String name;
 
     public BrandDto entityToDto() {
-        return new BrandDto(this.name);
+        return new BrandDto(this.id, this.name);
     }
 }

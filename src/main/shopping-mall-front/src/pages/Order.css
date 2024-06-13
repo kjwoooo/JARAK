@@ -1,0 +1,42 @@
+/* Order.css */
+
+.order-container {
+    padding: 20px;
+  }
+  
+  .order-form {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .shipping-info,
+  .payment-info {
+    flex: 1;
+    margin: 20px;
+  }
+  
+  .shipping-info h2,
+  .payment-info h2 {
+    border-bottom: 1px solid #000;
+    padding-bottom: 10px;
+  }
+  
+  .d-flex {
+    display: flex;
+    align-items: center;
+  }
+  
+  .d-flex .form-control {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  button {
+    white-space: nowrap;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+  

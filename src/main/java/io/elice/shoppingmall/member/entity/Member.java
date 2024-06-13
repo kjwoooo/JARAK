@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.member.entity;
 
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,28 +26,27 @@ public class Member {
     @Column(nullable = false)
     private String displayName;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String username;
 
     @OneToOne
     @JoinColumn(name="loginInfo_id", nullable = false)
     private LoginInfo loginInfo;
 
-    @Column(nullable = false)
+    @Column
     private String phone;
 
-    @Column(nullable = false)
+    @Column
     private String gender;
 
     @Column(nullable = false)
-    private String aothority;
+    private String authority;
 
     @Column(nullable = false)
     private String membership;
 
     public void modifyMember(MemberModifyInfo memberModify){
         this.displayName = memberModify.getDisplayName();
-        this.loginInfo.setPassword(memberModify.getModifyPassword());
         this.phone = memberModify.getPhone();
         this.gender = memberModify.getGender();
     }

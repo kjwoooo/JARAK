@@ -31,14 +31,27 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtTokenUtil util;
 
-    @GetMapping("/members")
-    public ResponseEntity<List<MemberResponseDTO>> getMembers(){
+
+    //NOTE: ADMIN API
+    @GetMapping("/admin/members")
+    public ResponseEntity<List<Member>> getMembersForAdmin(){
         return new ResponseEntity<>(memberService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/members/{id}")
-    public ResponseEntity<MemberResponseDTO> getMember(@PathVariable Long id){
-        return new ResponseEntity<>(memberService.findByIdToMemberResponseDTO(id), HttpStatus.OK);
+    @GetMapping("/admin/members/{id}")
+    public ResponseEntity<Member> getMemberForAdmin(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.findByIdToMember(id), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/members/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        return new ResponseEntity<>(memberService.delete(id), HttpStatus.OK);
+    }
+
+    //NOTE: USER API
+    @GetMapping("/members/info")
+    public ResponseEntity<MemberResponseDTO> getMember(@CookieValue String jwtToken){
+        return new ResponseEntity<>(memberService.findByJwtTokenToResponseDTO(jwtToken), HttpStatus.OK);
     }
 
     @PostMapping("/members")
@@ -52,7 +65,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
+    public ResponseEntity<Member> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
         memberService.login(memberLogin, response);
 
         return new ResponseEntity<>(memberService.login(memberLogin, response), HttpStatus.OK);
@@ -63,13 +76,13 @@ public class MemberController {
         return new ResponseEntity<>(memberService.tokenRefresh(jwtToken, response), HttpStatus.OK);
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/members-logout")
     public ResponseEntity<String> logout(HttpServletResponse response){
         return new ResponseEntity<>(memberService.logout(response), HttpStatus.OK);
     }
 
     @DeleteMapping("/unregister")
-    public ResponseEntity<String> delete(@CookieValue String jwtToken, HttpServletResponse response){
+    public ResponseEntity<String> unregister(@CookieValue String jwtToken, HttpServletResponse response){
         return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
     }
 }
