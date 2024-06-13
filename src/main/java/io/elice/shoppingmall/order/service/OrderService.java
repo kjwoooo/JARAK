@@ -99,7 +99,7 @@ public class OrderService {
         orderDTO.setAddr(address.getAddr());
         orderDTO.setAddrDetail(address.getAddrDetail());
         orderDTO.setRecipientTel(address.getRecipientTel());
-        orderDTO.setDeliveryReq(address.getDeliveryReq());
+        orderDTO.setDeliveryReq(address.getAddrName());
 
         // DTO에서 엔티티로 변환
         Order order = orderDTO.toEntity();

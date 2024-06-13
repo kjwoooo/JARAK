@@ -2,29 +2,80 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Nav, Button, DropdownButton, Dropdown } from 'react-bootstrap/';
 import useProductStore from '../stores/useProductStore.js';
-import useUserStore from '../stores/useUserStore.js'; // import useUserStore
+import useUserStore from '../stores/useUserStore.js';
 import './Detail.css';
-
-/** 
- * Product에서 상품눌렀을때 로드되는 상세페이지
- */
 
 function Detail() {
   const items = useProductStore(state => state.items);
   const { itemId } = useParams();
   const findId = items.find((x) => x.id == itemId);
   const navigate = useNavigate();
-  const user = useUserStore(state => state.user); // get user state
+  const user = useUserStore(state => state.user); 
 
-  const [alert, setAlert] = useState(true);
   const [modal, setModal] = useState('detail');
 
   const handleBuyNow = () => {
     if (user) {
-      navigate('/order', { state: { item: findId } });
+      const cartKey = `cart_${user.id}`;
+      const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+      const existingItemIndex = storedCartItems.findIndex(item => item.id === findId.id);
+
+      if (storedCartItems.length > 0) {
+        if (existingItemIndex >= 0) {
+          const confirmAddToCart = window.confirm("이미 장바구니에 담은 상품입니다 추가로 구매하시겠습니까?");
+          if (confirmAddToCart) {
+            storedCartItems[existingItemIndex].quantity += 1;
+            localStorage.setItem(cartKey, JSON.stringify(storedCartItems));
+          } else {
+            const confirmGoToCart = window.confirm("장바구니로 이동하시겠습니까?");
+            if (confirmGoToCart) {
+              navigate('/carts');
+              return;
+            }
+          }
+        } else {
+          const confirmAddToCart = window.confirm("장바구니에 있는 상품을 함께 구매하시겠습니까?");
+          if (confirmAddToCart) {
+            storedCartItems.push({ ...findId, quantity: 1 });
+            localStorage.setItem(cartKey, JSON.stringify(storedCartItems));
+            navigate('/order', { state: { cartItems: storedCartItems, productTotal: calculateTotal(storedCartItems), shipping: 2500, total: calculateTotal(storedCartItems) + 2500 } });
+            return;
+          } else {
+            navigate('/order', { state: { cartItems: [{ ...findId, quantity: 1 }], productTotal: findId.price, shipping: 2500, total: findId.price + 2500 } });
+            return;
+          }
+        }
+      } else {
+        navigate('/order', { state: { cartItems: [{ ...findId, quantity: 1 }], productTotal: findId.price, shipping: 2500, total: findId.price + 2500 } });
+      }
     } else {
       window.alert("지금 당장 로그인하고 쌈@뽕하게 주문하세요!");
     }
+  };
+
+  const handleAddToCart = () => {
+    if (user) {
+      const cartKey = `cart_${user.id}`;
+      const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+      const existingItemIndex = storedCartItems.findIndex(item => item.id === findId.id);
+
+      if (existingItemIndex >= 0) {
+        const confirmIncreaseQuantity = window.confirm("이미 장바구니에 있는 상품 입니다. 추가로 담으시겠습니까?");
+        if (confirmIncreaseQuantity) {
+          storedCartItems[existingItemIndex].quantity += 1;
+        }
+      } else {
+        storedCartItems.push({ ...findId, quantity: 1 });
+      }
+
+      localStorage.setItem(cartKey, JSON.stringify(storedCartItems));
+    } else {
+      window.alert("지금 당장 쌈@뽕하게 로그인하고 장바구니에 담으세요!");
+    }
+  };
+
+  const calculateTotal = (items) => {
+    return items.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   return (
@@ -35,7 +86,8 @@ function Detail() {
         </div>
         <div className="col-md-6 detail-info">
           <h2>{findId.title}</h2>
-          <p className="price">{findId.price}</p>
+          <p className="price">{findId.price.toLocaleString()} 원</p>
+
           <DropdownButton id="size-dropdown" title="사이즈">
             <Dropdown.Item>Small</Dropdown.Item>
             <Dropdown.Item>Medium</Dropdown.Item>
@@ -48,7 +100,7 @@ function Detail() {
           </DropdownButton>
           <p className="total-price">총 상품 금액 <span>0</span></p>
           <div className="buttons">
-            <Button variant="outline-dark" className="add-to-cart">Add to cart</Button>
+            <Button variant="outline-dark" className="add-to-cart" onClick={handleAddToCart}>Add to cart</Button>
             <Button variant="outline-dark" className="buy-now" onClick={handleBuyNow}>Buy now</Button>
           </div>
         </div>

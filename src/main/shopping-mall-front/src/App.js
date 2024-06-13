@@ -16,8 +16,8 @@ import MyPage from './pages/MyPage.js';
 import AdminMain from './adminpage/AdminMain.js';
 import useBannerStore from './stores/useBannerStore';
 import Order from './pages/Order.js';
-import Category from './Category.js';
-import Carts from './Carts.js';
+import Category from './pages/Category.js';
+import Carts from './pages/Carts.js';
 
 function App() {
 const { mainBanner } = useBannerStore();

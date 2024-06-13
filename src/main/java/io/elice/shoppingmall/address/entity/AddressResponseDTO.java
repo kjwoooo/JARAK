@@ -14,7 +14,7 @@ public class AddressResponseDTO {
     private String addr;
     private String addrDetail;
     private String recipientTel;
-    private String deliveryReq;
+    private String addrName;
     private String defDestination;
 
     public AddressResponseDTO(Address address){
@@ -24,7 +24,7 @@ public class AddressResponseDTO {
         this.addr = address.getAddr();
         this.addrDetail = address.getAddrDetail();
         this.recipientTel = address.getAddrDetail();
-        this.deliveryReq = address.getDeliveryReq();
+        this.addrName = address.getAddrName();
         this.defDestination = address.getDefDestination();
     }
 }
