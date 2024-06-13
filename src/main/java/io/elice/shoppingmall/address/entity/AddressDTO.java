@@ -15,7 +15,7 @@ public class AddressDTO {
     private String addr;
     private String addrDetail;
     private String recipientTel;
-    private String deliveryReq;
+    private String addrName;
     private String defDestination;
 
     public Address toEntity(){
@@ -26,7 +26,7 @@ public class AddressDTO {
         address.setAddr(addr);
         address.setAddrDetail(addrDetail);
         address.setRecipientTel(recipientTel);
-        address.setDeliveryReq(deliveryReq);
+        address.setAddrName(addrName);
         address.setDefDestination(defDestination);
 
         return address;
