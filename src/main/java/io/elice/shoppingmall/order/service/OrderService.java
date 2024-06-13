@@ -4,7 +4,9 @@ import io.elice.shoppingmall.address.entity.Address;
 import io.elice.shoppingmall.address.entity.AddressDTO;
 import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
+import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
+import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.cart.service.CartService;
 import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.exception.ErrorCode;
@@ -40,18 +42,20 @@ public class OrderService {
     private final AddressService addressService;
     private final MemberService memberService;
     private final CartService cartService;
+    private final CartItemService cartItemService;
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
     private static final OrderDetailMapper orderDetailMapper = OrderDetailMapper.INSTANCE;
 
     @Autowired
     public OrderService(OrderRepository orderRepository, ItemRepository itemRepository,
                         AddressService addressService, MemberService memberService,
-                        CartService cartService) {
+                        CartService cartService, CartItemService cartItemService) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
         this.addressService = addressService;
         this.memberService = memberService;
         this.cartService = cartService;
+        this.cartItemService = cartItemService;
     }
 
     // 주문 조회 (페이징 적용)
@@ -89,14 +93,15 @@ public class OrderService {
         Address address = resolveAddress(jwtToken, orderDTO);
 
         // DTO에서 엔티티로 변환
-        // Order order = orderDTO.toEntity();
         Order order = orderMapper.orderDTOToOrder(orderDTO);
         order.setMember(member);
         order.setOrderDate(LocalDateTime.now());
         setOrderAddress(order, address);
 
         Cart cart = cartService.getCartByMemberId(member.getId());
-        List<CartItems> cartItems = cart.getCartItems();
+        List<CartItems> cartItems = cartItemService.findItems(cart.getId()).stream()
+                .map(CartItemResponseDto::toEntity)
+                .collect(Collectors.toList());
 
         if (cartItems.isEmpty()) {
             throw new CustomException(ErrorCode.EMPTY_CART);
