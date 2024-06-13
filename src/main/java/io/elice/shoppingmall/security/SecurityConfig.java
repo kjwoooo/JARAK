@@ -73,9 +73,9 @@ public class SecurityConfig{
                 .userInfoEndpoint()
                     .userService(principalOauth2UserService)
                         .and()
-                            .successHandler(oAuth2AuthenticationSuccessHandler)
-                                .and()
-                                    .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+                            .successHandler(oAuth2AuthenticationSuccessHandler);
+//                                .and()
+//                                    .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
 
         http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
