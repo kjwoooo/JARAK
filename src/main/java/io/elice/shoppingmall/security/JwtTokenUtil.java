@@ -3,6 +3,8 @@ package io.elice.shoppingmall.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,9 @@ public class JwtTokenUtil {
     @Getter
     private final long EXPIRE_TIME_MS = 1000 * 60 * 60;
     @Getter
-    private final int JWT_COOKIE_MAX_AGE = 60 * 60;
-
+    private final int JWT_COOKIE_MAX_AGE = 60 * 60 * 24;
+    @Getter
+    private final int JWT_SUM_EXPIRE_TIME_MS = 1000 * 60 * 5;
     private final String JWT_USERNAME = "username";
     private final String JWT_AUTHORITY = "authority";
 
@@ -41,6 +44,20 @@ public class JwtTokenUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_TIME_MS))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
+    }
+
+    public String tokenExpireExtension(String token){
+        Claims claims = Jwts.claims();
+        claims.put(JWT_USERNAME, getUsername(token));
+        claims.put(JWT_AUTHORITY, getAuthenticationInToken(token));
+        long expireTime = getExpireTime(token);
+
+        return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(new Date(getIssuedAtTime(token)))
+            .setExpiration(new Date(getExpireTime(token)))
+            .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+            .compact();
     }
 
     public String getUsername(String token) {
@@ -62,7 +79,22 @@ public class JwtTokenUtil {
         return expiredDate.before(new Date());
     }
 
+    public Long getIssuedAtTime(String token){
+        return extractClaims(token).getIssuedAt().getTime();
+    }
+
+    public Long getExpireTime(String token){
+        return extractClaims(token).getExpiration().getTime();
+    }
+
     private Claims extractClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+    }
+
+    public void tokenDestroy(HttpServletResponse response){
+        Cookie cookie = new Cookie(getJWT_COOKIE_NAME(), null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

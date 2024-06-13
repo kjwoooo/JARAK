@@ -13,6 +13,11 @@ public enum ErrorCode {
 
     EXIST_USERNAME(400, "이미 존재하는 아이디 입니다."),
     EXIST_EMAIL(400, "이미 존재하는 이메일 입니다."),
+<<<<<<< HEAD
+=======
+
+    DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다.");
+>>>>>>> feat/user7
 
     NOT_FOUND_CATEGORY(400, "존재하지 않는 카테고리입니다."),
     NOT_FOUND_PARENT_CATEGORY(400, "존재하지 않는 상위 카테고리입니다."),
