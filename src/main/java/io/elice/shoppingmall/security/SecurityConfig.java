@@ -2,6 +2,7 @@ package io.elice.shoppingmall.security;
 
 import io.elice.shoppingmall.member.MemberAuthority;
 import io.elice.shoppingmall.member.service.MemberService;
+import io.elice.shoppingmall.security.oautho.OAuth2AuthenticationFailurHandler;
 import io.elice.shoppingmall.security.oautho.OAuth2AuthenticationSuccessHandler;
 import io.elice.shoppingmall.security.oautho.PrincipalOauth2UserService;
 import lombok.Getter;
@@ -32,6 +33,8 @@ public class SecurityConfig{
     private final MemberService memberService;
     private final PrincipalOauth2UserService principalOauth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailurHandler oAuth2AuthenticationFailurHandler;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -64,16 +67,16 @@ public class SecurityConfig{
                 .hasAuthority(MemberAuthority.ADMIN.name())
 
             .anyRequest().permitAll()
-        );
+        ).exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
-//        http.oauth2Login()
-//                .userInfoEndpoint()
-//                    .userService(principalOauth2UserService)
-//                        .and()
-//                            .successHandler(oAuth2AuthenticationSuccessHandler);
+        http.oauth2Login()
+                .userInfoEndpoint()
+                    .userService(principalOauth2UserService)
+                        .and()
+                            .successHandler(oAuth2AuthenticationSuccessHandler)
+                                .and()
+                                    .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
-//        http.logout(logout -> logout
-//            .logoutUrl("/members-logout"));
 
         http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JwtExceptionFilter(), JwtTokenFilter.class);

@@ -159,7 +159,7 @@ public class MemberService {
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         memberRepository.delete(member);
-        jwtTokenDestroy(response);
+        util.tokenDestroy(response);
 
         return "회원 탈퇴";
     }

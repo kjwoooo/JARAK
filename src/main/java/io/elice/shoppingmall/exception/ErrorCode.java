@@ -12,7 +12,9 @@ public enum ErrorCode {
     MEMBER_PASSWROD_WRONG(400, "비밀번호가 잘못되었습니다."),
 
     EXIST_USERNAME(400, "이미 존재하는 아이디 입니다."),
-    EXIST_EMAIL(400, "이미 존재하는 이메일 입니다.");
+    EXIST_EMAIL(400, "이미 존재하는 이메일 입니다."),
+
+    DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다.");
 
 
     private final int state;
