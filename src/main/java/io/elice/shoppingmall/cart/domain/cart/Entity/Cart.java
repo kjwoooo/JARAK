@@ -3,11 +3,13 @@ package io.elice.shoppingmall.cart.domain.cart.Entity;
 import io.elice.shoppingmall.cart.domain.cart.DTO.CartResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
+import io.elice.shoppingmall.member.entity.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -32,15 +34,15 @@ public class Cart extends BaseEntity {
     private long id;
 
 //memberid 1:1양방향 관계
-//
-//    @OneToOne
-//    @JoinColumn(name=member_id)
-//    private Member member_id;
+
+    @OneToOne
+    @JoinColumn(name="member_id")
+    private Member member_id;
 
     @OneToMany(mappedBy = "cart_id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItems> cartItems = new ArrayList<>();
 
     public CartResponseDto toCartResponseDto() {
-        return new CartResponseDto(getId(), getCreatedAt());
+        return new CartResponseDto(id, getCreatedAt());
     }
 }
