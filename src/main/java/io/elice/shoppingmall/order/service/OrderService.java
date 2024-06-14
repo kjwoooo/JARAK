@@ -35,6 +35,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 @Service
@@ -106,6 +107,7 @@ public class OrderService {
     }
 
     // 주문 생성
+    @Transactional
     public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
         Address address = resolveAddress(jwtToken, orderDTO);
@@ -132,6 +134,7 @@ public class OrderService {
     }
 
     // 주문 수정
+    @Transactional
     public OrderDTO updateOrder(String jwtToken, Long orderId, OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
@@ -150,6 +153,7 @@ public class OrderService {
     }
 
     // 주문 취소(환불)
+    @Transactional
     public void cancelOrder(String jwtToken, Long orderId, String refundReason) {
         Member member = memberService.findByJwtToken(jwtToken);
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
@@ -194,6 +198,7 @@ public class OrderService {
     }
 
     // 관리자 주문 상태 수정
+    @Transactional
     public OrderDTO updateOrderStatus(Long orderId, OrderState orderState) {
         if (orderState == null) {
             throw new CustomException(ErrorCode.INVALID_ORDER_STATE);
@@ -208,6 +213,7 @@ public class OrderService {
     }
 
     // 관리자 주문 삭제
+    @Transactional
     public void deleteOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
