@@ -190,6 +190,13 @@ public class OrderService {
         return orderMapper.orderToOrderDTO(updatedOrder);
     }
 
+    // 관리자 주문 삭제
+    public void deleteOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
+        orderRepository.delete(order);
+    }
+
     // 주문 저장 및 DTO 반환
     private OrderDTO saveAndReturnOrder(Order order, List<OrderDetail> orderDetails) {
         try {
