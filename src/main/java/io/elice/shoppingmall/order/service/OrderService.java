@@ -21,8 +21,6 @@ import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemImage;
-//NOTE: ItemImageEntity가 변경되어서 수정하였습니다 확인부탁드립니다.
-//import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -266,11 +264,6 @@ public class OrderService {
         int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
         int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
         String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
-        //NOTE: ItemImageEntity가 변경되어서 수정하였습니다 확인부탁드립니다.
-//        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
-//                .findFirst()
-//                .map(ItemImages::getStoredFileName)
-//                .orElse("No Image");
 
         String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImages().stream()
                 .findFirst()
