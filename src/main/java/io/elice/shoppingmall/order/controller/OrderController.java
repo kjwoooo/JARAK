@@ -1,6 +1,5 @@
 package io.elice.shoppingmall.order.controller;
 
-import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
@@ -96,11 +95,7 @@ public class OrderController {
     public ResponseEntity<String> deleteOrder(@CookieValue String jwtToken,
                                               @PathVariable Long orderId,
                                               @RequestParam(required = false) String refundReason) {
-        try {
-            orderService.cancelOrder(jwtToken, orderId, refundReason);
-            return new ResponseEntity<>("주문이 성공적으로 취소되었습니다.", HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        orderService.cancelOrder(jwtToken, orderId, refundReason);
+        return new ResponseEntity<>("주문이 성공적으로 취소되었습니다.", HttpStatus.OK);
     }
 }

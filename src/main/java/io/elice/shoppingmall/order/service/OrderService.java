@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -58,28 +59,49 @@ public class OrderService {
 
     // 주문 조회 (페이징 적용)
     public Page<OrderDTO> getOrdersByMemberId(Long memberId, int pageNumber, int pageSize) {
+        if (pageNumber < 0 || pageSize <= 0) {
+            throw new CustomException(ErrorCode.INVALID_PAGING_PARAMETERS);
+        }
+
         Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
         Page<Order> pagedOrders = orderRepository.findByMemberIdOrderByIdDesc(memberId, pageableRequest);
+
+        if (pagedOrders.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND_ORDER);
+        }
+
         return pagedOrders.map(orderMapper::orderToOrderDTO);
     }
+
 
     // 주문 상세 조회
     public List<OrderDetailDTO> getOrderDetailsByOrderId(Long orderId, Long memberId) {
         Order order = orderRepository.findByIdAndMemberId(orderId, memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
-        return orderDetailMapper.orderDetailsToOrderDetailDTOs(order.getOrderDetails());
+
+        List<OrderDetail> orderDetails = order.getOrderDetails();
+        if (orderDetails.isEmpty()) {
+            throw new CustomException(ErrorCode.NO_ORDER_DETAILS_FOUND);
+        }
+
+        return orderDetailMapper.orderDetailsToOrderDetailDTOs(orderDetails);
     }
 
     // 주문 조회 (단일)
     public Optional<OrderDTO> getOrderById(Long orderId, Long memberId) {
         Order order = orderRepository.findByIdAndMemberId(orderId, memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
+
         return Optional.of(orderMapper.orderToOrderDTO(order));
     }
 
     // 전체 주문 수 조회
     public long getTotalOrderCount() {
-        return orderRepository.count();
+        long totalOrderCount = orderRepository.count();
+        if (totalOrderCount < 0) {
+            throw new CustomException(ErrorCode.ORDER_COUNT_ERROR);
+        }
+        return totalOrderCount;
     }
 
     // 주문 생성
@@ -154,12 +176,18 @@ public class OrderService {
 
     // 주문 저장 및 DTO 반환
     private OrderDTO saveAndReturnOrder(Order order, List<OrderDetail> orderDetails) {
-        order.setOrderDetails(orderDetails);
-        setOrderSummary(order, orderDetails);
+        try {
+            order.setOrderDetails(orderDetails);
+            setOrderSummary(order, orderDetails);
 
-        Order savedOrder = orderRepository.save(order);
-        return orderMapper.orderToOrderDTO(savedOrder);
+            Order savedOrder = orderRepository.save(order);
+            return orderMapper.orderToOrderDTO(savedOrder);
+        } catch (DataAccessException e) {
+            // 데이터베이스 접근 예외 처리
+            throw new CustomException(ErrorCode.SAVE_ORDER_FAILED);
+        }
     }
+
 
     // 선택된 주소 확인
     private Address resolveAddress(String jwtToken, OrderDTO orderDTO) {
