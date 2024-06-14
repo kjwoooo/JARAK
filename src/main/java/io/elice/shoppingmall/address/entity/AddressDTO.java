@@ -10,14 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDTO {
-    private Long memberId;
     private String recipientName;
     private String zipcode;
     private String addr;
     private String addrDetail;
     private String recipientTel;
+    private String addrName;
     private String deliveryReq;
-    private String defDestination;
 
     public Address toEntity(){
         Address address = new Address();
@@ -27,8 +26,8 @@ public class AddressDTO {
         address.setAddr(addr);
         address.setAddrDetail(addrDetail);
         address.setRecipientTel(recipientTel);
+        address.setAddrName(addrName);
         address.setDeliveryReq(deliveryReq);
-        address.setDefDestination(defDestination);
 
         return address;
     }

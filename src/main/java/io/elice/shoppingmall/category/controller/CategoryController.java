@@ -21,8 +21,7 @@ public class CategoryController {
     /**모든 카테고리 조회*/
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
-        List<CategoryDto> categories = categoryService.getAllCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 
     /**
@@ -32,31 +31,27 @@ public class CategoryController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> getCategory(@PathVariable Long id) {
-        CategoryDto category = categoryService.getCategory(id);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+        return new ResponseEntity<>(categoryService.getCategory(id), HttpStatus.OK);
     }
 
 
     /**특정 상위 카테고리의 하위 카테고리 조회*/
     @GetMapping("/{parentId}/subcategories")
     public ResponseEntity<List<CategoryDto>> getSubCategories(@PathVariable Long parentId) {
-        List<CategoryDto> subcategories = categoryService.getSubCategories(parentId);
-        return new ResponseEntity<>(subcategories, HttpStatus.OK);
+        return new ResponseEntity<>(categoryService.getSubCategories(parentId), HttpStatus.OK);
     }
 
     /**카테고리 추가*/
     @PostMapping
     // 단순 이름으로만 카테고리를 생성할지? 추후 추가적인 내용(설명, 분류)을 추가할지 몰라서 DTO로 구성
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
-        CategoryDto createdCategory = categoryService.createCategory(categoryDto);
-        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
+        return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
     }
 
     /**카테고리 업데이트*/
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
-        CategoryDto updatedCategory = categoryService.updateCategory(id, categoryDto);
-        return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+        return new ResponseEntity<>(categoryService.updateCategory(id, categoryDto), HttpStatus.OK);
     }
 
     /** 카테고리 삭제*/

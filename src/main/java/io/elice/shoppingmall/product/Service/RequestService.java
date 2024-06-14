@@ -1,13 +1,10 @@
 package io.elice.shoppingmall.product.Service;
 
 import io.elice.shoppingmall.product.DTO.RequestDTO;
-import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Review.Request;
-import io.elice.shoppingmall.product.Entity.Review.Review;
-import io.elice.shoppingmall.product.Repository.ItemRepository;
+import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import io.elice.shoppingmall.product.Repository.RequestRepository;
-import io.elice.shoppingmall.product.Repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
