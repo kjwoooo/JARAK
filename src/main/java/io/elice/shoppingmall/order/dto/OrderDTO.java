@@ -77,7 +77,7 @@ public class OrderDTO {
     @Size(min = 1, message = "Order details must have at least one item.")
     private List<OrderDetailDTO> orderDetails;
 
-    private boolean useNewAddress; // 새로운 배송지 사용 여부
+    private Long selectedAddressId; // 사용자가 선택한 특정 주소 ID
 
     public Order toEntity() {
         return Order.builder()

@@ -143,26 +143,44 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-    // 새로운 배송지 저장 및 변환
+    // 선택된 주소 확인
     private Address resolveAddress(String jwtToken, OrderDTO orderDTO) {
-        if (orderDTO.isUseNewAddress()) {
-            AddressDTO newAddressDTO = new AddressDTO(
-                    orderDTO.getRecipientName(),
-                    orderDTO.getZipcode(),
-                    orderDTO.getAddr(),
-                    orderDTO.getAddrDetail(),
-                    orderDTO.getRecipientTel(),
-                    orderDTO.getDeliveryReq(),
-                    "Y"
-            );
-            return addressService.save(jwtToken, newAddressDTO);
+        Long selectedAddressId = orderDTO.getSelectedAddressId();
+
+        if (selectedAddressId != null) {
+            // 선택된 주소가 있으면 해당 주소를 반환
+            return addressService.findById(selectedAddressId);
         } else {
-            List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
-            return addresses.stream()
-                    .filter(addr -> "Y".equals(addr.getDeliveryReq()))
-                    .findFirst()
-                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
+            // 선택된 주소가 없으면 주소 리스트를 조회하여 첫 번째 주소를 반환
+            return getOrSaveAddress(jwtToken, orderDTO);
         }
+    }
+
+    // 주소 리스트 존재 확인
+    private Address getOrSaveAddress(String jwtToken, OrderDTO orderDTO) {
+        List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
+
+        if (addresses.isEmpty()) {
+            // 주소 리스트가 없다면 새로운 주소 저장
+            return saveNewAddress(jwtToken, orderDTO);
+        } else {
+            // 주소 리스트가 존재하면 첫 번째 주소를 반환
+            return addresses.get(0);
+        }
+    }
+
+    // 새로운 주소 저장
+    private Address saveNewAddress(String jwtToken, OrderDTO orderDTO) {
+        AddressDTO newAddressDTO = new AddressDTO(
+                orderDTO.getRecipientName(),
+                orderDTO.getZipcode(),
+                orderDTO.getAddr(),
+                orderDTO.getAddrDetail(),
+                orderDTO.getRecipientTel(),
+                orderDTO.getDeliveryReq(),
+                orderDTO.getAddrName()
+        );
+        return addressService.save(jwtToken, newAddressDTO);
     }
 
     // CartItems 가져오기
@@ -229,5 +247,7 @@ public class OrderService {
         order.setAddr(address.getAddr());
         order.setAddrDetail(address.getAddrDetail());
         order.setRecipientTel(address.getRecipientTel());
+        order.setAddrName(address.getAddrName());
+        order.setDeliveryReq(address.getDeliveryReq());
     }
 }
