@@ -1,6 +1,5 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
-import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,14 +11,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemDetail {
+public class ItemImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String color;
-    private String size;
-    private int quantity;
+    private String filePath;
+    private String fileName;
 
     @ManyToOne
     @JoinColumn(name = "item_id")
