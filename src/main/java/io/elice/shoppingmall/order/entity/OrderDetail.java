@@ -49,4 +49,10 @@ public class OrderDetail extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderState orderState;
+
+    @Column(nullable = false)
+    private String color;
+
+    @Column(nullable = false)
+    private String size;
 }

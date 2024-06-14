@@ -22,6 +22,8 @@ public class OrderDetailDTO {
     private Integer price;
     private Integer quantity;
     private OrderState orderState;
+    private String color;
+    private String size;
 
     public OrderDetail toEntity(Order order, Item item) {
         return OrderDetail.builder()
@@ -31,6 +33,8 @@ public class OrderDetailDTO {
                 .price(price)
                 .quantity(quantity)
                 .orderState(orderState)
+                .color(color)
+                .size(size)
                 .build();
     }
 }

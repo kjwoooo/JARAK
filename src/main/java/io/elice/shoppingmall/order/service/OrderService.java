@@ -284,6 +284,8 @@ public class OrderService {
                         .price(cartItem.getItem_id().getPrice())
                         .quantity(cartItem.getQuantity())
                         .orderState(OrderState.PENDING) // 기본 주문 상태 설정
+                        .color(cartItem.getColor())
+                        .size(cartItem.getSize())
                         .build())
                 .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
     }
