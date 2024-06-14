@@ -24,7 +24,6 @@ import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -95,14 +94,7 @@ public class OrderService {
         order.setMember(member);
         setOrderAddress(order, address);
 
-        Cart cart = cartService.findCartByMemberId(member);
-        List<CartItems> cartItems = cartItemService.findAllItemsByCartId(cart.getId()).stream()
-                .map(cartItemDto -> {
-                    Item item = itemRepository.findById(cartItemDto.getItem_id())
-                            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
-                    return cartItemDto.toEntity(cart, item);
-                })
-                .collect(Collectors.toList());
+        List<CartItems> cartItems = getCartItems(member);
 
         if (cartItems.isEmpty()) {
             throw new CustomException(ErrorCode.EMPTY_CART);
@@ -171,6 +163,18 @@ public class OrderService {
                     .findFirst()
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
         }
+    }
+
+    // CartItems 가져오기
+    private List<CartItems> getCartItems(Member member) {
+        Cart cart = cartService.findCartByMemberId(member);
+        return cartItemService.findAllItemsByCartId(cart.getId()).stream()
+                .map(cartItemDto -> {
+                    Item item = itemRepository.findById(cartItemDto.getItem_id())
+                            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
+                    return cartItemDto.toEntity(cart, item);
+                })
+                .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
     }
 
     // CartItems로부터 OrderDetail 생성
