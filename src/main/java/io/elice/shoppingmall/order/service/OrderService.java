@@ -300,10 +300,17 @@ public class OrderService {
         }
     }
 
-    // 관리자용 전체 주문 조회 (페이징 적용)
-    public List<OrderDTO> getAllOrders(int pageNumber, int pageSize) {
+    // 모든 주문 조회 (페이징 적용)
+    public Page<OrderDTO> getAllOrders(int pageNumber, int pageSize) {
+        validatePagingParameters(pageNumber, pageSize);
+
         Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
         Page<Order> pagedOrders = orderRepository.findAll(pageableRequest);
-        return pagedOrders.stream().map(orderMapper::orderToOrderDTO).toList();
+
+        validatePagedOrders(pagedOrders);
+
+        return pagedOrders.map(orderMapper::orderToOrderDTO);
     }
+
+
 }
