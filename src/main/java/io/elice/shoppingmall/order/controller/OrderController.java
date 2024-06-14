@@ -115,11 +115,11 @@ public class OrderController {
         }
     }
 
-    // 주문 삭제
+    // 주문 취소(환불)
     @DeleteMapping("/delete/{orderId}")
     public ResponseEntity<String> deleteOrder(@CookieValue String jwtToken, @PathVariable Long orderId) {
         try {
-            orderService.deleteOrder(jwtToken, orderId);
+            orderService.cancelOrder(jwtToken, orderId);
             return new ResponseEntity<>("주문이 성공적으로 삭제되었습니다.", HttpStatus.OK);
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

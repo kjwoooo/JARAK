@@ -114,6 +114,11 @@ public class OrderService {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
+        // 주문 상태가 CANCELLED인 경우 수정 불가
+        if (order.getOrderState() == OrderState.CANCELLED) {
+            throw new CustomException(ErrorCode.CANNOT_MODIFY_CANCELLED_ORDER);
+        }
+
         Address address = resolveAddress(jwtToken, orderDTO);
         setOrderAddress(order, address);
 
@@ -121,6 +126,18 @@ public class OrderService {
         return saveAndReturnOrder(order, orderDetails);
     }
 
+    // 주문 취소(환불)
+    public void cancelOrder(String jwtToken, Long orderId) {
+        Member member = memberService.findByJwtToken(jwtToken);
+        Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
+
+        // 주문 상태를 CANCELLED로 설정
+        order.setOrderState(OrderState.CANCELLED);
+        orderRepository.save(order);
+    }
+
+    /*
     // 주문 삭제
     public void deleteOrder(String jwtToken, Long orderId) {
         Member member = memberService.findByJwtToken(jwtToken);
@@ -128,6 +145,7 @@ public class OrderService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
         orderRepository.delete(order);
     }
+     */
 
     // 주문 저장 및 DTO 반환
     private OrderDTO saveAndReturnOrder(Order order, List<OrderDetail> orderDetails) {
@@ -235,9 +253,9 @@ public class OrderService {
         order.setRecipientName(address.getRecipientName());
         order.setZipcode(address.getZipcode());
         order.setAddr(address.getAddr());
-        order.setAddrDetail(address.getAddrDetail());
+        order.setAddrDetail(address.getAddrDetail() != null ? address.getAddrDetail() : ""); // null 체크 및 기본값 설정
         order.setRecipientTel(address.getRecipientTel());
         order.setAddrName(address.getAddrName());
-        order.setDeliveryReq(address.getDeliveryReq());
+        order.setDeliveryReq(address.getDeliveryReq() != null ? address.getDeliveryReq() : ""); // null 체크 및 기본값 설정
     }
 }

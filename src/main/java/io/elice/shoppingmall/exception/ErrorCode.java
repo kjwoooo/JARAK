@@ -26,6 +26,7 @@ public enum ErrorCode {
 
     NOT_FOUND_ORDER(400, "주문을 찾을 수 없습니다."),
     EMPTY_CART(400, "장바구니에 상품이 없습니다."),
+    CANNOT_MODIFY_CANCELLED_ORDER(400, "취소된 주문은 수정할 수 없습니다."),
 
     // 유효성 검사(Validation) error codes
     INVALID_ORDER_DETAILS(400, "주문 세부 정보가 유효하지 않습니다.");
