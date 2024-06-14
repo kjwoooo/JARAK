@@ -1,16 +1,21 @@
 package io.elice.shoppingmall.order.controller;
 
 import io.elice.shoppingmall.order.dto.OrderDTO;
+import io.elice.shoppingmall.order.entity.OrderState;
 import io.elice.shoppingmall.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/admin/orders")
 public class OrderAdminController {
     private final OrderService orderService;
 
@@ -25,5 +30,13 @@ public class OrderAdminController {
                                                        @RequestParam(defaultValue = "10") int size) {
         Page<OrderDTO> orders = orderService.getAllOrders(page, size);
         return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    // 관리자 주문 상태 수정
+    @PutMapping("/update/{orderId}")
+    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId,
+                                                      @RequestParam OrderState orderState) {
+        OrderDTO updatedOrder = orderService.updateOrderStatus(orderId, orderState);
+        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }
 }

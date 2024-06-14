@@ -169,6 +169,27 @@ public class OrderService {
     }
      */
 
+    // 관리자 모든 주문 조회 (페이징 적용)
+    public Page<OrderDTO> getAllOrders(int pageNumber, int pageSize) {
+        validatePagingParameters(pageNumber, pageSize);
+
+        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
+        Page<Order> pagedOrders = orderRepository.findAll(pageableRequest);
+
+        validatePagedOrders(pagedOrders);
+        return pagedOrders.map(orderMapper::orderToOrderDTO);
+    }
+
+    // 관리자 주문 상태 수정
+    public OrderDTO updateOrderStatus(Long orderId, OrderState orderState) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
+
+        order.setOrderState(orderState);
+        Order updatedOrder = orderRepository.save(order);
+        return orderMapper.orderToOrderDTO(updatedOrder);
+    }
+
     // 주문 저장 및 DTO 반환
     private OrderDTO saveAndReturnOrder(Order order, List<OrderDetail> orderDetails) {
         try {
@@ -259,7 +280,7 @@ public class OrderService {
                 .toList();  // Stream.toList()로 변경하여 불변 리스트를 반환
     }
 
-//     주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
+    // 주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
     private void setOrderSummary(Order order, List<OrderDetail> orderDetails) {
         int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
         int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
@@ -299,18 +320,4 @@ public class OrderService {
             throw new CustomException(ErrorCode.NOT_FOUND_ORDER);
         }
     }
-
-    // 모든 주문 조회 (페이징 적용)
-    public Page<OrderDTO> getAllOrders(int pageNumber, int pageSize) {
-        validatePagingParameters(pageNumber, pageSize);
-
-        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
-        Page<Order> pagedOrders = orderRepository.findAll(pageableRequest);
-
-        validatePagedOrders(pagedOrders);
-
-        return pagedOrders.map(orderMapper::orderToOrderDTO);
-    }
-
-
 }
