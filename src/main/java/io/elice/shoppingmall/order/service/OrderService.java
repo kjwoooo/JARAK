@@ -20,7 +20,9 @@ import io.elice.shoppingmall.order.mapper.OrderDetailMapper;
 import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.Entity.Item.Item;
-import io.elice.shoppingmall.product.Entity.Item.ItemImages;
+import io.elice.shoppingmall.product.Entity.Item.ItemImage;
+//NOTE: ItemImageEntity가 변경되어서 수정하였습니다 확인부탁드립니다.
+//import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -259,14 +261,20 @@ public class OrderService {
                 .toList();  // Stream.toList()로 변경하여 불변 리스트를 반환
     }
 
-    // 주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
+//     주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
     private void setOrderSummary(Order order, List<OrderDetail> orderDetails) {
         int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
         int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
         String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
-        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
+        //NOTE: ItemImageEntity가 변경되어서 수정하였습니다 확인부탁드립니다.
+//        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImagesList().stream()
+//                .findFirst()
+//                .map(ItemImages::getStoredFileName)
+//                .orElse("No Image");
+
+        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImages().stream()
                 .findFirst()
-                .map(ItemImages::getStoredFileName)
+                .map(ItemImage::getFileName)
                 .orElse("No Image");
 
         order.setTotalQuantity(totalQuantity);
