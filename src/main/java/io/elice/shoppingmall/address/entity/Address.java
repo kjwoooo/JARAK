@@ -46,5 +46,5 @@ public class Address {
     private String addrName;
 
     @Column(nullable = false)
-    private String defDestination;
+    private String deliveryReq;
 }
