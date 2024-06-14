@@ -166,7 +166,7 @@ public class OrderService {
         } else {
             List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
             return addresses.stream()
-                    .filter(addr -> "Y".equals(addr.getDefDestination()))
+                    .filter(addr -> "Y".equals(addr.getDeliveryReq()))
                     .findFirst()
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
         }
