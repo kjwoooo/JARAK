@@ -35,7 +35,7 @@ public class AddressController {
 
     @PostMapping("/addresses/{id}")
     public ResponseEntity<AddressResponseDTO> postMemberAddress(@CookieValue String jwtToken, @PathVariable Long id, @RequestBody AddressDTO addressDto){
-        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, id, addressDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, id, addressDto), HttpStatus.OK);
     }
 
     @PostMapping("/addresses")
@@ -43,8 +43,8 @@ public class AddressController {
         return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, addressDto), HttpStatus.CREATED);
     }
 
-//    @DeleteMapping("/addresses/{id}")
-//    public ResponseEntity<String> deleteMemberAddress(@CookieValue String jwtToken, @PathVariable Long id){
-//
-//    }
+    @DeleteMapping("/addresses/{id}")
+    public ResponseEntity<String> deleteMemberAddress(@CookieValue String jwtToken, @PathVariable Long id){
+        return new ResponseEntity<>(addressService.delete(jwtToken, id), HttpStatus.OK);
+    }
 }
