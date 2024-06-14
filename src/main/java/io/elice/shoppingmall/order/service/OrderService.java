@@ -4,6 +4,7 @@ import io.elice.shoppingmall.address.entity.Address;
 import io.elice.shoppingmall.address.entity.AddressDTO;
 import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
+import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.cart.service.CartService;
@@ -19,9 +20,11 @@ import io.elice.shoppingmall.order.entity.OrderState;
 import io.elice.shoppingmall.order.mapper.OrderDetailMapper;
 import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
+import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemImage;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
+import io.elice.shoppingmall.product.Service.Item.ItemService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +42,7 @@ import org.springframework.validation.annotation.Validated;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
+    private final ItemService itemService;
     private final AddressService addressService;
     private final MemberService memberService;
     private final CartService cartService;
@@ -47,11 +51,12 @@ public class OrderService {
     private static final OrderDetailMapper orderDetailMapper = OrderDetailMapper.INSTANCE;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, ItemRepository itemRepository,
+    public OrderService(OrderRepository orderRepository, ItemRepository itemRepository, ItemService itemService,
                         AddressService addressService, MemberService memberService,
                         CartService cartService, CartItemService cartItemService) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
+        this.itemService = itemService;
         this.addressService = addressService;
         this.memberService = memberService;
         this.cartService = cartService;
@@ -267,12 +272,24 @@ public class OrderService {
     private List<CartItems> getCartItems(Member member) {
         Cart cart = cartService.findCartByMemberId(member);
         return cartItemService.findAllItemsByCartId(cart.getId()).stream()
-                .map(cartItemDto -> {
-                    Item item = itemRepository.findById(cartItemDto.getItem_id())
-                            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
-                    return cartItemDto.toEntity(cart, item);
-                })
+                .map(cartItemDto -> convertToCartItems(cartItemDto, cart))
                 .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
+    }
+
+    // CartItemResponseDto를 CartItems로 변환하는 메서드
+    private CartItems convertToCartItems(CartItemResponseDto cartItemDto, Cart cart) {
+        // ItemDetail 정보를 가져옴
+        ItemDetailDTO itemDetail = itemService.getItemDetailById(cartItemDto.getItem_id());
+
+        // 예외 처리: ItemDetail의 quantity가 0 이하인 경우 예외 발생
+        if (itemDetail.getQuantity() <= 0) {
+            throw new CustomException(ErrorCode.INVALID_ITEM_QUANTITY);
+        }
+
+        Item item = itemRepository.findById(cartItemDto.getItem_id())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
+
+        return cartItemDto.toEntity(cart, item);
     }
 
     // CartItems로부터 OrderDetail 생성
