@@ -59,20 +59,15 @@ public class OrderService {
 
     // 주문 조회 (페이징 적용)
     public Page<OrderDTO> getOrdersByMemberId(Long memberId, int pageNumber, int pageSize) {
-        if (pageNumber < 0 || pageSize <= 0) {
-            throw new CustomException(ErrorCode.INVALID_PAGING_PARAMETERS);
-        }
+        validatePagingParameters(pageNumber, pageSize);
 
         Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
         Page<Order> pagedOrders = orderRepository.findByMemberIdOrderByIdDesc(memberId, pageableRequest);
 
-        if (pagedOrders.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND_ORDER);
-        }
+        validatePagedOrders(pagedOrders);
 
         return pagedOrders.map(orderMapper::orderToOrderDTO);
     }
-
 
     // 주문 상세 조회
     public List<OrderDetailDTO> getOrderDetailsByOrderId(Long orderId, Long memberId) {
@@ -188,7 +183,6 @@ public class OrderService {
         }
     }
 
-
     // 선택된 주소 확인
     private Address resolveAddress(String jwtToken, OrderDTO orderDTO) {
         Long selectedAddressId = orderDTO.getSelectedAddressId();
@@ -290,5 +284,18 @@ public class OrderService {
         order.setRecipientTel(address.getRecipientTel());
         order.setAddrName(address.getAddrName());
         order.setDeliveryReq(address.getDeliveryReq() != null ? address.getDeliveryReq() : ""); // null 체크 및 기본값 설정
+    }
+
+    // 예외 처리 헬퍼 메서드
+    private void validatePagingParameters(int pageNumber, int pageSize) {
+        if (pageNumber < 0 || pageSize <= 0) {
+            throw new CustomException(ErrorCode.INVALID_PAGING_PARAMETERS);
+        }
+    }
+
+    private void validatePagedOrders(Page<Order> pagedOrders) {
+        if (pagedOrders.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND_ORDER);
+        }
     }
 }
