@@ -30,6 +30,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -106,7 +107,7 @@ public class OrderService {
 
         Order order = orderMapper.orderDTOToOrder(orderDTO);
         order.setMember(member);
-        order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING로 설정
+        order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING 으로 설정
         setOrderAddress(order, address);
 
         List<CartItems> cartItems = getCartItems(member);
@@ -169,12 +170,18 @@ public class OrderService {
     }
      */
 
-    // 관리자 모든 주문 조회 (페이징 적용)
-    public Page<OrderDTO> getAllOrders(int pageNumber, int pageSize) {
+    // 관리자 모든 주문 조회 (페이징 적용 및 검색)
+    public Page<OrderDTO> getAllOrders(int pageNumber, int pageSize, String username) {
         validatePagingParameters(pageNumber, pageSize);
 
-        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
-        Page<Order> pagedOrders = orderRepository.findAll(pageableRequest);
+        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize, Sort.by("id").descending());
+
+        Page<Order> pagedOrders;
+        if (username != null && !username.isEmpty()) {
+            pagedOrders = orderRepository.findByMemberUsernameContaining(username, pageableRequest);
+        } else {
+            pagedOrders = orderRepository.findAll(pageableRequest);
+        }
 
         validatePagedOrders(pagedOrders);
         return pagedOrders.map(orderMapper::orderToOrderDTO);

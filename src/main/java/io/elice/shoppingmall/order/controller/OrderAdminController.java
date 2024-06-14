@@ -25,11 +25,12 @@ public class OrderAdminController {
         this.orderService = orderService;
     }
 
-    // 관리자 주문 조회 (페이징 적용)
+    // 관리자 모든 주문 조회 (페이징 적용 및 검색)
     @GetMapping
     public ResponseEntity<Page<OrderDTO>> getAllOrders(@RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "10") int size) {
-        Page<OrderDTO> orders = orderService.getAllOrders(page, size);
+                                                       @RequestParam(defaultValue = "10") int size,
+                                                       @RequestParam(required = false) String username) {
+        Page<OrderDTO> orders = orderService.getAllOrders(page, size, username);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
