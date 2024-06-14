@@ -88,7 +88,7 @@ public class OrderService {
             // 기존 배송지 정보 가져오기
             List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
             address = addresses.stream()
-                    .filter(addr -> "Y".equals(addr.getDefDestination()))
+                    .filter(addr -> "Y".equals(addr.getDeliveryReq()))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("기본 배송지 정보가 없습니다. 새로운 배송지를 입력해주세요."));
         }
