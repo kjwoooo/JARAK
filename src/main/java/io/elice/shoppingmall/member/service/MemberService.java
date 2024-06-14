@@ -104,7 +104,7 @@ public class MemberService {
      * 해당 회원이 존재하는지 검증
      * @param loginInfo 로그인할 때, 회원이 입력한 ID, Password 정보
      * @param response
-     * @return
+     * @returnwb
      */
         Member member = memberRepository.findByUsername(memberLogin.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));

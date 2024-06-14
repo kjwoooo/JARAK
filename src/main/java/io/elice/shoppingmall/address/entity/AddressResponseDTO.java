@@ -20,7 +20,7 @@ public class AddressResponseDTO {
 
     public AddressResponseDTO(Address address){
         this.id = address.getId();
-        this.memberId = address.getId();
+        this.memberId = address.getMember().getId();
         this.recipientName = address.getRecipientName();
         this.zipcode = address.getZipcode();
         this.addr = address.getAddr();
