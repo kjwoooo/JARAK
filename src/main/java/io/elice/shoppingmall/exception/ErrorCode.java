@@ -22,10 +22,13 @@ public enum ErrorCode {
 
     NOT_MATCHE_ADDRESS_TO_MEMBER(400, "회원 정보와 주소 정보가 일치하지 않습니다."),
 
-    DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다.");
+    DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다."),
 
+    NOT_FOUND_ORDER(400, "주문을 찾을 수 없습니다."),
+    EMPTY_CART(400, "장바구니에 상품이 없습니다."),
 
-
+    // 유효성 검사(Validation) error codes
+    INVALID_ORDER_DETAILS(400, "주문 세부 정보가 유효하지 않습니다.");
 
     private final int state;
     private final String message;

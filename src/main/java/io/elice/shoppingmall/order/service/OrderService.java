@@ -4,7 +4,6 @@ import io.elice.shoppingmall.address.entity.Address;
 import io.elice.shoppingmall.address.entity.AddressDTO;
 import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
-import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.cart.service.CartService;
@@ -23,7 +22,6 @@ import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemImages;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import jakarta.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -89,51 +87,21 @@ public class OrderService {
     public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
 
-<<<<<<< HEAD
-//        // 배송지 정보를 결정하고 주소를 가져옴
-//        Address address = resolveAddress(jwtToken, orderDTO);
-=======
-        Address address;
-
-        if (orderDTO.isUseNewAddress()) {
-            // 새로운 배송지 정보 입력받기
-            AddressDTO newAddressDTO = new AddressDTO(
-                    orderDTO.getRecipientName(),
-                    orderDTO.getZipcode(),
-                    orderDTO.getAddr(),
-                    orderDTO.getAddrDetail(),
-                    orderDTO.getRecipientTel(),
-                    orderDTO.getDeliveryReq(),
-                    "Y" // 기본 배송지 설정 여부
-            );
-            address = addressService.save(jwtToken, newAddressDTO);
-        } else {
-            // 기존 배송지 정보 가져오기
-            List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
-            address = addresses.stream()
-                    .filter(addr -> "Y".equals(addr.getDeliveryReq()))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("기본 배송지 정보가 없습니다. 새로운 배송지를 입력해주세요."));
-        }
-
-        // 주소 정보를 OrderDTO에 설정
-        orderDTO.setRecipientName(address.getRecipientName());
-        orderDTO.setZipcode(address.getZipcode());
-        orderDTO.setAddr(address.getAddr());
-        orderDTO.setAddrDetail(address.getAddrDetail());
-        orderDTO.setRecipientTel(address.getRecipientTel());
-        orderDTO.setDeliveryReq(address.getAddrName());
->>>>>>> dev
+        // 배송지 정보를 결정하고 주소를 가져옴
+        Address address = resolveAddress(jwtToken, orderDTO);
 
         // DTO에서 엔티티로 변환
         Order order = orderMapper.orderDTOToOrder(orderDTO);
         order.setMember(member);
-        order.setOrderDate(LocalDateTime.now());
         setOrderAddress(order, address);
 
-        Cart cart = cartService.getCartByMemberId(member.getId());
-        List<CartItems> cartItems = cartItemService.findItems(cart.getId()).stream()
-                .map(CartItemResponseDto::toEntity)
+        Cart cart = cartService.findCartByMemberId(member);
+        List<CartItems> cartItems = cartItemService.findAllItemsByCartId(cart.getId()).stream()
+                .map(cartItemDto -> {
+                    Item item = itemRepository.findById(cartItemDto.getItem_id())
+                            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
+                    return cartItemDto.toEntity(cart, item);
+                })
                 .collect(Collectors.toList());
 
         if (cartItems.isEmpty()) {
@@ -209,7 +177,7 @@ public class OrderService {
     private List<OrderDetail> createOrderDetailsFromCartItems(List<CartItems> cartItems, Order order) {
         return cartItems.stream()
                 .map(cartItem -> {
-                    Item item = cartItem.getItem();
+                    Item item = cartItem.getItem_id();
                     int price = item.getPrice();
 
                     return OrderDetail.builder()
@@ -221,6 +189,7 @@ public class OrderService {
                 })
                 .toList();  // Stream.toList()로 변경하여 불변 리스트를 반환
     }
+
 
     // OrderDTO로부터 OrderDetail 생성
     private List<OrderDetail> createOrderDetailsFromOrderDTO(OrderDTO orderDTO, Order order) {

@@ -14,9 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,10 +39,6 @@ public class Order extends BaseEntity {
 
     @Column(nullable = false)
     private Integer price;
-
-    @Column(name = "order_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private LocalDateTime orderDate;
 
     @Column(name = "pay_card", length = 255, nullable = false)
     private String payCard;

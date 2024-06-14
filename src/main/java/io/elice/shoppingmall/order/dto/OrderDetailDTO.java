@@ -19,6 +19,8 @@ import lombok.Setter;
 public class OrderDetailDTO {
     private Long id;
 
+    private Long orderId;
+
     @NotNull(message = "Item ID is required.")
     private Long itemId;
 

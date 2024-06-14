@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +26,6 @@ public class OrderDTO {
 
     @NotNull(message = "Price is required.")
     private Integer price;
-
-    @NotNull(message = "Order date is required.")
-    private LocalDateTime orderDate;
 
     @NotBlank(message = "Pay card is required.")
     @Size(max = 255, message = "Pay card can have at most 255 characters.")
@@ -82,7 +78,6 @@ public class OrderDTO {
         return Order.builder()
                 .id(id)
                 .price(price)
-                .orderDate(orderDate)
                 .payCard(payCard)
                 .orderState(orderState)
                 .refundReason(refundReason)
