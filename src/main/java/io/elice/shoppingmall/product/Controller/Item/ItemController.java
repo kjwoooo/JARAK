@@ -1,71 +1,81 @@
 package io.elice.shoppingmall.product.Controller.Item;
 
+
 import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
-import io.elice.shoppingmall.product.Entity.Item.Item;
-import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
 import io.elice.shoppingmall.product.Service.Item.ItemService;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.misc.LogManager;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/item")
+@RequestMapping("/api/items")
 public class ItemController {
 
-    private final ItemService itemService;
-    //XXX: 수정 필요. Entity를 컨테이너에서 찾으려 해서 에러
-//    private final ItemDetail itemDetail;
-    //----------------------------------------
+    @Autowired
+    private ItemService itemService;
 
-//    private final ReviewService reviewService;
-//    private final RequestService requestService;
-
-    //상품 등록
-    @PostMapping("/upload")
-    public ResponseEntity<ItemDTO> save(@ModelAttribute ItemDTO itemDTO) throws IOException {
-        itemService.save(itemDTO);
-        return new ResponseEntity(itemDTO, HttpStatus.OK);
+    // Create Item
+    @PostMapping
+    public ItemDTO createItem(@RequestPart ItemDTO itemDTO, @RequestPart List<MultipartFile> files) throws IOException {
+        return itemService.createItem(itemDTO, files);
     }
 
-    //상품 사이즈, 색상, 수량 등록
-    @PostMapping("/{itemId}/details")
-    public ResponseEntity<ItemDetailDTO> saveItemDetail(@PathVariable Long itemId, @RequestBody ItemDetailDTO itemDetailDTO){
-        //XXX: 수정 필요.
-//        itemDetailDTO.setItemId(itemId);
-//        itemService.saveItemDetail(itemDetail);
-        return new ResponseEntity(itemDetailDTO, HttpStatus.OK);
+    // Get All Items
+    @GetMapping
+    public List<ItemDTO> getAllItems() {
+        return itemService.getAllItems();
     }
 
-    //상품 상세 페이지 조회
+    // Get Item by ID
     @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable Long id, Model model){
-        ItemDTO itemdto = itemService.findById(id);
-//        List<ReviewDTO> reviewDTOList = reviewService.findAll(id);
-//        List<RequestDTO> requestDTOList = requestService.findAll(id);
-        return new ResponseEntity(HttpStatus.OK);
+    public ItemDTO getItemById(@PathVariable Long id) {
+        return itemService.getItemById(id);
     }
 
-
-    //상품 수정
+    // Update Item
     @PutMapping("/{id}")
-    public ResponseEntity update(@RequestBody ItemDTO itemDTO){
-        itemService.update(itemDTO);
-        return new ResponseEntity(HttpStatus.OK);
+    public ItemDTO updateItem(@PathVariable Long id, @RequestPart ItemDTO itemDTO, @RequestPart List<MultipartFile> files) throws IOException {
+        return itemService.updateItem(id, itemDTO, files);
     }
 
-    //상품 삭제
+    // Delete Item
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id){
-        itemService.delete(id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public void deleteItem(@PathVariable Long id) {
+        itemService.deleteItem(id);
+    }
+
+    // Create ItemDetail
+    @PostMapping("/{itemId}/details")
+    public ItemDetailDTO createItemDetail(@PathVariable Long itemId, @RequestBody ItemDetailDTO itemDetailDTO) {
+        itemDetailDTO.setItemId(itemId);
+        return itemService.createItemDetail(itemDetailDTO);
+    }
+
+    // Get All ItemDetails
+    @GetMapping("/details")
+    public List<ItemDetailDTO> getAllItemDetails() {
+        return itemService.getAllItemDetails();
+    }
+
+    // Get ItemDetail by ID
+    @GetMapping("/details/{id}")
+    public ItemDetailDTO getItemDetailById(@PathVariable Long id) {
+        return itemService.getItemDetailById(id);
+    }
+
+    // Update ItemDetail
+    @PutMapping("/details/{id}")
+    public ItemDetailDTO updateItemDetail(@PathVariable Long id, @RequestBody ItemDetailDTO itemDetailDTO) {
+        return itemService.updateItemDetail(id, itemDetailDTO);
+    }
+
+    // Delete ItemDetail
+    @DeleteMapping("/details/{id}")
+    public void deleteItemDetail(@PathVariable Long id) {
+        itemService.deleteItemDetail(id);
     }
 }
