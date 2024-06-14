@@ -56,18 +56,17 @@ public class OrderService {
     }
 
     // 주문 조회 (페이징 적용)
-    public Page<OrderDTO> getOrdersByMemberId(Long memberId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(memberId, pageable);
-        return orders.map(orderMapper::orderToOrderDTO);
+    public Page<OrderDTO> getOrdersByMemberId(Long memberId, int pageNumber, int pageSize) {
+        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
+        Page<Order> pagedOrders = orderRepository.findByMemberIdOrderByIdDesc(memberId, pageableRequest);
+        return pagedOrders.map(orderMapper::orderToOrderDTO);
     }
 
     // 주문 상세 조회
     public List<OrderDetailDTO> getOrderDetailsByOrderId(Long orderId, Long memberId) {
         Order order = orderRepository.findByIdAndMemberId(orderId, memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
-        List<OrderDetail> orderDetails = order.getOrderDetails();
-        return orderDetailMapper.orderDetailsToOrderDetailDTOs(orderDetails);
+        return orderDetailMapper.orderDetailsToOrderDetailDTOs(order.getOrderDetails());
     }
 
     // 주문 조회 (단일)
@@ -95,7 +94,6 @@ public class OrderService {
         setOrderAddress(order, address);
 
         List<CartItems> cartItems = getCartItems(member);
-
         if (cartItems.isEmpty()) {
             throw new CustomException(ErrorCode.EMPTY_CART);
         }
@@ -118,13 +116,11 @@ public class OrderService {
     // 주문 수정
     public OrderDTO updateOrder(String jwtToken, Long orderId, OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
+
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
-        // 배송지 정보를 결정하고 주소를 가져옴
         Address address = resolveAddress(jwtToken, orderDTO);
-
-        // 기존 주문의 주소 정보 업데이트
         setOrderAddress(order, address);
 
         List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
@@ -198,20 +194,14 @@ public class OrderService {
     // CartItems로부터 OrderDetail 생성
     private List<OrderDetail> createOrderDetailsFromCartItems(List<CartItems> cartItems, Order order) {
         return cartItems.stream()
-                .map(cartItem -> {
-                    Item item = cartItem.getItem_id();
-                    int price = item.getPrice();
-
-                    return OrderDetail.builder()
-                            .order(order)
-                            .item(item)
-                            .price(price)
-                            .quantity(cartItem.getQuantity())
-                            .build();
-                })
-                .toList();  // Stream.toList()로 변경하여 불변 리스트를 반환
+                .map(cartItem -> OrderDetail.builder()
+                        .order(order)
+                        .item(cartItem.getItem_id())
+                        .price(cartItem.getItem_id().getPrice())
+                        .quantity(cartItem.getQuantity())
+                        .build())
+                .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
     }
-
 
     // OrderDTO로부터 OrderDetail 생성
     private List<OrderDetail> createOrderDetailsFromOrderDTO(OrderDTO orderDTO, Order order) {
