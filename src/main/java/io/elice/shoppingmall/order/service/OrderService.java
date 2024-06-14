@@ -127,13 +127,18 @@ public class OrderService {
     }
 
     // 주문 취소(환불)
-    public void cancelOrder(String jwtToken, Long orderId) {
+    public void cancelOrder(String jwtToken, Long orderId, String refundReason) {
         Member member = memberService.findByJwtToken(jwtToken);
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
-        // 주문 상태를 CANCELLED로 설정
         order.setOrderState(OrderState.CANCELLED);
+        if (refundReason != null && !refundReason.isEmpty()) {
+            order.setRefundReason(refundReason);
+        } else {
+            order.setRefundReason("취소 사유가 존재하지 않습니다.");  // 기본 환불 사유 설정
+        }
+
         orderRepository.save(order);
     }
 
