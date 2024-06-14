@@ -45,88 +45,62 @@ public class OrderController {
     public ResponseEntity<Page<OrderDTO>> getOrders(@CookieValue String jwtToken,
                                                     @RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size) {
-        try {
-            Member member = getMemberFromJwtToken(jwtToken);
-            Page<OrderDTO> orders = orderService.getOrdersByMemberId(member.getId(), page, size);
-            return new ResponseEntity<>(orders, HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        Member member = getMemberFromJwtToken(jwtToken);
+        Page<OrderDTO> orders = orderService.getOrdersByMemberId(member.getId(), page, size);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     // 주문 상세 내역 조회
     @GetMapping("/{orderId}")
     public ResponseEntity<List<OrderDetailDTO>> getOrderDetails(@CookieValue String jwtToken,
                                                                 @PathVariable Long orderId) {
-        try {
-            Member member = getMemberFromJwtToken(jwtToken);
-            List<OrderDetailDTO> orderDetails = orderService.getOrderDetailsByOrderId(orderId, member.getId());
-            return new ResponseEntity<>(orderDetails, HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        Member member = getMemberFromJwtToken(jwtToken);
+        List<OrderDetailDTO> orderDetails = orderService.getOrderDetailsByOrderId(orderId, member.getId());
+        return new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 
     // 주문 생성 페이지 호출
     @GetMapping("/create")
     public ResponseEntity<OrderDTO> getCreateOrderPage(@CookieValue String jwtToken) {
-        try {
-            Member member = getMemberFromJwtToken(jwtToken);
-            OrderDTO orderDTO = new OrderDTO();
-            orderDTO.setMemberId(member.getId());
-            return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        Member member = getMemberFromJwtToken(jwtToken);
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setMemberId(member.getId());
+        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 
     // 주문 생성
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> createOrder(@CookieValue String jwtToken, @Valid @RequestBody OrderDTO orderDTO) {
-        try {
-            OrderDTO createdOrder = orderService.createOrder(jwtToken, orderDTO);
-            return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        OrderDTO createdOrder = orderService.createOrder(jwtToken, orderDTO);
+        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
     // 주문 수정 페이지 호출
     @GetMapping("/update/{orderId}")
     public ResponseEntity<OrderDTO> getUpdateOrderPage(@CookieValue String jwtToken, @PathVariable Long orderId) {
-        try {
-            Member member = getMemberFromJwtToken(jwtToken);
-            OrderDTO orderDTO = orderService.getUpdateOrderPage(orderId, member.getId());
-            return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        Member member = getMemberFromJwtToken(jwtToken);
+        OrderDTO orderDTO = orderService.getUpdateOrderPage(orderId, member.getId());
+        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 
     // 주문 수정
     @PutMapping("/update/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@CookieValue String jwtToken, @PathVariable Long orderId,
                                                 @Valid @RequestBody OrderDTO orderDTO) {
-        try {
-            OrderDTO updatedOrder = orderService.updateOrder(jwtToken, orderId, orderDTO);
-            return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        OrderDTO updatedOrder = orderService.updateOrder(jwtToken, orderId, orderDTO);
+        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }
 
     // 주문 취소(환불)
     @DeleteMapping("/delete/{orderId}")
     public ResponseEntity<String> deleteOrder(@CookieValue String jwtToken,
                                               @PathVariable Long orderId,
-                                              @RequestParam String orderReason) {
+                                              @RequestParam(required = false) String refundReason) {
         try {
-            orderService.cancelOrder(jwtToken, orderId, orderReason);
+            orderService.cancelOrder(jwtToken, orderId, refundReason);
             return new ResponseEntity<>("주문이 성공적으로 취소되었습니다.", HttpStatus.OK);
         } catch (CustomException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
