@@ -15,6 +15,7 @@ import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.dto.OrderDetailDTO;
 import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.entity.OrderDetail;
+import io.elice.shoppingmall.order.entity.OrderState;
 import io.elice.shoppingmall.order.mapper.OrderDetailMapper;
 import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
@@ -84,13 +85,11 @@ public class OrderService {
     // 주문 생성
     public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
-
-        // 배송지 정보를 결정하고 주소를 가져옴
         Address address = resolveAddress(jwtToken, orderDTO);
 
-        // DTO에서 엔티티로 변환
         Order order = orderMapper.orderDTOToOrder(orderDTO);
         order.setMember(member);
+        order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING로 설정
         setOrderAddress(order, address);
 
         List<CartItems> cartItems = getCartItems(member);
@@ -112,7 +111,6 @@ public class OrderService {
     // 주문 수정
     public OrderDTO updateOrder(String jwtToken, Long orderId, OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
-
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
@@ -200,6 +198,7 @@ public class OrderService {
                         .item(cartItem.getItem_id())
                         .price(cartItem.getItem_id().getPrice())
                         .quantity(cartItem.getQuantity())
+                        .orderState(OrderState.PENDING) // 기본 주문 상태 설정
                         .build())
                 .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
     }
