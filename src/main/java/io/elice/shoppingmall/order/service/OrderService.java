@@ -174,6 +174,7 @@ public class OrderService {
     public Page<OrderDTO> getAllOrders(int pageNumber, int pageSize, String username) {
         validatePagingParameters(pageNumber, pageSize);
 
+        // 페이지 요청 시 id를 기준으로 내림차순 정렬하여 최신 주문이 먼저 나오도록 설정
         Pageable pageableRequest = PageRequest.of(pageNumber, pageSize, Sort.by("id").descending());
 
         Page<Order> pagedOrders;
@@ -189,6 +190,10 @@ public class OrderService {
 
     // 관리자 주문 상태 수정
     public OrderDTO updateOrderStatus(Long orderId, OrderState orderState) {
+        if (orderState == null) {
+            throw new CustomException(ErrorCode.INVALID_ORDER_STATE);
+        }
+
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
