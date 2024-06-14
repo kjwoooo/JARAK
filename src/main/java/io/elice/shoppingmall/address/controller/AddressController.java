@@ -38,6 +38,11 @@ public class AddressController {
         return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, id, addressDto), HttpStatus.CREATED);
     }
 
+    @PostMapping("/addresses")
+    public ResponseEntity<AddressResponseDTO> updateMemberAddress(@CookieValue String jwtToken, @RequestBody AddressDTO addressDto){
+        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, addressDto), HttpStatus.CREATED);
+    }
+
 //    @DeleteMapping("/addresses/{id}")
 //    public ResponseEntity<String> deleteMemberAddress(@CookieValue String jwtToken, @PathVariable Long id){
 //

@@ -119,6 +119,6 @@ public class AddressService {
     }
 
     public AddressResponseDTO saveAndReturnResponseDTO(String jwtToken, Long id, AddressDTO addressDTO){
-        return new AddressResponseDTO(save(jwtToken, addressDTO));
+        return new AddressResponseDTO(save(jwtToken, id, addressDTO));
     }
 }
