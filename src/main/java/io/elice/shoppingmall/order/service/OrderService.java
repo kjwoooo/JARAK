@@ -99,11 +99,7 @@ public class OrderService {
         }
 
         List<OrderDetail> orderDetails = createOrderDetailsFromCartItems(cartItems, order);
-        order.setOrderDetails(orderDetails);
-        setOrderSummary(order, orderDetails);
-
-        Order savedOrder = orderRepository.save(order);
-        return orderMapper.orderToOrderDTO(savedOrder);
+        return saveAndReturnOrder(order, orderDetails);
     }
 
     // 주문 수정 페이지 호출
@@ -124,11 +120,7 @@ public class OrderService {
         setOrderAddress(order, address);
 
         List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
-        order.setOrderDetails(orderDetails);
-        setOrderSummary(order, orderDetails);
-
-        Order savedOrder = orderRepository.save(order);
-        return orderMapper.orderToOrderDTO(savedOrder);
+        return saveAndReturnOrder(order, orderDetails);
     }
 
     // 주문 삭제
@@ -137,6 +129,15 @@ public class OrderService {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
         orderRepository.delete(order);
+    }
+
+    // 주문 저장 및 DTO 반환
+    private OrderDTO saveAndReturnOrder(Order order, List<OrderDetail> orderDetails) {
+        order.setOrderDetails(orderDetails);
+        setOrderSummary(order, orderDetails);
+
+        Order savedOrder = orderRepository.save(order);
+        return orderMapper.orderToOrderDTO(savedOrder);
     }
 
     // 선택된 주소 확인
