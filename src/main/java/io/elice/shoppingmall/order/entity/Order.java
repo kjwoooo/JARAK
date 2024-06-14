@@ -40,8 +40,9 @@ public class Order extends BaseEntity {
     @Column(nullable = false)
     private Integer price;
 
-    @Column(name = "pay_card", length = 255, nullable = false)
-    private String payCard;
+    // 기능 고도화 시 사용할 필드
+//    @Column(name = "pay_card", length = 255, nullable = false)
+//    private String payCard;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_state", nullable = false)
@@ -64,6 +65,9 @@ public class Order extends BaseEntity {
 
     @Column(name = "recipient_tel", length = 20, nullable = false)
     private String recipientTel;
+
+    @Column(name = "addr_name", length = 255, nullable = false)
+    private String addrName;
 
     @Column(name = "delivery_req", length = 255)
     private String deliveryReq;

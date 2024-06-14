@@ -27,9 +27,10 @@ public class OrderDTO {
     @NotNull(message = "Price is required.")
     private Integer price;
 
-    @NotBlank(message = "Pay card is required.")
-    @Size(max = 255, message = "Pay card can have at most 255 characters.")
-    private String payCard;
+    // 기능 고도화 시 사용할 필드
+    // @NotBlank(message = "Pay card is required.")
+    // @Size(max = 255, message = "Pay card can have at most 255 characters.")
+    // private String payCard;
 
     @NotNull(message = "Order state is required.")
     private OrderState orderState;
@@ -53,6 +54,10 @@ public class OrderDTO {
     @NotBlank(message = "Recipient telephone is required.")
     @Size(max = 20, message = "Recipient telephone can have at most 20 characters.")
     private String recipientTel;
+
+    @NotBlank(message = "Address name is required.")
+    @Size(max = 255, message = "Address name can have at most 255 characters.")
+    private String addrName;
 
     private String deliveryReq;
 
@@ -78,7 +83,7 @@ public class OrderDTO {
         return Order.builder()
                 .id(id)
                 .price(price)
-                .payCard(payCard)
+                // .payCard(payCard)
                 .orderState(orderState)
                 .refundReason(refundReason)
                 .recipientName(recipientName)
@@ -86,6 +91,7 @@ public class OrderDTO {
                 .addr(addr)
                 .addrDetail(addrDetail)
                 .recipientTel(recipientTel)
+                .addrName(addrName)
                 .deliveryReq(deliveryReq)
                 .totalQuantity(totalQuantity)
                 .repItemName(repItemName)
