@@ -9,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AddressResponseDTO {
     private Long id;
+    private Long memberId;
     private String recipientName;
     private String zipcode;
     private String addr;
@@ -19,6 +20,7 @@ public class AddressResponseDTO {
 
     public AddressResponseDTO(Address address){
         this.id = address.getId();
+        this.memberId = address.getId();
         this.recipientName = address.getRecipientName();
         this.zipcode = address.getZipcode();
         this.addr = address.getAddr();
