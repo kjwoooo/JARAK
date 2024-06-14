@@ -298,4 +298,11 @@ public class OrderService {
             throw new CustomException(ErrorCode.NOT_FOUND_ORDER);
         }
     }
+
+    // 관리자용 전체 주문 조회 (페이징 적용)
+    public List<OrderDTO> getAllOrders(int pageNumber, int pageSize) {
+        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
+        Page<Order> pagedOrders = orderRepository.findAll(pageableRequest);
+        return pagedOrders.stream().map(orderMapper::orderToOrderDTO).toList();
+    }
 }
