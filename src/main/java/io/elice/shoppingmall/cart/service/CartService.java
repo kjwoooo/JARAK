@@ -2,18 +2,11 @@ package io.elice.shoppingmall.cart.service;
 
 import io.elice.shoppingmall.cart.domain.cart.DTO.CartResponseDto;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
-import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
-import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.cart.repository.CartRepository;
 import io.elice.shoppingmall.member.entity.Member;
-import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.member.service.MemberService;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 
 //전체적 cart service
 @Service
@@ -33,9 +26,15 @@ public class CartService {
         Cart cart = new Cart();
         //해당 memberId 찾는 로직
         Member member_id = memberService.findByIdToMember(memberId);
-        cart.setMember_id(member_id);
+        cart.setMember(member_id);
         cartRepository.save(cart);
         return cart.toCartResponseDto();
+   }
+
+   //member id로 cart 조회
+   //entity로 변환해서 넘기기
+   public Cart findCartByMemberId(Member member_id){
+        return cartRepository.findByMember(member_id);
    }
 
     //cart id로 cart 조회

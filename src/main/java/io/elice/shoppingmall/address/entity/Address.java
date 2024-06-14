@@ -43,8 +43,8 @@ public class Address {
     private String recipientTel;
 
     @Column(nullable = false)
-    private String deliveryReq;
+    private String addrName;
 
     @Column(nullable = false)
-    private String defDestination;
+    private String deliveryReq;
 }

@@ -89,8 +89,41 @@ public class OrderService {
     public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
         Member member = memberService.findByJwtToken(jwtToken);
 
-        // 배송지 정보를 결정하고 주소를 가져옴
-        Address address = resolveAddress(jwtToken, orderDTO);
+<<<<<<< HEAD
+//        // 배송지 정보를 결정하고 주소를 가져옴
+//        Address address = resolveAddress(jwtToken, orderDTO);
+=======
+        Address address;
+
+        if (orderDTO.isUseNewAddress()) {
+            // 새로운 배송지 정보 입력받기
+            AddressDTO newAddressDTO = new AddressDTO(
+                    orderDTO.getRecipientName(),
+                    orderDTO.getZipcode(),
+                    orderDTO.getAddr(),
+                    orderDTO.getAddrDetail(),
+                    orderDTO.getRecipientTel(),
+                    orderDTO.getDeliveryReq(),
+                    "Y" // 기본 배송지 설정 여부
+            );
+            address = addressService.save(jwtToken, newAddressDTO);
+        } else {
+            // 기존 배송지 정보 가져오기
+            List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
+            address = addresses.stream()
+                    .filter(addr -> "Y".equals(addr.getDeliveryReq()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("기본 배송지 정보가 없습니다. 새로운 배송지를 입력해주세요."));
+        }
+
+        // 주소 정보를 OrderDTO에 설정
+        orderDTO.setRecipientName(address.getRecipientName());
+        orderDTO.setZipcode(address.getZipcode());
+        orderDTO.setAddr(address.getAddr());
+        orderDTO.setAddrDetail(address.getAddrDetail());
+        orderDTO.setRecipientTel(address.getRecipientTel());
+        orderDTO.setDeliveryReq(address.getAddrName());
+>>>>>>> dev
 
         // DTO에서 엔티티로 변환
         Order order = orderMapper.orderDTOToOrder(orderDTO);

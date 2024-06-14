@@ -59,8 +59,17 @@ public class AddressService {
         return new AddressResponseDTO(address);
     }
 
-    public void delete(Long id){
-        addressRepository.delete(findById(id));
+    public String delete(String jwtToken, Long id){
+        Member member = memberService.findByJwtToken(jwtToken);
+        Address address = addressRepository.findById(id).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
+
+        if(address.getMember().getId() == member.getId()){
+            addressRepository.delete(findById(id));
+            return "주소 삭제";
+        }
+
+        throw new CustomException(ErrorCode.NOT_MATCHE_ADDRESS_TO_MEMBER);
     }
 
     /**
@@ -119,6 +128,6 @@ public class AddressService {
     }
 
     public AddressResponseDTO saveAndReturnResponseDTO(String jwtToken, Long id, AddressDTO addressDTO){
-        return new AddressResponseDTO(save(jwtToken, addressDTO));
+        return new AddressResponseDTO(save(jwtToken, id, addressDTO));
     }
 }

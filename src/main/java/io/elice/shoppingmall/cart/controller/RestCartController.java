@@ -3,25 +3,30 @@ package io.elice.shoppingmall.cart.controller;
 import io.elice.shoppingmall.cart.domain.cart.DTO.CartResponseDto;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
 import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemRequestDto;
+import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemAddResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.cart.service.CartService;
+import io.elice.shoppingmall.member.entity.Member;
+import io.elice.shoppingmall.member.service.MemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import org.springframework.web.client.ResourceAccessException;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/carts")
 public class RestCartController {
-    //로그인된 상태에서
+    //로그인 된 상태에서
     private final CartService cartService;
     private final CartItemService cartItemService;
+    private final MemberService memberService;
 
     //cart 조회
     @GetMapping("/{cartId}")
@@ -38,16 +43,21 @@ public class RestCartController {
     @GetMapping("/{cartId}/items")
     public ResponseEntity<List<CartItemResponseDto>> getCartItems(@PathVariable Long cartId) {
         try {
-            List<CartItemResponseDto> items = cartItemService.findItems(cartId);
+            List<CartItemResponseDto> items = cartItemService.findAllItemsByCartId(cartId);
             return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (ResourceAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
     }
 
-    //카트 생성(회원이 로그인 시 생성) //수정 필요
+
+    //카트 생성(회원이 로그인 시 생성)
     @PostMapping
-    public ResponseEntity<CartResponseDto> createCart(@RequestBody Long memberId) {
+    public ResponseEntity<CartResponseDto> createCart(@CookieValue String jwtToken) {
+        //memberId 가져옴
+        Member member = memberService.findByJwtToken(jwtToken);
+        Long memberId = member.getId();
         CartResponseDto cart = cartService.createCart(memberId);
         return new ResponseEntity<>(cart, HttpStatus.CREATED);
     }
@@ -65,10 +75,10 @@ public class RestCartController {
 
     //상품 추가
     @PostMapping("/{cartId}/{itemId}")
-    public ResponseEntity<CartItemResponseDto> addCartItem(@PathVariable Long itemId, @PathVariable Long cartId,
+    public ResponseEntity<CartItemAddResponseDto> addCartItem(@PathVariable Long cartId, @PathVariable Long itemId,
         @RequestBody CartItemRequestDto cartItemRequestDto)  {
         try {
-            CartItemResponseDto item = cartItemService.addCartItem(itemId, cartId, cartItemRequestDto);
+            CartItemAddResponseDto item = cartItemService.addCartItem(itemId, cartId, cartItemRequestDto);
             return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (ResourceAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
