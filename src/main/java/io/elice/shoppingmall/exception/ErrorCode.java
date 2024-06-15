@@ -25,6 +25,9 @@ public enum ErrorCode {
 
     DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다."),
 
+    NOT_FOUND_REVIEW(400, "존재하지 않는 리뷰입니다."),
+
+
     NOT_FOUND_ORDER(400, "주문을 찾을 수 없습니다."),
     EMPTY_CART(400, "장바구니에 상품이 없습니다."),
     CANNOT_MODIFY_CANCELLED_ORDER(400, "취소된 주문은 수정할 수 없습니다."),

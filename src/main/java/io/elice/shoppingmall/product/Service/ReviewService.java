@@ -1,5 +1,7 @@
 package io.elice.shoppingmall.product.Service;
 
+import io.elice.shoppingmall.exception.CustomException;
+import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.member.service.MemberService;
@@ -61,7 +63,7 @@ public class ReviewService {
         // ReviewDTO에 저장된 username을 사용하여 회원을 조회
 
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 상품입니다.")); // 상품 조회
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM)); // 상품 조회
 
         Member member = memberService.findByUsername(username); // 회원의 닉네임을 사용하여 회원 조회
 
@@ -90,7 +92,7 @@ public class ReviewService {
     @Transactional
     public ReviewDTO updateReview(Long reviewId, ReviewDTO reviewDTO) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
 
         review.update(reviewDTO.getTitle(), reviewDTO.getContent(), reviewDTO.getImg(), reviewDTO.getRate());
 
@@ -101,7 +103,7 @@ public class ReviewService {
     @Transactional
     public void deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
 
         reviewRepository.deleteById(reviewId);
     }
