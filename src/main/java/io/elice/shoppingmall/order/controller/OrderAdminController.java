@@ -34,6 +34,13 @@ public class OrderAdminController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    // 관리자 전체 주문 수 조회
+    @GetMapping("/count")
+    public ResponseEntity<Long> getTotalOrderCount() {
+        long totalOrderCount = orderService.getTotalOrderCount();
+        return new ResponseEntity<>(totalOrderCount, HttpStatus.OK);
+    }
+
     // 관리자 주문 상태 수정
     @PutMapping("/update/{orderId}")
     public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId,

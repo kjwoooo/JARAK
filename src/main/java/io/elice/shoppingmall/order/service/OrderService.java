@@ -97,15 +97,6 @@ public class OrderService {
         return Optional.of(orderMapper.orderToOrderDTO(order));
     }
 
-    // 전체 주문 수 조회
-    public long getTotalOrderCount() {
-        long totalOrderCount = orderRepository.count();
-        if (totalOrderCount < 0) {
-            throw new CustomException(ErrorCode.ORDER_COUNT_ERROR);
-        }
-        return totalOrderCount;
-    }
-
     // 주문 생성
     @Transactional
     public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
@@ -178,6 +169,15 @@ public class OrderService {
         orderRepository.delete(order);
     }
      */
+
+    // 관리자 전체 주문 수 조회
+    public long getTotalOrderCount() {
+        long totalOrderCount = orderRepository.count();
+        if (totalOrderCount < 0) {
+            throw new CustomException(ErrorCode.ORDER_COUNT_ERROR);
+        }
+        return totalOrderCount;
+    }
 
     // 관리자 모든 주문 조회 (페이징 적용 및 검색)
     public Page<OrderDTO> getAllOrders(int pageNumber, int pageSize, String username) {
