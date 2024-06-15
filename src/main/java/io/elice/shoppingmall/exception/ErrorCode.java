@@ -22,7 +22,9 @@ public enum ErrorCode {
 
     NOT_MATCHE_ADDRESS_TO_MEMBER(400, "회원 정보와 주소 정보가 일치하지 않습니다."),
 
-    DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다.");
+    DO_NOT_HAVE_AUTHORITY(403, "접근 권한이 없습니다."),
+
+    NOT_FOUND_REVIEW(400, "존재하지 않는 리뷰입니다.");
 
 
 
