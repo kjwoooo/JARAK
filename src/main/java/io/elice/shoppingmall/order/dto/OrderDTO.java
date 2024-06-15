@@ -27,13 +27,19 @@ public class OrderDTO {
     @NotNull(message = "Price is required.")
     private Integer price;
 
-    // 기능 고도화 시 사용할 필드
-    // @NotBlank(message = "Pay card is required.")
-    // @Size(max = 255, message = "Pay card can have at most 255 characters.")
-    // private String payCard;
+    @NotNull(message = "Shipping cost is required.")
+    private Integer shippingCost;
 
-    @NotNull(message = "Order state is required.")
-    private OrderState orderState;
+    @NotNull(message = "Total quantity is required.")
+    private Integer totalQuantity;
+
+    @NotBlank(message = "Representative item name is required.")
+    @Size(max = 255, message = "Representative item name can have at most 255 characters.")
+    private String repItemName;
+
+    @NotBlank(message = "Representative item image is required.")
+    @Size(max = 255, message = "Representative item image can have at most 255 characters.")
+    private String repItemImage;
 
     private String refundReason;
 
@@ -61,16 +67,8 @@ public class OrderDTO {
 
     private String deliveryReq;
 
-    @NotNull(message = "Total quantity is required.")
-    private Integer totalQuantity;
-
-    @NotBlank(message = "Representative item name is required.")
-    @Size(max = 255, message = "Representative item name can have at most 255 characters.")
-    private String repItemName;
-
-    @NotBlank(message = "Representative item image is required.")
-    @Size(max = 255, message = "Representative item image can have at most 255 characters.")
-    private String repItemImage;
+    @NotNull(message = "Order state is required.")
+    private OrderState orderState;
 
     @Valid  // 리스트 내부의 OrderDetailDTO도 유효성 검사 수행
     @NotNull(message = "Order details are required.")
@@ -83,8 +81,10 @@ public class OrderDTO {
         return Order.builder()
                 .id(id)
                 .price(price)
-                // .payCard(payCard)
-                .orderState(orderState)
+                .shippingCost(shippingCost)
+                .totalQuantity(totalQuantity)
+                .repItemName(repItemName)
+                .repItemImage(repItemImage)
                 .refundReason(refundReason)
                 .recipientName(recipientName)
                 .zipcode(zipcode)
@@ -93,9 +93,7 @@ public class OrderDTO {
                 .recipientTel(recipientTel)
                 .addrName(addrName)
                 .deliveryReq(deliveryReq)
-                .totalQuantity(totalQuantity)
-                .repItemName(repItemName)
-                .repItemImage(repItemImage)
+                .orderState(orderState)
                 .build();
     }
 }

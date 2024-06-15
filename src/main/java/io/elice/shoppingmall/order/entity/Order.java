@@ -40,13 +40,17 @@ public class Order extends BaseEntity {
     @Column(nullable = false)
     private Integer price;
 
-    // 기능 고도화 시 사용할 필드
-//    @Column(name = "pay_card", length = 255, nullable = false)
-//    private String payCard;
+    @Column(nullable = false)
+    private Integer shippingCost;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "order_state", nullable = false)
-    private OrderState orderState;
+    @Column(name = "total_quantity", nullable = false)
+    private Integer totalQuantity;
+
+    @Column(name = "rep_item_name", length = 255, nullable = false)
+    private String repItemName;
+
+    @Column(name = "rep_item_image", length = 255, nullable = false)
+    private String repItemImage;
 
     @Column(name = "refund_reason", length = 255)
     private String refundReason;
@@ -72,14 +76,9 @@ public class Order extends BaseEntity {
     @Column(name = "delivery_req", length = 255)
     private String deliveryReq;
 
-    @Column(name = "total_quantity", nullable = false)
-    private Integer totalQuantity;
-
-    @Column(name = "rep_item_name", length = 255, nullable = false)
-    private String repItemName;
-
-    @Column(name = "rep_item_image", length = 255, nullable = false)
-    private String repItemImage;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_state", nullable = false)
+    private OrderState orderState;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;

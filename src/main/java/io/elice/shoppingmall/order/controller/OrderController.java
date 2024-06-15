@@ -3,10 +3,8 @@ package io.elice.shoppingmall.order.controller;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
-import io.elice.shoppingmall.order.dto.OrderDetailDTO;
 import io.elice.shoppingmall.order.service.OrderService;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -51,10 +49,10 @@ public class OrderController {
 
     // 주문 상세 내역 조회
     @GetMapping("/{orderId}")
-    public ResponseEntity<List<OrderDetailDTO>> getOrderDetails(@CookieValue String jwtToken,
-                                                                @PathVariable Long orderId) {
+    public ResponseEntity<OrderDTO> getOrderDetails(@CookieValue String jwtToken,
+                                                    @PathVariable Long orderId) {
         Member member = getMemberFromJwtToken(jwtToken);
-        List<OrderDetailDTO> orderDetails = orderService.getOrderDetailsByOrderId(orderId, member.getId());
+        OrderDTO orderDetails = orderService.getOrderDetailsByOrderId(orderId, member.getId());
         return new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 

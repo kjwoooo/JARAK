@@ -77,7 +77,7 @@ public class OrderService {
     }
 
     // 주문 상세 조회
-    public List<OrderDetailDTO> getOrderDetailsByOrderId(Long orderId, Long memberId) {
+    public OrderDTO getOrderDetailsByOrderId(Long orderId, Long memberId) {
         Order order = orderRepository.findByIdAndMemberId(orderId, memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
@@ -86,7 +86,10 @@ public class OrderService {
             throw new CustomException(ErrorCode.NO_ORDER_DETAILS_FOUND);
         }
 
-        return orderDetailMapper.orderDetailsToOrderDetailDTOs(orderDetails);
+        OrderDTO orderDTO = orderMapper.orderToOrderDTO(order);
+        List<OrderDetailDTO> orderDetailDTOs = orderDetailMapper.orderDetailsToOrderDetailDTOs(orderDetails);
+        orderDTO.setOrderDetails(orderDetailDTOs);
+        return orderDTO;
     }
 
     // 주문 조회 (단일)
@@ -160,16 +163,6 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    /*
-    // 주문 삭제
-    public void deleteOrder(String jwtToken, Long orderId) {
-        Member member = memberService.findByJwtToken(jwtToken);
-        Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
-        orderRepository.delete(order);
-    }
-     */
-
     // 관리자 전체 주문 수 조회
     public long getTotalOrderCount() {
         long totalOrderCount = orderRepository.count();
@@ -225,6 +218,7 @@ public class OrderService {
         try {
             order.setOrderDetails(orderDetails);
             setOrderSummary(order, orderDetails);
+            order.setPrice(order.getPrice() + order.getShippingCost());
 
             Order savedOrder = orderRepository.save(order);
             return orderMapper.orderToOrderDTO(savedOrder);
@@ -232,6 +226,23 @@ public class OrderService {
             // 데이터베이스 접근 예외 처리
             throw new CustomException(ErrorCode.SAVE_ORDER_FAILED);
         }
+    }
+
+    // 주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
+    private void setOrderSummary(Order order, List<OrderDetail> orderDetails) {
+        int itemTotalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
+        int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
+        String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
+
+        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImages().stream()
+                .findFirst()
+                .map(ItemImage::getFileName)
+                .orElse("No Image");
+
+        order.setTotalQuantity(totalQuantity);
+        order.setRepItemName(repItemName);
+        order.setRepItemImage(repItemImage);
+        order.setPrice(itemTotalPrice);
     }
 
     // 선택된 주소 확인
@@ -274,6 +285,17 @@ public class OrderService {
         return addressService.save(jwtToken, newAddressDTO);
     }
 
+    // 주문 객체에 주소 정보 설정
+    private void setOrderAddress(Order order, Address address) {
+        order.setRecipientName(address.getRecipientName());
+        order.setZipcode(address.getZipcode());
+        order.setAddr(address.getAddr());
+        order.setAddrDetail(address.getAddrDetail() != null ? address.getAddrDetail() : ""); // null 체크 및 기본값 설정
+        order.setRecipientTel(address.getRecipientTel());
+        order.setAddrName(address.getAddrName());
+        order.setDeliveryReq(address.getDeliveryReq() != null ? address.getDeliveryReq() : ""); // null 체크 및 기본값 설정
+    }
+
     // CartItems 가져오기
     private List<CartItems> getCartItems(Member member) {
         Cart cart = cartService.findCartByMemberId(member);
@@ -306,7 +328,6 @@ public class OrderService {
                         .item(cartItem.getItem_id())
                         .price(cartItem.getItem_id().getPrice())
                         .quantity(cartItem.getQuantity())
-                        .orderState(OrderState.PENDING) // 기본 주문 상태 설정
                         .color(cartItem.getColor())
                         .size(cartItem.getSize())
                         .build())
@@ -322,34 +343,6 @@ public class OrderService {
                     return orderDetailDTO.toEntity(order, item);
                 })
                 .toList();  // Stream.toList()로 변경하여 불변 리스트를 반환
-    }
-
-    // 주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
-    private void setOrderSummary(Order order, List<OrderDetail> orderDetails) {
-        int totalPrice = orderDetails.stream().mapToInt(detail -> detail.getPrice() * detail.getQuantity()).sum();
-        int totalQuantity = orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
-        String repItemName = orderDetails.isEmpty() ? "No Item" : orderDetails.get(0).getItem().getItemName();
-
-        String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImages().stream()
-                .findFirst()
-                .map(ItemImage::getFileName)
-                .orElse("No Image");
-
-        order.setTotalQuantity(totalQuantity);
-        order.setRepItemName(repItemName);
-        order.setRepItemImage(repItemImage);
-        order.setPrice(totalPrice);
-    }
-
-    // 주문 객체에 주소 정보 설정
-    private void setOrderAddress(Order order, Address address) {
-        order.setRecipientName(address.getRecipientName());
-        order.setZipcode(address.getZipcode());
-        order.setAddr(address.getAddr());
-        order.setAddrDetail(address.getAddrDetail() != null ? address.getAddrDetail() : ""); // null 체크 및 기본값 설정
-        order.setRecipientTel(address.getRecipientTel());
-        order.setAddrName(address.getAddrName());
-        order.setDeliveryReq(address.getDeliveryReq() != null ? address.getDeliveryReq() : ""); // null 체크 및 기본값 설정
     }
 
     // 예외 처리 헬퍼 메서드
