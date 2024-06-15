@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.order.entity;
 
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.member.entity.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,9 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +28,7 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,12 +40,9 @@ public class Order {
     @Column(nullable = false)
     private Integer price;
 
-    @Column(name = "order_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date orderDate;
-
-    @Column(name = "pay_card", length = 255, nullable = false)
-    private String payCard;
+    // 기능 고도화 시 사용할 필드
+//    @Column(name = "pay_card", length = 255, nullable = false)
+//    private String payCard;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_state", nullable = false)
@@ -70,6 +65,9 @@ public class Order {
 
     @Column(name = "recipient_tel", length = 20, nullable = false)
     private String recipientTel;
+
+    @Column(name = "addr_name", length = 255, nullable = false)
+    private String addrName;
 
     @Column(name = "delivery_req", length = 255)
     private String deliveryReq;

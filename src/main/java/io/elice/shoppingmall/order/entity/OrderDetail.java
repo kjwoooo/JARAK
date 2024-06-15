@@ -1,8 +1,11 @@
 package io.elice.shoppingmall.order.entity;
 
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,7 +26,7 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "order_detail")
-public class OrderDetail {
+public class OrderDetail extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +45,14 @@ public class OrderDetail {
 
     @Column(nullable = false)
     private Integer quantity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderState orderState;
+
+    @Column(nullable = false)
+    private String color;
+
+    @Column(nullable = false)
+    private String size;
 }

@@ -1,20 +1,14 @@
 package io.elice.shoppingmall.product.Service.Item;
 
-import io.elice.shoppingmall.exception.CustomException;
-import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
-import io.elice.shoppingmall.product.Entity.Item.ItemImages;
-import io.elice.shoppingmall.option.entity.Gender;
-import io.elice.shoppingmall.option.entity.Brand;
+import io.elice.shoppingmall.product.Entity.Item.ItemImage;
 import io.elice.shoppingmall.product.Repository.Item.ItemDetailRepository;
-import io.elice.shoppingmall.product.Repository.Item.ItemImagesRepository;
+import io.elice.shoppingmall.product.Repository.Item.ItemImageRepository;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
-import jakarta.mail.Multipart;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,91 +17,246 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
-public class ItemService { //dev branch 가져와서 category, member 엔티티 추가적으로 수정해야함
+public class ItemService {
 
-    private final ItemRepository itemRepository;
-    private final ItemImagesRepository itemImagesRepository;
-    private final ItemDetailRepository itemDetailRepository;
+    @Autowired
+    private ItemRepository itemRepository;
 
-    private ItemImages itemImages;
-    private Brand brand;
-    private Gender gender;
+    @Autowired
+    private ItemDetailRepository itemDetailRepository;
 
+    @Autowired
+    private ItemImageRepository itemImageRepository;
 
-    //item 생성
-    @Transactional
-    public void save(ItemDTO itemDTO) throws IOException {
-//        Item item = Item.toSaveItem(itemDTO, itemImages, brand, gender);
-//        itemRepository.save(item);
-        Item itemEntity = Item.toSaveItem(itemDTO, itemImages, brand, gender); //id값없음
-        Long savedId = itemRepository.save(itemEntity).getId();
-        Item item = itemRepository.findById(savedId).get(); //id값을 위해 다시 entity 얻어옴
-        for(MultipartFile imageFile : itemDTO.getItemImages()){
-            String originalFilename = imageFile.getOriginalFilename();
-            String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/eliceshoppingmall_img/" + storedFileName;
-            imageFile.transferTo(new File(savePath));
-            ItemImages itemImages = ItemImages.toItemImages(item, originalFilename, storedFileName);
-            itemImagesRepository.save(itemImages);
+    // Create Item with multiple images
+    public ItemDTO createItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+        Item item = new Item();
+        item.setItemName(itemDTO.getItemName());
+        item.setPrice(itemDTO.getPrice());
+        item.setGender(itemDTO.getGender());
+
+        item = itemRepository.save(item);
+        itemDTO.setId(item.getId());
+
+        if (files != null && !files.isEmpty()) {
+            List<ItemImage> itemImages = new ArrayList<>();
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    // 파일 저장 경로 설정
+                    String uploadDir = "src/main/resources/imagefiles";
+                    File uploadDirFile = new File(uploadDir);
+                    if (!uploadDirFile.exists()) {
+                        uploadDirFile.mkdirs();
+                    }
+
+                    // UUID를 사용한 파일 이름 생성
+                    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                    String filePath = uploadDir + fileName;
+
+                    // 파일 저장
+                    File dest = new File(filePath);
+                    file.transferTo(dest);
+
+                    // 파일 경로와 이름 설정
+                    ItemImage itemImage = new ItemImage();
+                    itemImage.setFilePath(filePath);
+                    itemImage.setFileName(fileName);
+                    itemImage.setItem(item);
+
+                    itemImages.add(itemImage);
+                }
+            }
+            itemImageRepository.saveAll(itemImages);
         }
+
+        return itemDTO;
     }
 
-    //ItemDetail 생성
-    @Transactional
-    public ItemDetail saveItemDetail(ItemDetail itemDetail) {
-        return itemDetailRepository.save(itemDetail);
-    }
+    // Get All Items
+    public List<ItemDTO> getAllItems() {
+        List<Item> items = itemRepository.findAll();
+        List<ItemDTO> itemDTOs = new ArrayList<>();
 
-    //전체 상품목록 조회
-    @Transactional
-    public List<ItemDTO> findAll(){
-        List<Item> itemList = itemRepository.findAll();
-        List<ItemDTO> itemDTOList = new ArrayList<>();
-        for(Item item : itemList){
-            itemDTOList.add(ItemDTO.toItemDTO(item, itemImages.getId(), brand.getId(), gender.getId()));
+        for (Item item : items) {
+            ItemDTO itemDTO = new ItemDTO(
+                    item.getId(),
+                    item.getItemName(),
+                    item.getPrice(),
+                    item.getGender()
+            );
+            itemDTOs.add(itemDTO);
         }
-        return itemDTOList;
+
+        return itemDTOs;
     }
 
-    //한 상품의 모든 ItemDetail조회
-    public List<ItemDetailDTO> findItemDetailsByItemId(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_ITEM));
-
-        List<ItemDetail> itemDetailList = itemDetailRepository.findByItem(item);
-        List<ItemDetailDTO> itemDetailDTOList = new ArrayList<>();
-        for(ItemDetail itemDetail: itemDetailList){
-            itemDetailDTOList.add(ItemDetailDTO.toItemDetailDTO(itemDetail, itemId));
-        }
-        return itemDetailDTOList;
-    }
-
-    //특정 상품 조회
-    @Transactional
-    public ItemDTO findById(Long id){
-        Optional<Item> optionalItem =  itemRepository.findById(id);
-        if(optionalItem.isPresent()){
+    // Get Item by ID
+    public ItemDTO getItemById(Long id) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if (optionalItem.isPresent()) {
             Item item = optionalItem.get();
-            ItemDTO itemDTO = ItemDTO.toItemDTO(item, itemImages.getId(), brand.getId(), gender.getId());
-            return itemDTO;
+            return new ItemDTO(
+                    item.getId(),
+                    item.getItemName(),
+                    item.getPrice(),
+                    item.getGender()
+            );
         }
-        else{
-            return null;
+        return null; // Or throw an exception
+    }
+
+
+    // Update Item with multiple images
+    public ItemDTO updateItem(Long id, ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if (optionalItem.isPresent()) {
+            Item item = optionalItem.get();
+            item.setItemName(itemDTO.getItemName());
+            item.setPrice(itemDTO.getPrice());
+            item.setGender(itemDTO.getGender());
+
+            item = itemRepository.save(item);
+
+            if (files != null && !files.isEmpty()) {
+                List<ItemImage> itemImages = new ArrayList<>();
+                for (MultipartFile file : files) {
+                    if (file != null && !file.isEmpty()) {
+                        // 파일 저장 경로 설정
+                        String uploadDir = "uploads/";
+                        File uploadDirFile = new File(uploadDir);
+                        if (!uploadDirFile.exists()) {
+                            uploadDirFile.mkdirs();
+                        }
+
+                        // UUID를 사용한 파일 이름 생성
+                        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                        String filePath = uploadDir + fileName;
+
+                        // 파일 저장
+                        File dest = new File(filePath);
+                        file.transferTo(dest);
+
+                        // 파일 경로와 이름 설정
+                        ItemImage itemImage = new ItemImage();
+                        itemImage.setFilePath(filePath);
+                        itemImage.setFileName(fileName);
+                        itemImage.setItem(item);
+
+                        itemImages.add(itemImage);
+                    }
+                }
+                itemImageRepository.saveAll(itemImages);
+            }
+
+            return new ItemDTO(
+                    item.getId(),
+                    item.getItemName(),
+                    item.getPrice(),
+                    item.getGender()
+            );
+        }
+        return null; // Or throw an exception
+    }
+
+    // Delete Item
+    public void deleteItem(Long id) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if (optionalItem.isPresent()) {
+            Item item = optionalItem.get();
+
+            // 파일 삭제
+            List<ItemImage> itemImages = itemImageRepository.findByItemId(id);
+            for (ItemImage itemImage : itemImages) {
+                File file = new File(itemImage.getFilePath());
+                if (file.exists()) {
+                    file.delete();
+                }
+                itemImageRepository.delete(itemImage);
+            }
+
+            itemRepository.deleteById(id);
         }
     }
 
-    //상품 수정
-    public ItemDTO update(ItemDTO itemDTO){
-        Item item = Item.toUpdateItem(itemDTO, itemImages, brand, gender);
-        itemRepository.save(item);
-        return findById(itemDTO.getId());
+    // Create ItemDetail
+    public ItemDetailDTO createItemDetail(ItemDetailDTO itemDetailDTO) {
+        Optional<Item> optionalItem = itemRepository.findById(itemDetailDTO.getItemId());
+        if (optionalItem.isPresent()) {
+            Item item = optionalItem.get();
+            ItemDetail itemDetail = new ItemDetail();
+            itemDetail.setColor(itemDetailDTO.getColor());
+            itemDetail.setSize(itemDetailDTO.getSize());
+            itemDetail.setQuantity(itemDetailDTO.getQuantity());
+            itemDetail.setItem(item);
+
+            itemDetail = itemDetailRepository.save(itemDetail);
+            itemDetailDTO.setId(itemDetail.getId());
+            return itemDetailDTO;
+        }
+        return null; // Or throw an exception
     }
 
-    //상품 삭제
-    public void delete(Long id){
-        itemRepository.deleteById(id);
+    // Get All ItemDetails
+    public List<ItemDetailDTO> getAllItemDetails() {
+        List<ItemDetail> itemDetails = itemDetailRepository.findAll();
+        List<ItemDetailDTO> itemDetailDTOs = new ArrayList<>();
+
+        for (ItemDetail itemDetail : itemDetails) {
+            ItemDetailDTO itemDetailDTO = new ItemDetailDTO(
+                    itemDetail.getId(),
+                    itemDetail.getColor(),
+                    itemDetail.getSize(),
+                    itemDetail.getQuantity(),
+                    itemDetail.getItem().getId()
+            );
+            itemDetailDTOs.add(itemDetailDTO);
+        }
+
+        return itemDetailDTOs;
+    }
+
+    // Get ItemDetail by ID
+    public ItemDetailDTO getItemDetailById(Long id) {
+        Optional<ItemDetail> optionalItemDetail = itemDetailRepository.findById(id);
+        if (optionalItemDetail.isPresent()) {
+            ItemDetail itemDetail = optionalItemDetail.get();
+            return new ItemDetailDTO(
+                    itemDetail.getId(),
+                    itemDetail.getColor(),
+                    itemDetail.getSize(),
+                    itemDetail.getQuantity(),
+                    itemDetail.getItem().getId()
+            );
+        }
+        return null; // Or throw an exception
+    }
+
+    // Update ItemDetail
+    public ItemDetailDTO updateItemDetail(Long id, ItemDetailDTO itemDetailDTO) {
+        Optional<ItemDetail> optionalItemDetail = itemDetailRepository.findById(id);
+        if (optionalItemDetail.isPresent()) {
+            ItemDetail itemDetail = optionalItemDetail.get();
+            itemDetail.setColor(itemDetailDTO.getColor());
+            itemDetail.setSize(itemDetailDTO.getSize());
+            itemDetail.setQuantity(itemDetailDTO.getQuantity());
+
+            itemDetail = itemDetailRepository.save(itemDetail);
+            return new ItemDetailDTO(
+                    itemDetail.getId(),
+                    itemDetail.getColor(),
+                    itemDetail.getSize(),
+                    itemDetail.getQuantity(),
+                    itemDetail.getItem().getId()
+            );
+        }
+        return null; // Or throw an exception
+    }
+
+    // Delete ItemDetail
+    public void deleteItemDetail(Long id) {
+        itemDetailRepository.deleteById(id);
     }
 }

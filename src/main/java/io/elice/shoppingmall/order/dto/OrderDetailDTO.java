@@ -2,6 +2,7 @@ package io.elice.shoppingmall.order.dto;
 
 import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.entity.OrderDetail;
+import io.elice.shoppingmall.order.entity.OrderState;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,9 @@ public class OrderDetailDTO {
     private Long itemId;
     private Integer price;
     private Integer quantity;
+    private OrderState orderState;
+    private String color;
+    private String size;
 
     public OrderDetail toEntity(Order order, Item item) {
         return OrderDetail.builder()
@@ -28,6 +32,10 @@ public class OrderDetailDTO {
                 .item(item)
                 .price(price)
                 .quantity(quantity)
+                .orderState(orderState)
+                .color(color)
+                .size(size)
                 .build();
     }
 }
+
