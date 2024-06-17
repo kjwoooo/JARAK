@@ -51,22 +51,24 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
+
     /**
-     * 현재 인증된 회원 검색
+     * @deprecated findByUsername 사용 권장
      * @param jwtToken
-     * @return Member
+     * @return
      */
+    @Deprecated
     public Member findByJwtToken(String jwtToken) {
         String username = util.getUsername(jwtToken);
         return findByUsername(username);
     }
 
     /**
-     * 현재 인증된 회원을 검색 후
-     * MemberResponseDTO 반환
+     * @deprecated findByUsernameToResponseDTO 사용 권장
      * @param jwtToken
      * @return MemberResponseDTO
      */
+    @Deprecated
     public MemberResponseDTO findByJwtTokenToResponseDTO(String jwtToken){
         return new MemberResponseDTO(findByJwtToken(jwtToken));
     }
@@ -102,15 +104,14 @@ public class MemberService {
         return new MemberResponseDTO(findByUsername(username));
     }
 
-
-    public Member login(MemberLogin memberLogin, HttpServletResponse response){
     /**
      * 회원이 입력한 ID, Password를 바탕으로
      * 해당 회원이 존재하는지 검증
-     * @param loginInfo 로그인할 때, 회원이 입력한 ID, Password 정보
+     * @param memberLogin 로그인할 때, 회원이 입력한 ID, Password 정보
      * @param response
      * @returnwb
      */
+    public Member login(MemberLogin memberLogin, HttpServletResponse response){
         Member member = memberRepository.findByUsername(memberLogin.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
@@ -129,15 +130,6 @@ public class MemberService {
         return member;
     }
 
-    public String tokenRefresh(String jwtToken, HttpServletResponse response){
-        String username = util.getUsername(jwtToken);
-        Member member = memberRepository.findByUsername(username).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-
-        createJwtTokenCookie(member, response);
-        return "토큰 재발급 성공";
-    }
-
     public void createJwtTokenCookie(Member member, HttpServletResponse response){
         String jwtToken = util.createToken(member.getUsername(), member.getAuthority());
 
@@ -151,17 +143,6 @@ public class MemberService {
         util.tokenDestroy(response);
         return "로그아웃";
     }
-
-//    public String delete(String jwtToken, HttpServletResponse response){
-//        String username = util.getUsername(jwtToken);
-//        Member member = memberRepository.findByUsername(username).orElseThrow(()->
-//            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-//
-//        memberRepository.delete(member);
-//        util.tokenDestroy(response);
-//
-//        return "회원 탈퇴";
-//    }
 
     public String delete(UserDetails userDetails, HttpServletResponse response){
         Member member = memberRepository.findByUsername(userDetails.getUsername()).orElseThrow(()->
@@ -221,25 +202,6 @@ public class MemberService {
 
         return new MemberResponseDTO(member);
     }
-
-//    public MemberResponseDTO save(String jwtToken, MemberModifyInfo memberModifyInfo){
-//        String username = util.getUsername(jwtToken);
-//        Member oldMember = findByUsername(username);
-//
-//        loginInfoService.matchPassword(oldMember.getLoginInfo(), memberModifyInfo.getPassword());
-//
-//        memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
-//        memberModifyInfo.setPassword(encoder.encode(memberModifyInfo.getPassword()));
-//        oldMember.modifyMember(memberModifyInfo);
-//
-//        LoginInfo loginInfo = oldMember.getLoginInfo();
-//        loginInfo.setPassword(memberModifyInfo.getModifyPassword());
-//
-//        loginInfo = loginInfoService.save(loginInfo);
-//        oldMember.setLoginInfo(loginInfo);
-//
-//        return new MemberResponseDTO(memberRepository.save(oldMember));
-//    }
 
     public MemberResponseDTO save(UserDetails userDetails, MemberModifyInfo memberModifyInfo){
         Member oldMember = findByUsername(userDetails.getUsername());

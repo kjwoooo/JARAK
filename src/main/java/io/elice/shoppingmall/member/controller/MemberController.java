@@ -52,11 +52,6 @@ public class MemberController {
     }
 
     //NOTE: USER API
-//    @GetMapping("/members/info")
-//    public ResponseEntity<MemberResponseDTO> getMember(@CookieValue String jwtToken){
-//        return new ResponseEntity<>(memberService.findByJwtTokenToResponseDTO(jwtToken), HttpStatus.OK);
-//    }
-
     @GetMapping("/members/info")
     public ResponseEntity<MemberResponseDTO> getMember(@AuthenticationPrincipal UserDetails userDetails){
         return new ResponseEntity<>(memberService.findByUsernameToResponseDTO(userDetails.getUsername()), HttpStatus.OK);
@@ -78,11 +73,6 @@ public class MemberController {
 
         return new ResponseEntity<>(memberService.login(memberLogin, response), HttpStatus.OK);
     }
-
-//    @GetMapping("/token-refresh")
-//    public ResponseEntity<String> tokenRefresh(@CookieValue String jwtToken, HttpServletResponse response){
-//        return new ResponseEntity<>(memberService.tokenRefresh(jwtToken, response), HttpStatus.OK);
-//    }
 
     @PostMapping("/members-logout")
     public ResponseEntity<String> logout(HttpServletResponse response){
