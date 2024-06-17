@@ -26,6 +26,7 @@ public class OrderAdminController {
     }
 
     // 관리자 모든 주문 조회 (페이징 적용 및 검색)
+    //Feedback: validator 적용하기
     @GetMapping
     public ResponseEntity<Page<OrderDTO>> getAllOrders(@RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size,
@@ -42,7 +43,7 @@ public class OrderAdminController {
     }
 
     // 관리자 주문 상태 수정
-    @PutMapping("/update/{orderId}")
+    @PutMapping("/{orderId}")
     public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId,
                                                       @RequestParam OrderState orderState) {
         OrderDTO updatedOrder = orderService.updateOrderStatus(orderId, orderState);
@@ -50,7 +51,7 @@ public class OrderAdminController {
     }
 
     // 관리자 주문 삭제
-    @DeleteMapping("/delete/{orderId}")
+    @DeleteMapping("/{orderId}")
     public ResponseEntity<String> deleteOrder(@PathVariable Long orderId) {
         orderService.deleteOrder(orderId);
         return new ResponseEntity<>("주문이 성공적으로 삭제되었습니다.", HttpStatus.OK);

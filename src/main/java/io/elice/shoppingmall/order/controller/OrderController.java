@@ -33,6 +33,7 @@ public class OrderController {
     }
 
     // 회원을 JWT 토큰으로부터 검색
+    //Feedback : 인증이 끝난 부분으로 가져와야지 jwt를 여기서 가져와서 인증 로직을 여기서 처리하면 안됩니다.
     private Member getMemberFromJwtToken(String jwtToken) {
         return memberService.findByJwtToken(jwtToken);
     }
@@ -56,24 +57,15 @@ public class OrderController {
         return new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 
-    // 주문 생성 페이지 호출
-    @GetMapping("/create")
-    public ResponseEntity<OrderDTO> getCreateOrderPage(@CookieValue String jwtToken) {
-        Member member = getMemberFromJwtToken(jwtToken);
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setMemberId(member.getId());
-        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-    }
-
     // 주문 생성
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@CookieValue String jwtToken, @Valid @RequestBody OrderDTO orderDTO) {
         OrderDTO createdOrder = orderService.createOrder(jwtToken, orderDTO);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
     // 주문 수정 페이지 호출
-    @GetMapping("/update/{orderId}")
+    @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> getUpdateOrderPage(@CookieValue String jwtToken, @PathVariable Long orderId) {
         Member member = getMemberFromJwtToken(jwtToken);
         OrderDTO orderDTO = orderService.getUpdateOrderPage(orderId, member.getId());
@@ -81,7 +73,7 @@ public class OrderController {
     }
 
     // 주문 수정
-    @PutMapping("/update/{orderId}")
+    @PutMapping("/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@CookieValue String jwtToken, @PathVariable Long orderId,
                                                 @Valid @RequestBody OrderDTO orderDTO) {
         OrderDTO updatedOrder = orderService.updateOrder(jwtToken, orderId, orderDTO);
@@ -89,7 +81,7 @@ public class OrderController {
     }
 
     // 주문 취소(환불)
-    @DeleteMapping("/delete/{orderId}")
+    @DeleteMapping("/{orderId}")
     public ResponseEntity<String> deleteOrder(@CookieValue String jwtToken,
                                               @PathVariable Long orderId,
                                               @RequestParam(required = false) String refundReason) {

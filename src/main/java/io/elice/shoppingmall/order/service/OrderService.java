@@ -154,7 +154,8 @@ public class OrderService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
         order.setOrderState(OrderState.CANCELLED);
-        if (refundReason != null && !refundReason.isEmpty()) {
+
+        if (refundReason != null) {
             order.setRefundReason(refundReason);
         } else {
             order.setRefundReason("취소 사유가 존재하지 않습니다.");  // 기본 환불 사유 설정
@@ -165,11 +166,7 @@ public class OrderService {
 
     // 관리자 전체 주문 수 조회
     public long getTotalOrderCount() {
-        long totalOrderCount = orderRepository.count();
-        if (totalOrderCount < 0) {
-            throw new CustomException(ErrorCode.ORDER_COUNT_ERROR);
-        }
-        return totalOrderCount;
+        return orderRepository.count();
     }
 
     // 관리자 모든 주문 조회 (페이징 적용 및 검색)
@@ -310,6 +307,7 @@ public class OrderService {
         ItemDetailDTO itemDetail = itemService.getItemDetailById(cartItemDto.getItem_id());
 
         // 예외 처리: ItemDetail의 quantity가 0 이하인 경우 예외 발생
+        //Feedback : 요건 validator에서...?
         if (itemDetail.getQuantity() <= 0) {
             throw new CustomException(ErrorCode.INVALID_ITEM_QUANTITY);
         }
@@ -347,7 +345,7 @@ public class OrderService {
 
     // 예외 처리 헬퍼 메서드
     private void validatePagingParameters(int pageNumber, int pageSize) {
-        if (pageNumber < 0 || pageSize <= 0) {
+        if (pageNumber < 0 || pageSize <= 1) {
             throw new CustomException(ErrorCode.INVALID_PAGING_PARAMETERS);
         }
     }
