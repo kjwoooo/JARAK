@@ -14,22 +14,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 @Service
 public class CartItemService {
+
     public final CartItemRepository cartItemRepository;
     public final CartRepository cartRepository;
 
     public final ItemRepository itemRepository;
 
     @Autowired
-    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ItemRepository itemRepository){
+    public CartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository,
+        ItemRepository itemRepository) {
         this.cartItemRepository = cartItemRepository;
         this.cartRepository = cartRepository;
         this.itemRepository = itemRepository;
     }
 
     //cart 모든 item 조회(cartid)
+    public CartItemAddResponseDto findCartItemById(Long cartId){
+        return cartItemRepository.findById(cartId).get().toCartItemAddResponseDto();
+    }
+
 
     public List<CartItemResponseDto> findAllItemsByCartId(Long cartId) {
         List<CartItemResponseDto> responseDtoList = new ArrayList<>();
@@ -65,22 +72,18 @@ public class CartItemService {
     }
 
 
-//
-//    //특정 item 조회
-//    public  CartItemResponseDto findItemById(Long cartItemId) {
-//        CartItems cartitem = cartItemRepository.
-//    }
-
     //addCartitem
     //특정 item을 "장바구니에 추가" 했을 때 cartitemlist에 추가되는 로직
-    public CartItemAddResponseDto addCartItem(Long itemId, Long cartId, CartItemRequestDto cartItemRequestDto) {
-        //***id longtype으로 수정 요청
+    public CartItemAddResponseDto addCartItem(Long itemId, Long cartId,
+        CartItemRequestDto cartItemRequestDto) {
         Item item_id = itemRepository.findById(itemId).get();
         Cart cart_id = cartRepository.findById(cartId).get();
         CartItems cartitem = new CartItems().builder()
             .item_id(item_id)
             .cart_id(cart_id)
             .quantity(cartItemRequestDto.getQuantity())
+            .size((cartItemRequestDto.getSize()))
+            .color(cartItemRequestDto.getColor())
             .build();
 
         cartItemRepository.save(cartitem);
@@ -89,16 +92,16 @@ public class CartItemService {
     }
 
     //deleteCartitem
-    public void deleteCartItem(Long itemId){
-        cartItemRepository.deleteById(itemId);
+    public void deleteCartItem(Long cartItemId) {
+        cartItemRepository.deleteById(cartItemId);
     }
 
-
-    //수량 조절
-//    public void updateItemQuantity(Long itemId, int quantity) {
-//        CartItem item = cartRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found"));
-//        item.setQuantity(quantity);
-//        cartRepository.save(item);
-//    }
+    public CartItemAddResponseDto updateCartItemQuantity(Long cartId, Long cartItemId, CartItemRequestDto cartItemRequestDto){
+        Cart cart_id = cartRepository.findById(cartId).get();
+        //cartitem 정보
+        CartItems cartItems = cartItemRepository.findById(cartItemId).get();
+        cartItems.setQuantity(cartItemRequestDto.getQuantity());
+        cartItemRepository.save(cartItems);
+        return cartItems.toCartItemAddResponseDto();
+    }
 }
-    //각 상품에 대한 총합 계산
