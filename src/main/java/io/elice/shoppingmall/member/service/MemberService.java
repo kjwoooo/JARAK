@@ -112,8 +112,7 @@ public class MemberService {
      * @returnwb
      */
     public Member login(MemberLogin memberLogin, HttpServletResponse response){
-        Member member = memberRepository.findByUsername(memberLogin.getUsername()).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+        Member member = findByUsername(memberLogin.getUsername());
 
         loginInfoService.matchPassword(member.getLoginInfo(), memberLogin.getPassword());
         createJwtTokenCookie(member, response);
