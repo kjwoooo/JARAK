@@ -62,13 +62,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String token = authorizationHeader.split(" ")[1];
 
+        try{
         if(util.isExpired(token)){
             filterChain.doFilter(request, response);
             return;
         }
 
         String username = util.getUsername(token);
-        try{
+
             Member member = memberService.findByUsername(username);
 
             User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAuthority())));

@@ -59,7 +59,7 @@ public class SecurityConfig{
                 .hasAuthority(MemberAuthority.USER.name())
 
             //NOTE: 일반회원만 접근 가능
-            .requestMatchers("/members/info", "/addresses/**", "")
+            .requestMatchers("/members/info", "/addresses/**")
                 .hasAuthority(MemberAuthority.USER.name())
 
             //NOTE: 관리자만 접근 가능
