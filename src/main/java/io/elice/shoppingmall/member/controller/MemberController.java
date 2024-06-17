@@ -81,6 +81,6 @@ public class MemberController {
 
     @DeleteMapping("/unregister")
     public ResponseEntity<String> unregister(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse response){
-        return new ResponseEntity<>(memberService.delete(userDetails, response), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.delete(userDetails.getUsername(), response), HttpStatus.OK);
     }
 }

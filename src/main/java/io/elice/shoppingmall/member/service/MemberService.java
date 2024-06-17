@@ -143,9 +143,8 @@ public class MemberService {
         return "로그아웃";
     }
 
-    public String delete(UserDetails userDetails, HttpServletResponse response){
-        Member member = memberRepository.findByUsername(userDetails.getUsername()).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    public String delete(String username, HttpServletResponse response){
+        Member member = findByUsername(username);
 
         memberRepository.delete(member);
         util.tokenDestroy(response);
@@ -158,7 +157,6 @@ public class MemberService {
      * @param id
      * @return
      */
-
     public String delete(Long id){
         Member member = findByIdToMember(id);
         memberRepository.delete(member);
