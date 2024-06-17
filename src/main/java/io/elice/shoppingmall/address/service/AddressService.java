@@ -125,7 +125,8 @@ public class AddressService {
     }
 
     public AddressResponseDTO saveAndReturnResponseDTO(String username, AddressDTO addressDTO){
-        return new AddressResponseDTO(save(username, addressDTO));
+        Member member = memberService.findByUsername(username);
+        return new AddressResponseDTO(save(member, addressDTO));
     }
 
     /**
