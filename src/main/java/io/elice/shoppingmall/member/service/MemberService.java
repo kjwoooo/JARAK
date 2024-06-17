@@ -28,13 +28,12 @@ public class MemberService {
     private final LoginInfoService loginInfoService;
     private final PasswordEncoder encoder;
     private final JwtTokenUtil util;
-
+    private final String EMAIL_REGEX = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
     /**
      * 이메일 형식 검증
      * @param email
      */
     private void validEmail(String email){
-        String EMAIL_REGEX = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
         if(!Pattern.matches(EMAIL_REGEX, email))
             throw new CustomException(ErrorCode.NOT_MATCH_EMAIL);
     }
