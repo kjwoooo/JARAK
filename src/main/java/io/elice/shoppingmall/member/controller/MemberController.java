@@ -6,6 +6,7 @@ import io.elice.shoppingmall.member.entity.MemberModifyInfo;
 import io.elice.shoppingmall.member.entity.MemberRegister;
 import io.elice.shoppingmall.member.entity.MemberResponseDTO;
 import io.elice.shoppingmall.member.service.MemberService;
+import io.elice.shoppingmall.security.PrincipalDetails;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,14 +52,19 @@ public class MemberController {
     }
 
     //NOTE: USER API
+//    @GetMapping("/members/info")
+//    public ResponseEntity<MemberResponseDTO> getMember(@CookieValue String jwtToken){
+//        return new ResponseEntity<>(memberService.findByJwtTokenToResponseDTO(jwtToken), HttpStatus.OK);
+//    }
+
     @GetMapping("/members/info")
-    public ResponseEntity<MemberResponseDTO> getMember(@CookieValue String jwtToken){
-        return new ResponseEntity<>(memberService.findByJwtTokenToResponseDTO(jwtToken), HttpStatus.OK);
+    public ResponseEntity<MemberResponseDTO> getMember(@AuthenticationPrincipal UserDetails userDetails){
+        return new ResponseEntity<>(memberService.findByUsernameToResponseDTO(userDetails.getUsername()), HttpStatus.OK);
     }
 
     @PostMapping("/members")
-    public ResponseEntity<MemberResponseDTO> postMember(@CookieValue String jwtToken, @RequestBody MemberModifyInfo memberModify){
-        return new ResponseEntity<>(memberService.save(jwtToken, memberModify), HttpStatus.OK);
+    public ResponseEntity<MemberResponseDTO> postMember(@AuthenticationPrincipal UserDetails userDetails, @RequestBody MemberModifyInfo memberModify){
+        return new ResponseEntity<>(memberService.save(userDetails, memberModify), HttpStatus.OK);
     }
 
     @PostMapping("/register")
@@ -71,10 +79,10 @@ public class MemberController {
         return new ResponseEntity<>(memberService.login(memberLogin, response), HttpStatus.OK);
     }
 
-    @GetMapping("/token-refresh")
-    public ResponseEntity<String> tokenRefresh(@CookieValue String jwtToken, HttpServletResponse response){
-        return new ResponseEntity<>(memberService.tokenRefresh(jwtToken, response), HttpStatus.OK);
-    }
+//    @GetMapping("/token-refresh")
+//    public ResponseEntity<String> tokenRefresh(@CookieValue String jwtToken, HttpServletResponse response){
+//        return new ResponseEntity<>(memberService.tokenRefresh(jwtToken, response), HttpStatus.OK);
+//    }
 
     @PostMapping("/members-logout")
     public ResponseEntity<String> logout(HttpServletResponse response){
@@ -82,7 +90,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/unregister")
-    public ResponseEntity<String> unregister(@CookieValue String jwtToken, HttpServletResponse response){
-        return new ResponseEntity<>(memberService.delete(jwtToken, response), HttpStatus.OK);
+    public ResponseEntity<String> unregister(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse response){
+        return new ResponseEntity<>(memberService.delete(userDetails, response), HttpStatus.OK);
     }
 }

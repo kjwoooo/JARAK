@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class MemberService {
      * @param jwtToken
      * @return Member
      */
-    public Member findByJwtToken(String jwtToken){
+    public Member findByJwtToken(String jwtToken) {
         String username = util.getUsername(jwtToken);
         return findByUsername(username);
     }
@@ -95,6 +96,10 @@ public class MemberService {
     public Member findByUsername(String username){
         return memberRepository.findByUsername(username).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    public MemberResponseDTO findByUsernameToResponseDTO(String username){
+        return new MemberResponseDTO(findByUsername(username));
     }
 
 
@@ -147,15 +152,19 @@ public class MemberService {
         return "로그아웃";
     }
 
-    /**
-     * 인증된 사용자가 직접 회원 탈퇴
-     * @param jwtToken
-     * @param response
-     * @return
-     */
-    public String delete(String jwtToken, HttpServletResponse response){
-        String username = util.getUsername(jwtToken);
-        Member member = memberRepository.findByUsername(username).orElseThrow(()->
+//    public String delete(String jwtToken, HttpServletResponse response){
+//        String username = util.getUsername(jwtToken);
+//        Member member = memberRepository.findByUsername(username).orElseThrow(()->
+//            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+//
+//        memberRepository.delete(member);
+//        util.tokenDestroy(response);
+//
+//        return "회원 탈퇴";
+//    }
+
+    public String delete(UserDetails userDetails, HttpServletResponse response){
+        Member member = memberRepository.findByUsername(userDetails.getUsername()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         memberRepository.delete(member);
@@ -169,6 +178,7 @@ public class MemberService {
      * @param id
      * @return
      */
+
     public String delete(Long id){
         Member member = findByIdToMember(id);
         memberRepository.delete(member);
@@ -212,15 +222,27 @@ public class MemberService {
         return new MemberResponseDTO(member);
     }
 
-    /**
-     * 회원정보 수정
-     * @param jwtToken
-     * @param memberModifyInfo
-     * @return 변경된 회원정보
-     */
-    public MemberResponseDTO save(String jwtToken, MemberModifyInfo memberModifyInfo){
-        String username = util.getUsername(jwtToken);
-        Member oldMember = findByUsername(username);
+//    public MemberResponseDTO save(String jwtToken, MemberModifyInfo memberModifyInfo){
+//        String username = util.getUsername(jwtToken);
+//        Member oldMember = findByUsername(username);
+//
+//        loginInfoService.matchPassword(oldMember.getLoginInfo(), memberModifyInfo.getPassword());
+//
+//        memberModifyInfo.setModifyPassword(encoder.encode(memberModifyInfo.getModifyPassword()));
+//        memberModifyInfo.setPassword(encoder.encode(memberModifyInfo.getPassword()));
+//        oldMember.modifyMember(memberModifyInfo);
+//
+//        LoginInfo loginInfo = oldMember.getLoginInfo();
+//        loginInfo.setPassword(memberModifyInfo.getModifyPassword());
+//
+//        loginInfo = loginInfoService.save(loginInfo);
+//        oldMember.setLoginInfo(loginInfo);
+//
+//        return new MemberResponseDTO(memberRepository.save(oldMember));
+//    }
+
+    public MemberResponseDTO save(UserDetails userDetails, MemberModifyInfo memberModifyInfo){
+        Member oldMember = findByUsername(userDetails.getUsername());
 
         loginInfoService.matchPassword(oldMember.getLoginInfo(), memberModifyInfo.getPassword());
 
