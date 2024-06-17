@@ -52,8 +52,7 @@ public class OrderService {
 
     @Autowired
     public OrderService(OrderRepository orderRepository, ItemRepository itemRepository, ItemService itemService,
-                        AddressService addressService, MemberService memberService,
-                        CartService cartService, CartItemService cartItemService) {
+                        AddressService addressService, CartService cartService, CartItemService cartItemService) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
         this.itemService = itemService;
