@@ -118,6 +118,9 @@ public class AddressService {
      * @return
      */
     public Address save(Member member,AddressDTO addressDto){
+        if(member == null)
+            throw new CustomException(ErrorCode.NULL_POINT_MEMBER);
+
         Address address = addressDto.toEntity();
         address.setMember(member);
 
