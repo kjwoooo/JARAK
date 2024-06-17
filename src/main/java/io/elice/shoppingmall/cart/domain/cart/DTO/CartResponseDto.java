@@ -10,6 +10,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CartResponseDto {
     private Long id;
-    //private Long member_id;
     private LocalDateTime created_at;
 }
