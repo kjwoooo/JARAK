@@ -9,6 +9,7 @@ function AdminMain() {
   const user = useUserStore(state => state.user);
   const { mainBanner, setMainBanner } = useBannerStore();
   const [memberCount, setMemberCount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
 
   useEffect(() => {
     const fetchMemberCount = async () => {
@@ -20,8 +21,19 @@ function AdminMain() {
       }
     };
 
+    const fetchOrderCount = async () => {
+      try{
+        const response = await axios.get('/admin/orders/count');
+        setOrderCount(response.data);
+      }catch(error){
+        console.error('주문수를 가져오는데 실패했습니다.:',error);
+      }
+    };
+
     fetchMemberCount();
+    fetchOrderCount();
   }, []);
+  
 
   const handleMainBannerChange = (event) => {
     const file = event.target.files[0];
@@ -68,7 +80,7 @@ function AdminMain() {
           <Card className="stat-card">
             <Card.Body>
               <Card.Title>주문 수</Card.Title>
-              <Card.Text>0</Card.Text>
+              <Card.Text>{orderCount}</Card.Text>
             </Card.Body>
           </Card>
         </Col>

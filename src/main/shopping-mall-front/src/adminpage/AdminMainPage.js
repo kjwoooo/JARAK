@@ -17,6 +17,7 @@ function AdminPage() {
                     <ListGroup.Item action onClick={() => { navigate(LINKS.ADMIN_PAGE.path + '/category') }}>카테고리 관리</ListGroup.Item>
                     <ListGroup.Item action onClick={() => { navigate(LINKS.ADMIN_PAGE.path + '/item') }}>상품 관리</ListGroup.Item>
                     <ListGroup.Item action onClick={() => { navigate(LINKS.ADMIN_PAGE.path + '/order') }}>주문 관리</ListGroup.Item>
+                    <ListGroup.Item action onClick={() => { navigate(LINKS.ADMIN_PAGE.path + '/brand') }}>브랜드 관리</ListGroup.Item>
                     <ListGroup.Item></ListGroup.Item>
                 </ListGroup>
             </div>

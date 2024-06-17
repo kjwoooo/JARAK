@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,12 @@ public class MemberService {
     private final LoginInfoService loginInfoService;
     private final PasswordEncoder encoder;
     private final JwtTokenUtil util;
-
+    private final String EMAIL_REGEX = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
     /**
      * 이메일 형식 검증
      * @param email
      */
     private void validEmail(String email){
-        String EMAIL_REGEX = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
         if(!Pattern.matches(EMAIL_REGEX, email))
             throw new CustomException(ErrorCode.NOT_MATCH_EMAIL);
     }
@@ -50,22 +50,24 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
+
     /**
-     * 현재 인증된 회원 검색
+     * @deprecated findByUsername 사용 권장
      * @param jwtToken
-     * @return Member
+     * @return
      */
-    public Member findByJwtToken(String jwtToken){
+    @Deprecated
+    public Member findByJwtToken(String jwtToken) {
         String username = util.getUsername(jwtToken);
         return findByUsername(username);
     }
 
     /**
-     * 현재 인증된 회원을 검색 후
-     * MemberResponseDTO 반환
+     * @deprecated findByUsernameToResponseDTO 사용 권장
      * @param jwtToken
      * @return MemberResponseDTO
      */
+    @Deprecated
     public MemberResponseDTO findByJwtTokenToResponseDTO(String jwtToken){
         return new MemberResponseDTO(findByJwtToken(jwtToken));
     }
@@ -97,17 +99,19 @@ public class MemberService {
             new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
+    public MemberResponseDTO findByUsernameToResponseDTO(String username){
+        return new MemberResponseDTO(findByUsername(username));
+    }
 
-    public Member login(MemberLogin memberLogin, HttpServletResponse response){
     /**
      * 회원이 입력한 ID, Password를 바탕으로
      * 해당 회원이 존재하는지 검증
-     * @param loginInfo 로그인할 때, 회원이 입력한 ID, Password 정보
+     * @param memberLogin 로그인할 때, 회원이 입력한 ID, Password 정보
      * @param response
      * @returnwb
      */
-        Member member = memberRepository.findByUsername(memberLogin.getUsername()).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    public Member login(MemberLogin memberLogin, HttpServletResponse response){
+        Member member = findByUsername(memberLogin.getUsername());
 
         loginInfoService.matchPassword(member.getLoginInfo(), memberLogin.getPassword());
         createJwtTokenCookie(member, response);
@@ -124,15 +128,6 @@ public class MemberService {
         return member;
     }
 
-    public String tokenRefresh(String jwtToken, HttpServletResponse response){
-        String username = util.getUsername(jwtToken);
-        Member member = memberRepository.findByUsername(username).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-
-        createJwtTokenCookie(member, response);
-        return "토큰 재발급 성공";
-    }
-
     public void createJwtTokenCookie(Member member, HttpServletResponse response){
         String jwtToken = util.createToken(member.getUsername(), member.getAuthority());
 
@@ -147,16 +142,8 @@ public class MemberService {
         return "로그아웃";
     }
 
-    /**
-     * 인증된 사용자가 직접 회원 탈퇴
-     * @param jwtToken
-     * @param response
-     * @return
-     */
-    public String delete(String jwtToken, HttpServletResponse response){
-        String username = util.getUsername(jwtToken);
-        Member member = memberRepository.findByUsername(username).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    public String delete(String username, HttpServletResponse response){
+        Member member = findByUsername(username);
 
         memberRepository.delete(member);
         util.tokenDestroy(response);
@@ -212,15 +199,8 @@ public class MemberService {
         return new MemberResponseDTO(member);
     }
 
-    /**
-     * 회원정보 수정
-     * @param jwtToken
-     * @param memberModifyInfo
-     * @return 변경된 회원정보
-     */
-    public MemberResponseDTO save(String jwtToken, MemberModifyInfo memberModifyInfo){
-        String username = util.getUsername(jwtToken);
-        Member oldMember = findByUsername(username);
+    public MemberResponseDTO save(UserDetails userDetails, MemberModifyInfo memberModifyInfo){
+        Member oldMember = findByUsername(userDetails.getUsername());
 
         loginInfoService.matchPassword(oldMember.getLoginInfo(), memberModifyInfo.getPassword());
 

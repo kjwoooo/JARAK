@@ -10,6 +10,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,27 +26,27 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping("/addresses")
-    public ResponseEntity<List<AddressResponseDTO>> getMemberAddresses(@CookieValue String jwtToken){
-        return new ResponseEntity<>(addressService.findAllByJwtTokenAndReturnResponseDTO(jwtToken), HttpStatus.OK);
+    public ResponseEntity<List<AddressResponseDTO>> getMemberAddresses(@AuthenticationPrincipal UserDetails userDetails){
+        return new ResponseEntity<>(addressService.findAllByUsernameToResponseDTO(userDetails.getUsername()), HttpStatus.OK);
     }
 
     @GetMapping("/addresses/{id}")
-    public ResponseEntity<AddressResponseDTO> getMemberAddress(@CookieValue String jwtToken, @PathVariable Long id){
-        return new ResponseEntity<>(addressService.findByJwtTokenAndAddressId(jwtToken, id), HttpStatus.OK);
+    public ResponseEntity<AddressResponseDTO> getMemberAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id){
+        return new ResponseEntity<>(addressService.findByUsernameAndAddressId(userDetails.getUsername(), id), HttpStatus.OK);
     }
 
     @PostMapping("/addresses/{id}")
-    public ResponseEntity<AddressResponseDTO> postMemberAddress(@CookieValue String jwtToken, @PathVariable Long id, @RequestBody AddressDTO addressDto){
-        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, id, addressDto), HttpStatus.OK);
+    public ResponseEntity<AddressResponseDTO> postMemberAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, @RequestBody AddressDTO addressDto){
+        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(userDetails.getUsername(), id, addressDto), HttpStatus.OK);
     }
 
     @PostMapping("/addresses")
-    public ResponseEntity<AddressResponseDTO> updateMemberAddress(@CookieValue String jwtToken, @RequestBody AddressDTO addressDto){
-        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(jwtToken, addressDto), HttpStatus.CREATED);
+    public ResponseEntity<AddressResponseDTO> updateMemberAddress(@AuthenticationPrincipal UserDetails userDetails, @RequestBody AddressDTO addressDto){
+        return new ResponseEntity<>(addressService.saveAndReturnResponseDTO(userDetails.getUsername(), addressDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/addresses/{id}")
-    public ResponseEntity<String> deleteMemberAddress(@CookieValue String jwtToken, @PathVariable Long id){
-        return new ResponseEntity<>(addressService.delete(jwtToken, id), HttpStatus.OK);
+    public ResponseEntity<String> deleteMemberAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id){
+        return new ResponseEntity<>(addressService.delete(userDetails.getUsername(), id), HttpStatus.OK);
     }
 }

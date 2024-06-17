@@ -18,6 +18,7 @@ import useBannerStore from './stores/useBannerStore';
 import Order from './pages/Order.js';
 import Category from './pages/Category.js';
 import Carts from './pages/Carts.js';
+import Brand from './Brand.js';
 
 function App() {
 const { mainBanner } = useBannerStore();
@@ -42,6 +43,7 @@ const { mainBanner } = useBannerStore();
           <Route path='category' element={<Category/>} />
           <Route path='item' element={<div>여긴 상품관리를 해야할거같고</div>} />
           <Route path='order' element={<div>여긴 주문을 관리해야할거같아요</div>} />
+          <Route path='brand' element={<Brand/>} />
         </Route>
 
         <Route path={LINKS.MYPAGE.path} element={<MyPage/>}>

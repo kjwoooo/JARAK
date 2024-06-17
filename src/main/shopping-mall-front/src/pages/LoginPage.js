@@ -67,7 +67,7 @@ function LoginPage() {
                         value={credentials.username}
                         onChange={handleChange}
                         placeholder="아이디를 입력하세요"
-                    />
+                     required/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formPassword">
@@ -78,7 +78,7 @@ function LoginPage() {
                         value={credentials.password}
                         onChange={handleChange}
                         placeholder="비밀번호를 입력하세요"
-                    />
+                    required/>
                 </Form.Group>
 
                 <Button variant="primary" type="submit">
