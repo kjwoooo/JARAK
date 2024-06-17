@@ -1,7 +1,9 @@
 package io.elice.shoppingmall.product.Service;
 
+import io.elice.shoppingmall.product.DTO.ReplyDTO;
 import io.elice.shoppingmall.product.DTO.RequestDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
+import io.elice.shoppingmall.product.Entity.Review.Reply;
 import io.elice.shoppingmall.product.Entity.Review.Request;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import io.elice.shoppingmall.product.Repository.RequestRepository;
@@ -17,30 +19,10 @@ import java.util.Optional;
 public class RequestService {
     private final RequestRepository requestRepository;
     private final ItemRepository itemRepository;
-    public Long memberId = 1L;
+
 
     //문의 생성
-    public Long save(RequestDTO requestDTO){
-        Optional<Item> optionalItem = itemRepository.findById(requestDTO.getId());
-        if(optionalItem.isPresent()){
-            Item item = optionalItem.get();
-            Request request = Request.toSaveEntity(requestDTO, item);
-            return requestRepository.save(request).getId();
-        }
-        else{
-            return null;
-        }
-    }
-
-    //전체 문의 조회
-    public List<RequestDTO> findAll(Long itemId){
-        Item item  = itemRepository.findById(itemId).get();
-        List<Request> requestList = requestRepository.findAllByItemOrderByIdAsc(item);
-        List<RequestDTO> requestDTOList = new ArrayList<>();
-        for(Request request : requestList){
-            RequestDTO requestDTO = RequestDTO.toRequestDTO(request, memberId, itemId);
-            requestDTOList.add(requestDTO);
-        }
-        return requestDTOList;
-    }
+//    public ReplyDTO save(ReplyDTO replyDTO){
+//        Reply
+//    }
 }

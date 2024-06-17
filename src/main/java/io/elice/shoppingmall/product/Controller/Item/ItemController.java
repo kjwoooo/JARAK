@@ -12,15 +12,15 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/items")
+@RequestMapping("/items")
 public class ItemController {
 
     @Autowired
     private ItemService itemService;
 
-    // Create Item
+
     @PostMapping
-    public ItemDTO createItem(@RequestPart ItemDTO itemDTO, @RequestPart List<MultipartFile> files) throws IOException {
+    public ItemDTO createItem(@RequestPart(value = "itemDTO") ItemDTO itemDTO, @RequestPart(value = "files") List<MultipartFile> files) throws IOException {
         return itemService.createItem(itemDTO, files);
     }
 
@@ -32,14 +32,22 @@ public class ItemController {
 
     // Get Item by ID
     @GetMapping("/{id}")
-    public ItemDTO getItemById(@PathVariable Long id) {
+    public ItemDTO getItemById(@PathVariable("id") Long id) {
         return itemService.getItemById(id);
     }
 
     // Update Item
+//    @PutMapping("/{id}")
+//    public ItemDTO updateItem(@PathVariable Long id, @RequestPart ItemDTO itemDTO, @RequestPart List<MultipartFile> files) throws IOException {
+//        return itemService.updateItem(id, itemDTO, files);
+//    }
+
     @PutMapping("/{id}")
-    public ItemDTO updateItem(@PathVariable Long id, @RequestPart ItemDTO itemDTO, @RequestPart List<MultipartFile> files) throws IOException {
-        return itemService.updateItem(id, itemDTO, files);
+    public ItemDTO updateItem(@PathVariable Long id,
+                              @RequestPart(value = "itemDTO") ItemDTO itemDTO,
+                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                              @RequestPart(value = "imageIdsToDelete", required = false) List<Long> imageIdsToDelete) throws IOException {
+        return itemService.updateItem(id, itemDTO, files, imageIdsToDelete);
     }
 
     // Delete Item
@@ -56,25 +64,25 @@ public class ItemController {
     }
 
     // Get All ItemDetails
-    @GetMapping("/details")
-    public List<ItemDetailDTO> getAllItemDetails() {
-        return itemService.getAllItemDetails();
+    @GetMapping("/{itemId}/details")
+    public List<ItemDetailDTO> getAllItemDetails(@PathVariable Long itemId) {
+        return itemService.getAllItemDetails(itemId);
     }
 
     // Get ItemDetail by ID
-    @GetMapping("/details/{id}")
+    @GetMapping("/{itemId}/details/{id}")
     public ItemDetailDTO getItemDetailById(@PathVariable Long id) {
         return itemService.getItemDetailById(id);
     }
 
     // Update ItemDetail
-    @PutMapping("/details/{id}")
+    @PutMapping("/{itemId}/details/{id}")
     public ItemDetailDTO updateItemDetail(@PathVariable Long id, @RequestBody ItemDetailDTO itemDetailDTO) {
         return itemService.updateItemDetail(id, itemDetailDTO);
     }
 
     // Delete ItemDetail
-    @DeleteMapping("/details/{id}")
+    @DeleteMapping("/{itemId}/details/{id}")
     public void deleteItemDetail(@PathVariable Long id) {
         itemService.deleteItemDetail(id);
     }

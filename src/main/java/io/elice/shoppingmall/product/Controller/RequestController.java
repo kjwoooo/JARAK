@@ -17,14 +17,14 @@ import java.util.List;
 public class RequestController {
     private final RequestService requestService;
 
-    @PostMapping("/request/save")
-    public ResponseEntity save(@RequestBody RequestDTO requestDTO){
-        Long saveResult = requestService.save(requestDTO);
-        if(saveResult != null){
-            List<RequestDTO> requestDTOList = requestService.findAll(requestDTO.getItemId());
-            return new ResponseEntity<>(requestDTOList, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>("해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        }
-    }
+//    @PostMapping("/request/save")
+//    public ResponseEntity save(@RequestBody RequestDTO requestDTO){
+//        Long saveResult = requestService.save(requestDTO);
+//        if(saveResult != null){
+//            List<RequestDTO> requestDTOList = requestService.findAll(requestDTO.getItemId());
+//            return new ResponseEntity<>(requestDTOList, HttpStatus.OK);
+//        }else{
+//            return new ResponseEntity<>("해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+//        }
+//    }
 }

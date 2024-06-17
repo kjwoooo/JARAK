@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.product.Entity.Review;
 
 
+import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.product.DTO.RequestDTO;
 import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
@@ -19,9 +20,6 @@ public class Request extends BaseEntity { //Member Entity 받으면 연관관계
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long memberId;
-
     @Column(nullable = false)
     private String title;
 
@@ -32,19 +30,23 @@ public class Request extends BaseEntity { //Member Entity 받으면 연관관계
     private String img;
 
     @Column
-    private String comment;
+    private String reply;
 
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
 
-    public static Request toSaveEntity(RequestDTO requestDTO,Item item){
-        Request request = new Request();
-        request.setMemberId(requestDTO.getMemberId());
-        request.setTitle(requestDTO.getTitle());
-        request.setContent(requestDTO.getContent());
-        request.setImg(requestDTO.getImg());
-        request.setComment(requestDTO.getCommnet());
-        return request;
-    }
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+//    public static Request toSaveEntity(RequestDTO requestDTO,Item item){
+//        Request request = new Request();
+//        request.setMemberId(requestDTO.getMemberId());
+//        request.setTitle(requestDTO.getTitle());
+//        request.setContent(requestDTO.getContent());
+//        request.setImg(requestDTO.getImg());
+//        request.setComment(requestDTO.getCommnet());
+//        return request;
+//    }
 }

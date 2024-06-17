@@ -2,6 +2,7 @@ package io.elice.shoppingmall.product.DTO;
 
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Review.Request;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@Builder
 public class RequestDTO {
     private Long id;
     private Long itemId;
@@ -19,18 +21,5 @@ public class RequestDTO {
     private String content;
     private LocalDateTime createdAt;
     private String img;
-    private String commnet;
-
-    public static RequestDTO toRequestDTO(Request request, Long memberId, Long itemId) {
-        RequestDTO requestDTO = new RequestDTO();
-        requestDTO.setId(request.getId());
-        requestDTO.setItemId(itemId);
-        requestDTO.setMemberId(memberId);
-        requestDTO.setTitle(request.getTitle());
-        requestDTO.setContent(request.getContent());
-        requestDTO.setCreatedAt(request.getCreatedAt());
-        requestDTO.setImg(request.getImg());
-        requestDTO.setCommnet(request.getComment());
-        return requestDTO;
-    }
+    private String reply;
 }
