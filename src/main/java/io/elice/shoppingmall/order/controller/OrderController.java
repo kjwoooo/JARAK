@@ -49,7 +49,7 @@ public class OrderController {
     }
 
     // 주문 상세 내역 조회
-    @GetMapping("/{orderId}")
+    @GetMapping("/order/{orderId}")
     public ResponseEntity<OrderDTO> getOrderDetails(@CookieValue String jwtToken,
                                                     @PathVariable Long orderId) {
         Member member = getMemberFromJwtToken(jwtToken);

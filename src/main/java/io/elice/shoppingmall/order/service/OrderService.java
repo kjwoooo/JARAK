@@ -345,7 +345,7 @@ public class OrderService {
 
     // 예외 처리 헬퍼 메서드
     private void validatePagingParameters(int pageNumber, int pageSize) {
-        if (pageNumber < 0 || pageSize <= 1) {
+        if (pageNumber < 0 || pageSize <= 0) {
             throw new CustomException(ErrorCode.INVALID_PAGING_PARAMETERS);
         }
     }
