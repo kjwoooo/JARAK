@@ -45,7 +45,6 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final ItemService itemService;
     private final AddressService addressService;
-    private final MemberService memberService;
     private final CartService cartService;
     private final CartItemService cartItemService;
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
@@ -59,7 +58,6 @@ public class OrderService {
         this.itemRepository = itemRepository;
         this.itemService = itemService;
         this.addressService = addressService;
-        this.memberService = memberService;
         this.cartService = cartService;
         this.cartItemService = cartItemService;
     }
@@ -102,9 +100,8 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public OrderDTO createOrder(String jwtToken, @Valid OrderDTO orderDTO) {
-        Member member = memberService.findByJwtToken(jwtToken);
-        Address address = resolveAddress(jwtToken, orderDTO);
+    public OrderDTO createOrder(Member member, @Valid OrderDTO orderDTO) {
+        Address address = resolveAddress(member, orderDTO);
 
         Order order = orderMapper.orderDTOToOrder(orderDTO);
         order.setMember(member);
@@ -129,8 +126,7 @@ public class OrderService {
 
     // 주문 수정
     @Transactional
-    public OrderDTO updateOrder(String jwtToken, Long orderId, OrderDTO orderDTO) {
-        Member member = memberService.findByJwtToken(jwtToken);
+    public OrderDTO updateOrder(Member member, Long orderId, OrderDTO orderDTO) {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
@@ -139,7 +135,7 @@ public class OrderService {
             throw new CustomException(ErrorCode.CANNOT_MODIFY_CANCELLED_ORDER);
         }
 
-        Address address = resolveAddress(jwtToken, orderDTO);
+        Address address = resolveAddress(member, orderDTO);
         setOrderAddress(order, address);
 
         List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
@@ -148,8 +144,7 @@ public class OrderService {
 
     // 주문 취소(환불)
     @Transactional
-    public void cancelOrder(String jwtToken, Long orderId, String refundReason) {
-        Member member = memberService.findByJwtToken(jwtToken);
+    public void cancelOrder(Member member, Long orderId, String refundReason) {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
@@ -243,7 +238,7 @@ public class OrderService {
     }
 
     // 선택된 주소 확인
-    private Address resolveAddress(String jwtToken, OrderDTO orderDTO) {
+    private Address resolveAddress(Member member, OrderDTO orderDTO) {
         Long selectedAddressId = orderDTO.getSelectedAddressId();
 
         if (selectedAddressId != null) {
@@ -251,17 +246,17 @@ public class OrderService {
             return addressService.findById(selectedAddressId);
         } else {
             // 선택된 주소가 없으면 주소 리스트를 조회하여 첫 번째 주소를 반환
-            return getOrSaveAddress(jwtToken, orderDTO);
+            return getOrSaveAddress(member, orderDTO);
         }
     }
 
     // 주소 리스트 존재 확인
-    private Address getOrSaveAddress(String jwtToken, OrderDTO orderDTO) {
-        List<Address> addresses = addressService.findAllByJwtToken(jwtToken);
+    private Address getOrSaveAddress(Member member, OrderDTO orderDTO) {
+        List<Address> addresses = addressService.findAllByMember(member);
 
         if (addresses.isEmpty()) {
             // 주소 리스트가 없다면 새로운 주소 저장
-            return saveNewAddress(jwtToken, orderDTO);
+            return saveNewAddress(member, orderDTO);
         } else {
             // 주소 리스트가 존재하면 첫 번째 주소를 반환
             return addresses.get(0);
@@ -269,7 +264,7 @@ public class OrderService {
     }
 
     // 새로운 주소 저장
-    private Address saveNewAddress(String jwtToken, OrderDTO orderDTO) {
+    private Address saveNewAddress(Member member, OrderDTO orderDTO) {
         AddressDTO newAddressDTO = new AddressDTO(
                 orderDTO.getRecipientName(),
                 orderDTO.getZipcode(),
@@ -279,7 +274,7 @@ public class OrderService {
                 orderDTO.getDeliveryReq(),
                 orderDTO.getAddrName()
         );
-        return addressService.save(jwtToken, newAddressDTO);
+        return addressService.save(member, newAddressDTO);
     }
 
     // 주문 객체에 주소 정보 설정
