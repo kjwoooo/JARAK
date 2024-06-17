@@ -1,16 +1,15 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
-import io.elice.shoppingmall.product.Entity.Option.Color;
-import io.elice.shoppingmall.product.Entity.Option.Size;
+import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.Collection;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDetail {
@@ -18,16 +17,9 @@ public class ItemDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Integer quantity;
-
-    @OneToMany
-    @JoinColumn(name = "color_id")
-    private Collection<Color> colors;
-
-    @OneToMany
-    @JoinColumn(name = "size_id")
-    private Collection<Size> sizes;
+    private String color;
+    private String size;
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "item_id")

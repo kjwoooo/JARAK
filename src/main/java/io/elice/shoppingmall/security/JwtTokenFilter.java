@@ -1,7 +1,9 @@
 package io.elice.shoppingmall.security;
 
+import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -10,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,28 +62,38 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String token = authorizationHeader.split(" ")[1];
 
-        if(JwtTokenUtil.isExpired(token, util.getSECRET_KEY())){
+        if(util.isExpired(token)){
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = JwtTokenUtil.getUsername(token, util.getSECRET_KEY());
-        Member member = memberService.findByUsername(username).orElse(null);
+        String username = util.getUsername(token);
+        try{
+            Member member = memberService.findByUsername(username);
 
-        if(member == null){
-            filterChain.doFilter(request, response);
-            return;
+            User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAuthority())));
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                user, null, List.of(new SimpleGrantedAuthority(member.getAuthority())));
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            String newToken = util.tokenExpireExtension(token);
+            Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), newToken);
+            cookie.setPath("/");
+            cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
+            response.addCookie(cookie);
+
+        } catch(CustomException | ExpiredJwtException e){
+            util.tokenDestroy(response);
         }
-
-
-        User user = new User(username, member.getLoginInfo().getPassword(), List.of(new SimpleGrantedAuthority(member.getAdmin())));
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            user, null, List.of(new SimpleGrantedAuthority(member.getAdmin())));
-
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         filterChain.doFilter(request, response);
+
+//        if(member == null){
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
     }
 }
