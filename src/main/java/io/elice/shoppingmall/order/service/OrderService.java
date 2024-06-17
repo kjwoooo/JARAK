@@ -155,6 +155,11 @@ public class OrderService {
             order.setRefundReason("취소 사유가 존재하지 않습니다.");  // 기본 환불 사유 설정
         }
 
+        // 모든 OrderDetail의 상태를 CANCELLED로 설정
+        for (OrderDetail detail : order.getOrderDetails()) {
+            detail.setOrderState(OrderState.CANCELLED);
+        }
+
         orderRepository.save(order);
     }
 
@@ -192,6 +197,12 @@ public class OrderService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
         order.setOrderState(orderState);
+
+        // 모든 OrderDetail의 상태를 Order의 orderState의 값으로 설정
+        for (OrderDetail detail : order.getOrderDetails()) {
+            detail.setOrderState(orderState);
+        }
+        
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.orderToOrderDTO(updatedOrder);
     }
