@@ -48,6 +48,10 @@ public class AddressService {
         return addressRepository.findByMember(member);
     }
 
+    public List<Address> findAllByMember(Member member){
+        return addressRepository.findByMember(member);
+    }
+
     /**
      * @deprecated findAllByUsernameToResponseDTO 사용 권장
      * @param jwtToken
@@ -109,13 +113,11 @@ public class AddressService {
 
     /**
      * 인증받은 회원의 새로운 주소 등록
-     * @param username
+     * @param member
      * @param addressDto
      * @return
      */
-    public Address save(String username,AddressDTO addressDto){
-        Member member = memberService.findByUsername(username);
-
+    public Address save(Member member,AddressDTO addressDto){
         Address address = addressDto.toEntity();
         address.setMember(member);
 
@@ -123,7 +125,8 @@ public class AddressService {
     }
 
     public AddressResponseDTO saveAndReturnResponseDTO(String username, AddressDTO addressDTO){
-        return new AddressResponseDTO(save(username, addressDTO));
+        Member member = memberService.findByUsername(username);
+        return new AddressResponseDTO(save(member, addressDTO));
     }
 
     /**
@@ -134,11 +137,11 @@ public class AddressService {
      * @return
      */
     public Address save(String username, Long id, AddressDTO addressDTO){
+        Member member = memberService.findByUsername(username);
+
         try{
             Address oldAddress = findById(id);
             Address newAddress = addressDTO.toEntity();
-
-            Member member = memberService.findByUsername(username);
 
             newAddress.setMember(member);
             newAddress.setId(oldAddress.getId());
@@ -146,10 +149,7 @@ public class AddressService {
             return save(newAddress);
 
         } catch(CustomException e){
-            if(e.getCode() == ErrorCode.NOT_FOUND_ADDRESS)
-                return save(username, addressDTO);
-            else
-                throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
+            return save(member, addressDTO);
         }
     }
 
