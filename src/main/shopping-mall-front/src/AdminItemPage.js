@@ -8,12 +8,34 @@ function AdminItemPage() {
     const [categories, setCategories] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditProductModal, setShowEditProductModal] = useState(false);
+    const [showStockModal, setShowStockModal] = useState(false);
+    const [showStockDetailsModal, setShowStockDetailsModal] = useState(false);
+    const [showEditStockModal, setShowEditStockModal] = useState(false);
     const [newProductName, setNewProductName] = useState('');
     const [newProductPrice, setNewProductPrice] = useState('');
+    const [editProductName, setEditProductName] = useState('');
+    const [editProductPrice, setEditProductPrice] = useState('');
+    const [editSelectedMainCategory, setEditSelectedMainCategory] = useState(null);
+    const [editSelectedSubCategory, setEditSelectedSubCategory] = useState(null);
     const [selectedMainCategory, setSelectedMainCategory] = useState(null);
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
     const [mainFile, setMainFile] = useState(null);
     const [subFile, setSubFile] = useState(null);
+    const [editMainFile, setEditMainFile] = useState(null);
+    const [editSubFile, setEditSubFile] = useState(null);
+    const [currentItemId, setCurrentItemId] = useState(null);
+    const [stockDetails, setStockDetails] = useState([]);
+    const [newStock, setNewStock] = useState({
+        size: '',
+        color: '',
+        quantity: ''
+    });
+    const [editStock, setEditStock] = useState({
+        size: '',
+        color: '',
+        quantity: ''
+    });
 
     useEffect(() => {
         fetchProducts();
@@ -54,12 +76,6 @@ function AdminItemPage() {
         return category ? category.name : '카테고리 없음';
     };
 
-    const getThumbnailUrl = (product) => {
-      const mainImage = product.itemImageDTOs.find(image => image.isMain === true);
-      return mainImage ? `http://localhost:8080/images/${mainImage.fileName}` : '';
-  };
-  
-
     const handleAddProduct = async () => {
         const itemDTO = {
             itemName: newProductName,
@@ -97,6 +113,12 @@ function AdminItemPage() {
         fetchSubCategories(mainCategoryId);
     };
 
+    const handleEditMainCategoryChange = (e) => {
+        const mainCategoryId = e.target.value;
+        setEditSelectedMainCategory(mainCategoryId);
+        fetchSubCategories(mainCategoryId);
+    };
+
     const handleDeleteProduct = async (id) => {
         if (window.confirm("정말 상품을 삭제하시겠습니까?")) {
             try {
@@ -105,6 +127,109 @@ function AdminItemPage() {
             } catch (error) {
                 console.error("상품 삭제 실패:", error);
             }
+        }
+    };
+
+    const handleShowStockModal = (itemId) => {
+        setCurrentItemId(itemId);
+        setShowStockModal(true);
+    };
+
+    const handleAddStock = async () => {
+        try {
+            await axios.post(`/items/${currentItemId}/details`, newStock);
+            setShowStockModal(false);
+            setNewStock({
+                size: '',
+                color: '',
+                quantity: ''
+            });
+            fetchProducts();
+        } catch (error) {
+            console.error("재고 추가 실패:", error);
+        }
+    };
+
+    const handleShowStockDetailsModal = async (itemId) => {
+        setCurrentItemId(itemId);
+        try {
+            const response = await axios.get(`/items/${itemId}/details`);
+            setStockDetails(response.data);
+            setShowStockDetailsModal(true);
+        } catch (error) {
+            console.error("재고 현황 불러오기 실패:", error);
+        }
+    };
+
+    const handleShowEditStockModal = async (itemId, detailId) => {
+        try {
+            const response = await axios.get(`/items/${itemId}/details/${detailId}`);
+            setEditStock(response.data);
+            setCurrentItemId(itemId);
+            setShowEditStockModal(true);
+        } catch (error) {
+            console.error("재고 수정 불러오기 실패:", error);
+        }
+    };
+
+    const handleEditStock = async (detailId) => {
+        try {
+            await axios.put(`/items/${currentItemId}/details/${detailId}`, editStock);
+            setShowEditStockModal(false);
+            fetchProducts();
+        } catch (error) {
+            console.error("재고 수정 실패:", error);
+        }
+    };
+
+    const handleDeleteStock = async (itemId, detailId) => {
+        if (window.confirm("정말 해당 재고를 삭제하시겠습니까?")) {
+            try {
+                await axios.delete(`/items/${itemId}/details/${detailId}`);
+                setStockDetails(stockDetails.filter(detail => detail.id !== detailId));
+            } catch (error) {
+                console.error("재고 삭제 실패:", error);
+            }
+        }
+    };
+
+    const handleShowEditProductModal = async (productId) => {
+        setCurrentItemId(productId);
+        try {
+            const response = await axios.get(`/items/${productId}`);
+            const productData = response.data;
+            setEditProductName(productData.itemName);
+            setEditProductPrice(productData.price);
+            setEditSelectedMainCategory(productData.mainCategoryId);
+            setEditSelectedSubCategory(productData.subCategoryId);
+            setShowEditProductModal(true);
+        } catch (error) {
+            console.error("상품 정보 불러오기 실패:", error);
+        }
+    };
+
+    const handleEditProduct = async () => {
+        const itemDTO = {
+            itemName: editProductName,
+            price: editProductPrice,
+            categoryId: editSelectedSubCategory
+        };
+
+        const formData = new FormData();
+        formData.append('itemDTO', new Blob([JSON.stringify(itemDTO)], { type: 'application/json' }));
+        formData.append('mainFile', editMainFile);
+        formData.append('subFile', editSubFile);
+
+        try {
+            await axios.put(`/items/${currentItemId}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            setShowEditProductModal(false);
+            fetchProducts();
+        } catch (error) {
+            console.error("상품 수정 실패:", error);
         }
     };
 
@@ -118,6 +243,7 @@ function AdminItemPage() {
                         <th>상품명</th>
                         <th>가격</th>
                         <th>카테고리</th>
+                        <th>재고현황</th>
                         <th>작업</th>
                     </tr>
                 </thead>
@@ -125,14 +251,18 @@ function AdminItemPage() {
                     {products.map((product) => (
                         <tr key={product.id}>
                             <td>
-                                <img src={getThumbnailUrl(product)} alt="thumbnail" className="thumbnail-img" />
+                                <img src={''} alt="thumbnail" className="thumbnail-img" />
                             </td>
                             <td>{product.itemName}</td>
                             <td>{product.price}원</td>
                             <td>{getCategoryNameById(product.categoryId)}</td>
                             <td>
-                                <Button size="sm" variant="secondary" onClick={() => {/* 수정 로직 추가 */}}>수정</Button>
+                                <Button size="sm" variant="primary" onClick={() => handleShowStockDetailsModal(product.id)}>재고 현황 보기</Button>
+                            </td>
+                            <td>
+                                <Button size="sm" variant="secondary" onClick={() => handleShowEditProductModal(product.id)}>수정</Button>
                                 <Button size="sm" variant="danger" onClick={() => handleDeleteProduct(product.id)}>삭제</Button>
+                                <Button size="sm" variant="primary" onClick={() => handleShowStockModal(product.id)}>재고등록</Button>
                             </td>
                         </tr>
                     ))}
@@ -182,6 +312,128 @@ function AdminItemPage() {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleAddProduct}>등록하기</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showEditProductModal} onHide={() => setShowEditProductModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>상품 수정하기</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group>
+                        <Form.Label>수정할 이름</Form.Label>
+                        <Form.Control type="text" value={editProductName} onChange={(e) => setEditProductName(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>수정할 가격</Form.Label>
+                        <Form.Control type="number" value={editProductPrice} onChange={(e) => setEditProductPrice(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>상위 카테고리 선택</Form.Label>
+                        <Form.Control as="select" value={editSelectedMainCategory} onChange={handleEditMainCategoryChange}>
+                            <option value={null}>선택</option>
+                            {categories.map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>하위 카테고리 선택</Form.Label>
+                        <Form.Control as="select" value={editSelectedSubCategory} onChange={(e) => setEditSelectedSubCategory(e.target.value)} disabled={!editSelectedMainCategory}>
+                            <option value={null}>선택</option>
+                            {subCategories.map(subCat => (
+                                <option key={subCat.id} value={subCat.id}>{subCat.name}</option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>수정할 대표 이미지</Form.Label>
+                        <Form.Control type="file" onChange={(e) => setEditMainFile(e.target.files[0])} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>수정할 상세 이미지</Form.Label>
+                        <Form.Control type="file" onChange={(e) => setEditSubFile(e.target.files[0])} />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleEditProduct}>수정하기</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showStockModal} onHide={() => setShowStockModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>재고 등록하기</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group>
+                        <Form.Label>사이즈</Form.Label>
+                        <Form.Control type="text" value={newStock.size} onChange={(e) => setNewStock({ ...newStock, size: e.target.value })} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>색상</Form.Label>
+                        <Form.Control type="text" value={newStock.color} onChange={(e) => setNewStock({ ...newStock, color: e.target.value })} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>수량</Form.Label>
+                        <Form.Control type="number" value={newStock.quantity} onChange={(e) => setNewStock({ ...newStock, quantity: e.target.value })} />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleAddStock}>등록하기</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showStockDetailsModal} onHide={() => setShowStockDetailsModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>재고 현황</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>사이즈</th>
+                                <th>색상</th>
+                                <th>수량</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {stockDetails.map((detail) => (
+                                <tr key={detail.id}>
+                                    <td>{detail.size}</td>
+                                    <td>{detail.color}</td>
+                                    <td>{detail.quantity}</td>
+                                    <td>
+                                        <Button size="sm" variant="secondary" onClick={() => handleShowEditStockModal(currentItemId, detail.id)}>수정</Button>
+                                        <Button size="sm" variant="danger" onClick={() => handleDeleteStock(currentItemId, detail.id)}>삭제</Button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </Modal.Body>
+            </Modal>
+
+            <Modal show={showEditStockModal} onHide={() => setShowEditStockModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>재고 수정하기</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group>
+                        <Form.Label>사이즈</Form.Label>
+                        <Form.Control type="text" value={editStock.size} onChange={(e) => setEditStock({ ...editStock, size: e.target.value })} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>색상</Form.Label>
+                        <Form.Control type="text" value={editStock.color} onChange={(e) => setEditStock({ ...editStock, color: e.target.value })} />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>수량</Form.Label>
+                        <Form.Control type="number" value={editStock.quantity} onChange={(e) => setEditStock({ ...editStock, quantity: e.target.value })} />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => handleEditStock(editStock.id)}>수정하기</Button>
                 </Modal.Footer>
             </Modal>
         </div>
