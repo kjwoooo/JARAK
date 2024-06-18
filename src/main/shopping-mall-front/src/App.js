@@ -17,6 +17,7 @@ import AdminMain from './adminpage/AdminMain.js';
 import useBannerStore from './stores/useBannerStore';
 import Order from './pages/Order.js';
 import OrderComplete from './pages/OrderComplete';
+import Orders from './pages/Orders.js';
 import Category from './pages/Category.js';
 import Carts from './pages/Carts.js';
 import Brand from './Brand.js';
@@ -49,8 +50,8 @@ const { mainBanner } = useBannerStore();
         </Route>
 
         <Route path={LINKS.MYPAGE.path} element={<MyPage/>}>
-          <Route path='edit' element={<MemberEdit/>}/>
-          <Route path='orders' element={<div>내 주문내역 보는 영역</div>}/>
+          <Route path='edit' element={<MemberEdit/>} />
+          <Route path='orders' element={<Orders />} />
         </Route>
 
         <Route path={LINKS.REGISTER.path} element={<RegisterPage />} />

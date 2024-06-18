@@ -21,8 +21,16 @@ import lombok.Setter;
 public class OrderDTO {
     private Long memberId;
 
+    private Integer price;
+
     @NotNull(message = "Shipping cost is required.")
     private Integer shippingCost;
+
+    private Integer totalQuantity;
+
+    private String repItemName;
+
+    private String repItemImage;
 
     private String refundReason;
 
@@ -49,6 +57,8 @@ public class OrderDTO {
     private String addrName;
 
     private String deliveryReq;
+
+    private OrderState orderState;
 
     private List<OrderDetailDTO> orderDetails;
 

@@ -36,10 +36,10 @@ const OrderComplete = () => {
                                 </div>
                                 <div className="buttons-container">
                                     <Button
-                                        variant="secondary"
+                                        variant="light"
                                         size="lg"
                                         block
-                                        className="order-button"
+                                        className="order-detail-button"
                                         onClick={handleOrderDetailClick}
                                     >
                                         주문내역 보기

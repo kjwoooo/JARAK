@@ -39,7 +39,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.card-title {
+.card-body .card-title {
     font-size: 2rem; /* 원하는 글자 크기로 조정 */
     font-weight: bold; /* 글자 두께 조정 */
 }
@@ -63,31 +63,42 @@
     transition: all 0.3s ease;
 }
 
-.buttons-container .order-detail-button {
-    background-color: #ffffff;
-    border-color: #dbdbdb;
+.buttons-container .order-detail-button  {
+    width: 100%;
+    padding: 10px;
+    background: #fff;
+    color: #000;
     border-width: 1px;
-    color: #000000;
+    border-color: #dbdbdb;
+    cursor: pointer;
+    font-family: 'NanumGothic', sans-serif;
+    font-size: 1.1rem;
 }
 
 .buttons-container .order-detail-button:hover {
     background-color: #f1f1f1;
-    border-color: #dbdbdb;
+    border-color: #c0c0c0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.buttons-container .btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.order-button {
+.buttons-container .order-button {
     width: 100%;
     margin-bottom: 10px;
 }
 
-.order-button:first-child {
+.buttons-container .order-button:first-child {
     margin-top: 2rem;
+}
+
+.buttons-container .btn-primary {
+    background-color: #00d1b2;
+    border-color: #00d1b2;
+    color: #ffffff;
+}
+
+.buttons-container .btn-primary:hover {
+    background-color: #00c4a7;
+    border-color: #00c4a7;
 }
 
 @media (max-width: 768px) {
