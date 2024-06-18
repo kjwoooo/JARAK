@@ -85,7 +85,7 @@ public class OrderController {
     }
 
     // 주문 취소(환불)
-    @DeleteMapping("/{orderId}")
+    @PostMapping("/{orderId}")
     public ResponseEntity<String> deleteOrder(@AuthenticationPrincipal UserDetails userDetails,
                                               @PathVariable Long orderId,
                                               @RequestParam(required = false) String refundReason) {

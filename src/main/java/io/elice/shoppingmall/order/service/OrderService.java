@@ -100,20 +100,21 @@ public class OrderService {
     // 주문 생성
     @Transactional
     public OrderDTO createOrder(Member member, @Valid OrderDTO orderDTO) {
-        Address address = resolveAddress(member, orderDTO);
-
-        Order order = orderMapper.orderDTOToOrder(orderDTO);
+        // Order 엔티티 생성
+        Order order = orderDTO.toEntity();
         order.setMember(member);
-        order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING 으로 설정
-        setOrderAddress(order, address);
 
         List<CartItems> cartItems = getCartItems(member);
         if (cartItems.isEmpty()) {
             throw new CustomException(ErrorCode.EMPTY_CART);
         }
 
+        // 주문 상세 정보 생성
         List<OrderDetail> orderDetails = createOrderDetailsFromCartItems(cartItems, order);
-        return saveAndReturnOrder(order, orderDetails);
+        order.setOrderDetails(orderDetails);
+
+        orderRepository.save(order);
+        return orderDTO;
     }
 
     // 주문 수정 페이지 호출
@@ -123,7 +124,7 @@ public class OrderService {
         return orderMapper.orderToOrderDTO(order);
     }
 
-    // 주문 수정
+    // 주문 수정(배송 정보 수정)
     @Transactional
     public OrderDTO updateOrder(Member member, Long orderId, OrderDTO orderDTO) {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
@@ -134,9 +135,17 @@ public class OrderService {
             throw new CustomException(ErrorCode.CANNOT_MODIFY_CANCELLED_ORDER);
         }
 
-        Address address = resolveAddress(member, orderDTO);
-        setOrderAddress(order, address);
+        // 주문 정보 업데이트
+        order.setShippingCost(orderDTO.getShippingCost());
+        order.setRecipientName(orderDTO.getRecipientName());
+        order.setZipcode(orderDTO.getZipcode());
+        order.setAddr(orderDTO.getAddr());
+        order.setAddrDetail(orderDTO.getAddrDetail());
+        order.setRecipientTel(orderDTO.getRecipientTel());
+        order.setAddrName(orderDTO.getAddrName());
+        order.setDeliveryReq(orderDTO.getDeliveryReq());
 
+        // 주문 상세 정보 업데이트
         List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
         return saveAndReturnOrder(order, orderDetails);
     }
@@ -245,57 +254,6 @@ public class OrderService {
         order.setRepItemName(repItemName);
         order.setRepItemImage(repItemImage);
         order.setPrice(itemTotalPrice);
-    }
-
-    // 선택된 주소 확인
-    private Address resolveAddress(Member member, OrderDTO orderDTO) {
-        Long selectedAddressId = orderDTO.getSelectedAddressId();
-
-        if (selectedAddressId != null) {
-            // 선택된 주소가 있으면 해당 주소를 반환
-            return addressService.findById(selectedAddressId);
-        } else {
-            // 선택된 주소가 없으면 주소 리스트를 조회하여 첫 번째 주소를 반환
-            return getOrSaveAddress(member, orderDTO);
-        }
-    }
-
-    // 주소 리스트 존재 확인
-    private Address getOrSaveAddress(Member member, OrderDTO orderDTO) {
-        List<Address> addresses = addressService.findAllByMember(member);
-
-        if (addresses.isEmpty()) {
-            // 주소 리스트가 없다면 새로운 주소 저장
-            return saveNewAddress(member, orderDTO);
-        } else {
-            // 주소 리스트가 존재하면 첫 번째 주소를 반환
-            return addresses.get(0);
-        }
-    }
-
-    // 새로운 주소 저장
-    private Address saveNewAddress(Member member, OrderDTO orderDTO) {
-        AddressDTO newAddressDTO = new AddressDTO(
-                orderDTO.getRecipientName(),
-                orderDTO.getZipcode(),
-                orderDTO.getAddr(),
-                orderDTO.getAddrDetail(),
-                orderDTO.getRecipientTel(),
-                orderDTO.getDeliveryReq(),
-                orderDTO.getAddrName()
-        );
-        return addressService.save(member, newAddressDTO);
-    }
-
-    // 주문 객체에 주소 정보 설정
-    private void setOrderAddress(Order order, Address address) {
-        order.setRecipientName(address.getRecipientName());
-        order.setZipcode(address.getZipcode());
-        order.setAddr(address.getAddr());
-        order.setAddrDetail(address.getAddrDetail() != null ? address.getAddrDetail() : ""); // null 체크 및 기본값 설정
-        order.setRecipientTel(address.getRecipientTel());
-        order.setAddrName(address.getAddrName());
-        order.setDeliveryReq(address.getDeliveryReq() != null ? address.getDeliveryReq() : ""); // null 체크 및 기본값 설정
     }
 
     // CartItems 가져오기

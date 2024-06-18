@@ -19,27 +19,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class OrderDTO {
-    private Long id;
-
-    @NotNull(message = "Member ID is required.")
     private Long memberId;
-
-    @NotNull(message = "Price is required.")
-    private Integer price;
 
     @NotNull(message = "Shipping cost is required.")
     private Integer shippingCost;
-
-    @NotNull(message = "Total quantity is required.")
-    private Integer totalQuantity;
-
-    @NotBlank(message = "Representative item name is required.")
-    @Size(max = 255, message = "Representative item name can have at most 255 characters.")
-    private String repItemName;
-
-    @NotBlank(message = "Representative item image is required.")
-    @Size(max = 255, message = "Representative item image can have at most 255 characters.")
-    private String repItemImage;
 
     private String refundReason;
 
@@ -67,24 +50,11 @@ public class OrderDTO {
 
     private String deliveryReq;
 
-    @NotNull(message = "Order state is required.")
-    private OrderState orderState;
-
-    @Valid  // 리스트 내부의 OrderDetailDTO도 유효성 검사 수행
-    @NotNull(message = "Order details are required.")
-    @Size(min = 1, message = "Order details must have at least one item.")
     private List<OrderDetailDTO> orderDetails;
-
-    private Long selectedAddressId; // 사용자가 선택한 특정 주소 ID
 
     public Order toEntity() {
         return Order.builder()
-                .id(id)
-                .price(price)
                 .shippingCost(shippingCost)
-                .totalQuantity(totalQuantity)
-                .repItemName(repItemName)
-                .repItemImage(repItemImage)
                 .refundReason(refundReason)
                 .recipientName(recipientName)
                 .zipcode(zipcode)
@@ -93,7 +63,6 @@ public class OrderDTO {
                 .recipientTel(recipientTel)
                 .addrName(addrName)
                 .deliveryReq(deliveryReq)
-                .orderState(orderState)
                 .build();
     }
 }
