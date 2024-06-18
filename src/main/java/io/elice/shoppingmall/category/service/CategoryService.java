@@ -35,7 +35,7 @@ public class CategoryService {
         return categoryDtos;
     }
 
-    // 특정상위 카테고리의 하위 카테고리 조회
+    // 특정 상위 카테고리의 하위 카테고리 조회
     public List<CategoryDto> getSubCategories(Long parentId) {
         Category parentCategory = categoryRepository.findById(parentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PARENT_CATEGORY));
@@ -78,7 +78,6 @@ public class CategoryService {
 
 
     //  카테고리 업데이트
-    // CategoryDto로 받을지 Stirng으로 받을지 고민
     @Transactional(readOnly = false)
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id).orElseThrow(() ->
@@ -111,7 +110,7 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    // 자식 카테고리 삭제 메서드
+    // 자식 카테고리 삭제
     private void deleteSubCategories(Category category) {
         if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
             category.getSubCategories().forEach(subCategory -> deleteCategory(subCategory.getId()));
