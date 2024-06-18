@@ -1,14 +1,17 @@
 /* global daum */
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Modal, ListGroup } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useUserStore from '../stores/useUserStore.js';
 import './Order.css';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Order() {
     const location = useLocation();
+    const navigate = useNavigate();
     const { cartItems = [], productTotal = 0, shipping = 0, total = 0 } = location.state || {};
     const user = useUserStore(state => state.user);
     const [showAddressModal, setShowAddressModal] = useState(false);
@@ -136,7 +139,12 @@ function Order() {
     const handleSelectAddress = (address) => {
         setFormData({
             ...formData,
-            address: `${address.addr} ${address.addrDetail}`
+            recipientName: address.recipientName,
+            addrName: address.addrName,
+            recipientTel: address.recipientTel,
+            zipcode: address.zipcode,
+            address: `${address.addr} ${address.addrDetail}`,
+            deliveryReq: address.deliveryReq
         });
         setShowAddressModal(false);
     };
@@ -158,6 +166,31 @@ function Order() {
         window.location.reload();
     };
 
+    const handleSubmitOrder = async () => {
+        const orderData = {
+            shippingCost: shipping,
+            recipientName: formData.recipientName,
+            zipcode: formData.zipcode,
+            addr: formData.addr,
+            addrDetail: formData.addrDetail,
+            recipientTel: formData.recipientTel,
+            addrName: formData.addrName,
+            deliveryReq: formData.deliveryReq
+        };
+
+        try {
+            const response = await axios.post('/orders', orderData, {
+                headers: { 'Authorization': `Bearer ${jwtToken}` }
+            });
+            console.log('Order created:', response.data);
+            toast.success('주문이 성공적으로 진행되었습니다!');
+            navigate('/mypage/orders'); // 주문 내역 조회 페이지로 이동
+        } catch (error) {
+            console.error('Failed to create order:', error);
+            toast.error('주문 생성에 실패했습니다. 다시 시도해 주세요.');
+        }
+    };
+
     return (
         <div className="order-container">
             <h1>ORDER</h1>
@@ -173,10 +206,29 @@ function Order() {
                             <Form.Label>휴대폰 번호</Form.Label>
                             <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
                         </Form.Group>
+                        <Form.Group controlId="formAddrName">
+                            <Form.Label>배송지명</Form.Label>
+                            <Form.Control type="text" name="addrName" value={formData.addrName} onClick={() => setShowAddressModal(true)} placeholder="배송지 선택" readOnly />
+                        </Form.Group>
+                        <Form.Group controlId="formRecipientName">
+                            <Form.Label>받는 분</Form.Label>
+                            <Form.Control type="text" name="recipientName" value={formData.recipientName} onChange={handleChange} readOnly />
+                        </Form.Group>
+                        <Form.Group controlId="formRecipientTel">
+                            <Form.Label>받는 분 휴대폰 번호</Form.Label>
+                            <Form.Control type="text" name="recipientTel" value={formData.recipientTel} onChange={handleChange} readOnly />
+                        </Form.Group>
+                        <Form.Group controlId="formZipcode">
+                            <Form.Label>우편번호</Form.Label>
+                            <Form.Control type="text" name="zipcode" value={formData.zipcode} onChange={handleChange} readOnly />
+                        </Form.Group>
                         <Form.Group controlId="formAddress">
                             <Form.Label>배송 주소</Form.Label>
-                            <Form.Control type="text" name="address" value={formData.address} onClick={() => setShowAddressModal(true)} readOnly
-                                placeholder="눌러서 주소를 선택하세요!" />
+                            <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} readOnly />
+                        </Form.Group>
+                        <Form.Group controlId="formDeliveryReq">
+                            <Form.Label>배송요청사항</Form.Label>
+                            <Form.Control type="text" name="deliveryReq" value={formData.deliveryReq} onChange={handleChange} readOnly />
                         </Form.Group>
                     </Form>
                 </div>
@@ -192,7 +244,7 @@ function Order() {
                     <p className="total-amount">총 상품 금액: {productTotal.toLocaleString()} 원</p>
                     <p className="total-amount">배송비: {shipping.toLocaleString()} 원</p>
                     <p className="total-amount">총 결제 금액: {total.toLocaleString()} 원</p>
-                    <Button variant="primary">결제하기</Button>
+                    <Button variant="primary" onClick={handleSubmitOrder}>결제하기</Button>
                 </div>
             </div>
 
@@ -312,6 +364,8 @@ function Order() {
                     <Button variant="primary" onClick={handleSaveEditedAddress}>수정하기</Button>
                 </Modal.Footer>
             </Modal>
+
+            <ToastContainer />
         </div>
     );
 }
