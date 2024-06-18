@@ -60,8 +60,8 @@ const { mainBanner } = useBannerStore();
           <Route path='team6' element={<div>안녕하세요 6팀이에요</div>} />
         </Route>
 
-        <Route path='/order' element={<Order />} />
-        <Route path='/order/complete' element={<OrderComplete />} />
+        <Route path='/orders' element={<Order />} />
+        <Route path='/orders/complete' element={<OrderComplete />} />
 
         <Route path='/carts' element={<Carts/>} />
 

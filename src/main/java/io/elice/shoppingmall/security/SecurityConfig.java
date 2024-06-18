@@ -31,7 +31,7 @@ public class SecurityConfig{
 
     private final JwtTokenUtil util;
     private final MemberService memberService;
-//    private final PrincipalOauth2UserService principalOauth2UserService;
+    //    private final PrincipalOauth2UserService principalOauth2UserService;
 //    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 //    private final OAuth2AuthenticationFailurHandler oAuth2AuthenticationFailurHandler;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
@@ -52,21 +52,21 @@ public class SecurityConfig{
 
         http.authorizeHttpRequests(authorize -> authorize
 
-            //NOTE: 일반회원, 관리자 모두 접근 가능
-            .requestMatchers("/unregister", "/logout", "/token-refresh")
+                //NOTE: 일반회원, 관리자 모두 접근 가능
+                .requestMatchers("/unregister", "/logout", "/token-refresh")
                 .hasAnyAuthority(MemberAuthority.USER.name(), MemberAuthority.ADMIN.name())
-            .requestMatchers(HttpMethod.POST, "/members")
+                .requestMatchers(HttpMethod.POST, "/members")
                 .hasAuthority(MemberAuthority.USER.name())
 
-            //NOTE: 일반회원만 접근 가능
-            .requestMatchers("/members/info", "/addresses/**", "/orders/**", "/carts/**")
+                //NOTE: 일반회원만 접근 가능
+                .requestMatchers("/members/info", "/addresses/**", "/orders/**", "/carts/**")
                 .hasAuthority(MemberAuthority.USER.name())
 
-            //NOTE: 관리자만 접근 가능
-            .requestMatchers(HttpMethod.GET, "/admin/**")
+                //NOTE: 관리자만 접근 가능
+                .requestMatchers(HttpMethod.GET, "/admin/**")
                 .hasAuthority(MemberAuthority.ADMIN.name())
 
-            .anyRequest().permitAll()
+                .anyRequest().permitAll()
         );
 
 //        http.oauth2Login()

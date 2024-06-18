@@ -7,7 +7,7 @@ const OrderComplete = () => {
     const navigate = useNavigate();
 
     const handleOrderDetailClick = () => {
-        navigate('/mypage/orders');
+        navigate('/my-page/orders');
     };
 
     const handleShoppingClick = () => {

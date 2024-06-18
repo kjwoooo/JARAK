@@ -53,7 +53,7 @@ const Orders = () => {
     const deleteOrderData = async () => {
         try {
             await axios.delete(`/orders/${orderIdToDelete}`);
-            setOrders(orders.filter(order => order.id !== orderIdToDelete));
+            setOrders(orders.filter(orders => orders.id !== orderIdToDelete));
             closeModal();
         } catch (error) {
             console.error('Failed to delete order:', error);
@@ -75,8 +75,8 @@ const Orders = () => {
                     </div>
                     <Container className="orders-container">
                         <Row className="notification is-info is-light is-mobile orders-top">
-                            <Col md={2}>날짜</Col>
-                            <Col md={6}>주문정보</Col>
+                            <Col md={2}>주문 날짜</Col>
+                            <Col md={6}>주문 정보</Col>
                             <Col md={2}>상태</Col>
                             <Col md={2}>신청</Col>
                         </Row>
@@ -87,7 +87,6 @@ const Orders = () => {
                                         ? moment(orders.createdAt).format('YYYY-MM-DD')
                                         : 'Invalid Date'}
                                 </Col>
-
                                 <Col md={6} className="order-summary">
                                     {orders.totalQuantity - 1 === 0 ? orders.repItemName : `${orders.repItemName} 외 ${orders.totalQuantity - 1}건`}
                                 </Col>
