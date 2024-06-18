@@ -54,6 +54,12 @@ function AdminItemPage() {
         return category ? category.name : '카테고리 없음';
     };
 
+    const getThumbnailUrl = (product) => {
+      const mainImage = product.itemImageDTOs.find(image => image.isMain === true);
+      return mainImage ? `http://localhost:8080/images/${mainImage.fileName}` : '';
+  };
+  
+
     const handleAddProduct = async () => {
         const itemDTO = {
             itemName: newProductName,
@@ -118,7 +124,9 @@ function AdminItemPage() {
                 <tbody>
                     {products.map((product) => (
                         <tr key={product.id}>
-                            <td><img src={product.thumbnailUrl} alt="thumbnail" className="thumbnail-img" /></td>
+                            <td>
+                                <img src={getThumbnailUrl(product)} alt="thumbnail" className="thumbnail-img" />
+                            </td>
                             <td>{product.itemName}</td>
                             <td>{product.price}원</td>
                             <td>{getCategoryNameById(product.categoryId)}</td>
