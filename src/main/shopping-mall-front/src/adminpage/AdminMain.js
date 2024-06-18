@@ -10,6 +10,7 @@ function AdminMain() {
   const { mainBanner, setMainBanner } = useBannerStore();
   const [memberCount, setMemberCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
+  const [productCount, setProductCount] = useState(0);
 
   useEffect(() => {
     const fetchMemberCount = async () => {
@@ -30,6 +31,16 @@ function AdminMain() {
       }
     };
 
+    const fetchProductCount = async () => {
+      try{
+        const response = await axios.get('/items');
+        setProductCount(response.data.length);
+      }catch(error){
+        console.error('상품수를 가져오는데 실패했습니다.:',error);
+      }
+    };
+
+    fetchProductCount();
     fetchMemberCount();
     fetchOrderCount();
   }, []);
@@ -72,7 +83,7 @@ function AdminMain() {
           <Card className="stat-card">
             <Card.Body>
               <Card.Title>상품 수</Card.Title>
-              <Card.Text>0</Card.Text>
+              <Card.Text>{productCount}</Card.Text>
             </Card.Body>
           </Card>
         </Col>
