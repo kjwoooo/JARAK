@@ -1,7 +1,10 @@
 package io.elice.shoppingmall.product.Service.Item;
 
+import io.elice.shoppingmall.category.entity.Category;
+import io.elice.shoppingmall.category.repository.CategoryRepository;
 import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
+import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
 import io.elice.shoppingmall.product.Entity.Item.ItemImage;
@@ -31,6 +34,9 @@ public class ItemService {
     @Autowired
     private ItemImageRepository itemImageRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     // DTO를 엔티티로 변환하는 함수
     private Item convertToEntity(ItemDTO itemDTO) {
         Item item = new Item();
@@ -38,17 +44,20 @@ public class ItemService {
         item.setItemName(itemDTO.getItemName());
         item.setPrice(itemDTO.getPrice());
         item.setGender(itemDTO.getGender());
+        Optional<Category> optionalCategory = categoryRepository.findById(itemDTO.getCategoryId());
+        optionalCategory.ifPresent(item::setCategory);
         return item;
     }
 
     // 엔티티를 DTO로 변환하는 함수
     private ItemDTO convertToDTO(Item item) {
-        return new ItemDTO(
-                item.getId(),
-                item.getItemName(),
-                item.getPrice(),
-                item.getGender()
-        );
+        return ItemDTO.builder()
+                .id(item.getId())
+                .itemName(item.getItemName())
+                .price(item.getPrice())
+                .gender(item.getGender())
+                .categoryId(item.getCategory().getId())
+                .build();
     }
 
     // ItemDetailDTO를 ItemDetail로 변환하는 함수
@@ -74,40 +83,24 @@ public class ItemService {
                 .build();
     }
 
-//    public ItemDTO createItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
-//        Item item = convertToEntity(itemDTO);
-//        item = itemRepository.save(item);
-//        itemDTO.setId(item.getId());
-//
-//        if (files != null && !files.isEmpty()) {
-//            List<ItemImage> itemImages = new ArrayList<>();
-//            for (MultipartFile file : files) {
-//                if (file != null && !file.isEmpty()) {
-//                    // 파일 저장 경로 설정
-//                    String uploadDir = System.getProperty("user.dir") + "//src//main//resources//imagefiles";
-//                    File uploadDirFile = new File(uploadDir);
-//
-//                    // UUID를 사용한 파일 이름 생성
-//                    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-//                    String filePath = uploadDir + File.separator + fileName;
-//
-//                    // 파일 저장
-//                    File dest = new File(filePath);
-//                    file.transferTo(dest);
-//
-//                    // 파일 경로와 이름 설정
-//                    ItemImage itemImage = new ItemImage();
-//                    itemImage.setFilePath(filePath);
-//                    itemImage.setFileName(fileName);
-//                    itemImage.setItem(item);
-//
-//                    itemImages.add(itemImage);
-//                }
-//            }
-//            itemImageRepository.saveAll(itemImages);
-//        }
-//        return itemDTO;
-//    }
+    private ItemImage converToEntity(ItemImageDTO itemImageDTO) {
+        ItemImage itemImage = new ItemImage();
+        itemImage.setId(itemImageDTO.getId());
+        itemImage.setFileName(itemImageDTO.getFileName());
+        itemImage.setFilePath(itemImageDTO.getFilePath());
+        Optional<Item> item = itemRepository.findById(itemImageDTO.getItemId());
+        item.ifPresent(itemImage::setItem);
+        return itemImage;
+    }
+
+    private ItemImageDTO convertToDTO(ItemImage itemImage) {
+        return ItemImageDTO.builder()
+                .id(itemImage.getId())
+                .filePath(itemImage.getFilePath())
+                .fileName(itemImage.getFileName())
+                .itemId(itemImage.getItem().getId())
+                .build();
+    }
 
     public ItemDTO createItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
         Item item = convertToEntity(itemDTO);
@@ -168,51 +161,6 @@ public class ItemService {
         return null; // Or throw an exception
     }
 
-
-    // Update Item with multiple images
-//    public ItemDTO updateItem(Long id, ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
-//        Optional<Item> optionalItem = itemRepository.findById(id);
-//        if (optionalItem.isPresent()) {
-//            Item item = optionalItem.get();
-//            item.setItemName(itemDTO.getItemName());
-//            item.setPrice(itemDTO.getPrice());
-//            item.setGender(itemDTO.getGender());
-//
-//            item = itemRepository.save(item);
-//
-//            if (files != null && !files.isEmpty()) {
-//                List<ItemImage> itemImages = new ArrayList<>();
-//                for (MultipartFile file : files) {
-//                    if (file != null && !file.isEmpty()) {
-//                        // 파일 저장 경로 설정
-//                        String uploadDir = System.getProperty("user.dir") + "//src//main//resources//imagefiles";
-//                        File uploadDirFile = new File(uploadDir);
-//
-//
-//                        // UUID를 사용한 파일 이름 생성
-//                        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-//                        String filePath = uploadDir + File.separator + fileName;
-//
-//                        // 파일 저장
-//                        File dest = new File(filePath);
-//                        file.transferTo(dest);
-//
-//                        // 파일 경로와 이름 설정
-//                        ItemImage itemImage = new ItemImage();
-//                        itemImage.setFilePath(filePath);
-//                        itemImage.setFileName(fileName);
-//                        itemImage.setItem(item);
-//
-//                        itemImages.add(itemImage);
-//                    }
-//                }
-//                itemImageRepository.saveAll(itemImages);
-//            }
-//
-//            return convertToDTO(item);
-//        }
-//        return null; // Or throw an exception
-//    }
 
     public ItemDTO updateItem(Long id, ItemDTO itemDTO, List<MultipartFile> files, List<Long> imageIdsToDelete) throws IOException {
         Item existingItem = itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Item not found"));
@@ -334,4 +282,29 @@ public class ItemService {
     public void deleteItemDetail(Long id) {
         itemDetailRepository.deleteById(id);
     }
+
+    //find all itemimages
+    public List<ItemImageDTO> getAllItemImages(Long id) {
+        List<ItemImage> itemImages = itemImageRepository.findByItemId(id);
+        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
+
+        for (ItemImage itemImage : itemImages) {
+            ItemImageDTO itemImageDTO = convertToDTO(itemImage);
+            itemImageDTOs.add(itemImageDTO);
+        }
+
+        return itemImageDTOs;
+    }
+
+    //find itemimage by Id
+    public ItemImageDTO getItemImageById(Long id) {
+        Optional<ItemImage> optionalItemImage = itemImageRepository.findById(id);
+        if (optionalItemImage.isPresent()) {
+            ItemImage itemImage = optionalItemImage.get();
+            return convertToDTO(itemImage);
+        }
+        return null; // Or throw an exception
+    }
+
+    public void deleteItemImage(Long id) {itemImageRepository.deleteById(id);}
 }

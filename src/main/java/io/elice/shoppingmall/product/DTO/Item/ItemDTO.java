@@ -2,10 +2,7 @@ package  io.elice.shoppingmall.product.DTO.Item;
 
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +11,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ItemDTO {
     private Long id;
     private String itemName;
     private int price;
     private String gender;
+    private Long categoryId;
 }

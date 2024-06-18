@@ -5,6 +5,7 @@ import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.member.service.MemberService;
+import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Review.Review;
@@ -81,11 +82,19 @@ public class ReviewService {
     }
 
     // 리뷰 조회(페이지네이션)
-    public Page<ReviewDTO> getReviews(Long itemId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Review> reviewPage = reviewRepository.findAllByItem_IdOrderByCreatedAtDesc(itemId, pageable);
-
-        return reviewPage.map(ReviewDTO::fromEntity);
+    //FIX
+//    public Page<ReviewDTO> getReviews(Long itemId, int page, int size) {
+//    Pageable pageable = PageRequest.of(page, size);
+//    Page<Review> reviewPage = reviewRepository.findAllByItem_IdOrderByCreatedAtDesc(itemId, pageable);
+//    return reviewList.map(ReviewDTO::fromEntity);
+    public List<ReviewDTO> getReviews(Long itemId) {
+        List<Review> reviews = reviewRepository.findAllByItem_IdOrderByCreatedAtDesc(itemId);
+        List<ReviewDTO> reviewDTOs = new ArrayList<>();
+        for(Review review : reviews){
+            ReviewDTO reviewDTO = ReviewDTO.fromEntity(review);
+            reviewDTOs.add(reviewDTO);
+        }
+        return reviewDTOs;
     }
 
     // 리뷰 수정

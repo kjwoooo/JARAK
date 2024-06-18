@@ -20,6 +20,6 @@ public class RequestDTO {
     private String title;
     private String content;
     private LocalDateTime createdAt;
-    private String img;
     private String reply;
+
 }

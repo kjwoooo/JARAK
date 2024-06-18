@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
+import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.Entity.Review.Request;
 import jakarta.persistence.*;
@@ -32,4 +33,8 @@ public class Item extends BaseEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Request> requests;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

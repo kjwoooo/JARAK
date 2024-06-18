@@ -3,6 +3,8 @@ package io.elice.shoppingmall.product.Controller.Item;
 
 import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
+import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
+import io.elice.shoppingmall.product.Repository.Item.ItemImageRepository;
 import io.elice.shoppingmall.product.Service.Item.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -85,5 +87,15 @@ public class ItemController {
     @DeleteMapping("/{itemId}/details/{id}")
     public void deleteItemDetail(@PathVariable Long id) {
         itemService.deleteItemDetail(id);
+    }
+
+    @GetMapping("/{itemId}/itemimages")
+    public List<ItemImageDTO> getAllItemImages(@PathVariable Long itemId){
+        return itemService.getAllItemImages(itemId);
+    }
+
+    @GetMapping("/{itemId}/itemimages/{id}")
+    public ItemImageDTO getItemImage(@PathVariable Long id){
+        return itemService.getItemImageById(id);
     }
 }

@@ -20,8 +20,12 @@ public class Review extends BaseEntity { //member entity 받으면 연관관계 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+//FIX    @ManyToOne
+//    @JoinColumn(name = "member_id", nullable = false)
+//    private Member member;
+
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne

@@ -27,9 +27,6 @@ public class Request extends BaseEntity { //Member Entity 받으면 연관관계
     private String content;
 
     @Column
-    private String img;
-
-    @Column
     private String reply;
 
     @ManyToOne
@@ -39,14 +36,4 @@ public class Request extends BaseEntity { //Member Entity 받으면 연관관계
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
-
-//    public static Request toSaveEntity(RequestDTO requestDTO,Item item){
-//        Request request = new Request();
-//        request.setMemberId(requestDTO.getMemberId());
-//        request.setTitle(requestDTO.getTitle());
-//        request.setContent(requestDTO.getContent());
-//        request.setImg(requestDTO.getImg());
-//        request.setComment(requestDTO.getCommnet());
-//        return request;
-//    }
 }

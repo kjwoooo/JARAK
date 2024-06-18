@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    //FIx
 //    List<Review> findAllByItemOrderByIdAsc(Item item);
-    Page<Review> findAllByItem_IdOrderByCreatedAtDesc(Long itemId, Pageable pageable);
+//    Page<Review> findAllByItem_IdOrderByCreatedAtDesc(Long itemId, Pageable pageable);
+    List<Review> findAllByItem_IdOrderByCreatedAtDesc(Long itemId);
 
 }

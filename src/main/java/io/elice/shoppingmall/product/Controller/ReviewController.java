@@ -1,6 +1,5 @@
 package io.elice.shoppingmall.product.Controller;
 
-import com.sun.net.httpserver.HttpsServer;
 import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.product.Service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +38,16 @@ public class ReviewController {
     }
 
     // 리뷰 조회(페이지네이션)
+    //FIX
     @GetMapping("/{itemId}")
-    public ResponseEntity<Page<ReviewDTO>> getReviews(@PathVariable Long itemId,
-                                                      @PageableDefault(size = 5) Pageable pageable) {
-        Page<ReviewDTO> reviews = reviewService.getReviews(itemId, pageable.getPageNumber(), pageable.getPageSize());
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+//    public ResponseEntity<Page<ReviewDTO>> getReviews(@PathVariable Long itemId){
+//                                                      ,@PageableDefault(size = 5) Pageable pageable) {
+//        Page<ReviewDTO> reviews = reviewService.getReviews(itemId, pageable.getPageNumber(), pageable.getPageSize());
+//       Page<ReviewDTO> reviews = reviewService.getReviews(itemId);
+//        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    public ResponseEntity<List<ReviewDTO>> getReviews(@PathVariable Long itemId){
+        List<ReviewDTO> reviewDTOs = reviewService.getReviews(itemId);
+        return new ResponseEntity<>(reviewDTOs, HttpStatus.OK);
     }
 
     // 리뷰 수정

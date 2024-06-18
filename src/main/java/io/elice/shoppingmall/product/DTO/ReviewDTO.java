@@ -47,7 +47,4 @@ public class ReviewDTO {
         review.setRate(this.rate);
         return review;
     }
-
-
-
-    }
+}
