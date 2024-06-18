@@ -18,6 +18,8 @@ import useBannerStore from './stores/useBannerStore';
 import Order from './pages/Order.js';
 import OrderComplete from './pages/OrderComplete';
 import Orders from './pages/Orders.js';
+import OrderDetail from './pages/OrderDetail';
+import AdminOrder from './adminpage/AdminOrder';
 import Category from './pages/Category.js';
 import Carts from './pages/Carts.js';
 import Brand from './Brand.js';
@@ -45,13 +47,14 @@ const { mainBanner } = useBannerStore();
           <Route path='member' element={<Members></Members>} />
           <Route path='category' element={<Category/>} />
           <Route path='item' element={<AdminItemPage/>} />
-          <Route path='order' element={<div>여긴 주문을 관리해야할거같아요</div>} />
+          <Route path='orders' element={<AdminOrder/>} />
           <Route path='brand' element={<Brand/>} />
         </Route>
 
         <Route path={LINKS.MYPAGE.path} element={<MyPage/>}>
           <Route path='edit' element={<MemberEdit/>} />
           <Route path='orders' element={<Orders />} />
+          <Route path='order-detail' element={<OrderDetail />} />
         </Route>
 
         <Route path={LINKS.REGISTER.path} element={<RegisterPage />} />

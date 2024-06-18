@@ -53,7 +53,7 @@ const Orders = () => {
     const deleteOrderData = async () => {
         try {
             await axios.delete(`/orders/${orderIdToDelete}`);
-            setOrders(orders.filter(orders => orders.id !== orderIdToDelete));
+            setOrders(orders.filter(order => order.id !== orderIdToDelete));
             closeModal();
         } catch (error) {
             console.error('Failed to delete order:', error);
@@ -64,6 +64,10 @@ const Orders = () => {
         if (newPage >= 0 && newPage < totalPages) {
             setPage(newPage);
         }
+    };
+
+    const handleOrderClick = (orderId) => {
+        navigate(`/order-detail/${orderId}`);
     };
 
     return (
@@ -80,19 +84,19 @@ const Orders = () => {
                             <Col md={2}>상태</Col>
                             <Col md={2}>신청</Col>
                         </Row>
-                        {orders.map(orders => (
-                            <Row className="orders-item" key={orders.id}>
+                        {orders.map(order => (
+                            <Row className="orders-item" key={order.id}>
                                 <Col md={2}>
-                                    {moment(orders.createdAt).isValid()
-                                        ? moment(orders.createdAt).format('YYYY-MM-DD')
+                                    {moment(order.createdAt).isValid()
+                                        ? moment(order.createdAt).format('YYYY-MM-DD')
                                         : 'Invalid Date'}
                                 </Col>
-                                <Col md={6} className="order-summary">
-                                    {orders.totalQuantity - 1 === 0 ? orders.repItemName : `${orders.repItemName} 외 ${orders.totalQuantity - 1}건`}
+                                <Col md={6} className="order-summary" onClick={() => handleOrderClick(order.id)}>
+                                    {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
                                 </Col>
-                                <Col md={2}>{orderStateMap[orders.orderState]}</Col>
+                                <Col md={2}>{orderStateMap[order.orderState]}</Col>
                                 <Col md={2}>
-                                    <Button variant="danger" onClick={() => openModal(orders.id)}>주문 취소</Button>
+                                    <Button variant="danger" onClick={() => openModal(order.id)}>주문 취소</Button>
                                 </Col>
                             </Row>
                         ))}
