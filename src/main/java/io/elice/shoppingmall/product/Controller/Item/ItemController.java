@@ -44,12 +44,19 @@ public class ItemController {
 //        return itemService.updateItem(id, itemDTO, files);
 //    }
 
+//    @PutMapping("/{id}")
+//    public ItemDTO updateItem(@PathVariable Long id,
+//                              @RequestPart(value = "itemDTO") ItemDTO itemDTO,
+//                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+//                              @RequestPart(value = "imageIdsToDelete", required = false) List<Long> imageIdsToDelete) throws IOException {
+//        return itemService.updateItem(id, itemDTO, files, imageIdsToDelete);
+//    }
+
     @PutMapping("/{id}")
     public ItemDTO updateItem(@PathVariable Long id,
                               @RequestPart(value = "itemDTO") ItemDTO itemDTO,
-                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                              @RequestPart(value = "imageIdsToDelete", required = false) List<Long> imageIdsToDelete) throws IOException {
-        return itemService.updateItem(id, itemDTO, files, imageIdsToDelete);
+                              @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+        return itemService.updateItem(id, itemDTO, files);
     }
 
     // Delete Item
@@ -98,4 +105,7 @@ public class ItemController {
     public ItemImageDTO getItemImage(@PathVariable Long id){
         return itemService.getItemImageById(id);
     }
+
+    @DeleteMapping("/{itemId}/itemimages/{id}")
+    public void deleteItemImage(@PathVariable Long id) {itemService.deleteItemImage(id);}
 }

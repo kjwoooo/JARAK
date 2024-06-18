@@ -19,18 +19,6 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    //댓글 등록
-//    @PostMapping("/comment/save")
-//    public ResponseEntity save(@RequestBody ReviewDTO reviewDTO){
-//        Long saveResult = reviewService.save(reviewDTO);
-//        if(saveResult != null){
-//            List<ReviewDTO> reviewDTOList = reviewService.findAll(reviewDTO.getItemId());
-//            return new ResponseEntity<>(reviewDTOList, HttpStatus.OK);
-//        }else{
-//            return new ResponseEntity<>("해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-//        }
-//    }
-
     // 리뷰 생성
     @PostMapping("/{itemId}")
     public ResponseEntity<ReviewDTO> createReview(@PathVariable Long itemId, @RequestBody ReviewDTO reviewDTO) {

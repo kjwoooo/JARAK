@@ -2,6 +2,7 @@ package  io.elice.shoppingmall.product.DTO.Item;
 
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
+import io.elice.shoppingmall.product.Entity.Item.ItemImage;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -18,4 +19,5 @@ public class ItemDTO {
     private int price;
     private String gender;
     private Long categoryId;
+    private List<ItemImageDTO> itemImageDTOs;
 }

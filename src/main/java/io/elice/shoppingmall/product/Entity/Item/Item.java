@@ -2,6 +2,7 @@ package io.elice.shoppingmall.product.Entity.Item;
 
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
+import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
 import io.elice.shoppingmall.product.Entity.Review.Request;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -38,6 +38,7 @@ public class ItemService {
     private CategoryRepository categoryRepository;
 
     // DTO를 엔티티로 변환하는 함수
+
     private Item convertToEntity(ItemDTO itemDTO) {
         Item item = new Item();
         item.setId(itemDTO.getId());
@@ -46,17 +47,28 @@ public class ItemService {
         item.setGender(itemDTO.getGender());
         Optional<Category> optionalCategory = categoryRepository.findById(itemDTO.getCategoryId());
         optionalCategory.ifPresent(item::setCategory);
+        List<ItemImage> itemImages= itemImageRepository.findAllByItemId(item.getId());
+        item.setItemImages(itemImages);
         return item;
     }
 
     // 엔티티를 DTO로 변환하는 함수
     private ItemDTO convertToDTO(Item item) {
+
+        List<ItemImage> itemImages = itemImageRepository.findAllByItemId(item.getId());
+        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
+        for(ItemImage itemImage : itemImages){
+            ItemImageDTO itemImageDTO = convertToDTO(itemImage);
+            itemImageDTOs.add(itemImageDTO);
+        }
+
         return ItemDTO.builder()
                 .id(item.getId())
                 .itemName(item.getItemName())
                 .price(item.getPrice())
                 .gender(item.getGender())
                 .categoryId(item.getCategory().getId())
+                .itemImageDTOs(itemImageDTOs)
                 .build();
     }
 
@@ -102,39 +114,54 @@ public class ItemService {
                 .build();
     }
 
+//    public ItemDTO createItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+//        Item item = convertToEntity(itemDTO);
+//        item = itemRepository.save(item);
+//        itemDTO.setId(item.getId());
+//        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
+//
+//        if (files != null && !files.isEmpty()) {
+//            List<ItemImage> itemImages = new ArrayList<>();
+//            for (MultipartFile file : files) {
+//                if (file != null && !file.isEmpty()) {
+//                    // 파일 저장 경로 설정
+//                    String uploadDir = System.getProperty("user.dir") + "//src//main//resources//imagefiles";
+//                    File uploadDirFile = new File(uploadDir);
+//
+//                    // UUID를 사용한 파일 이름 생성
+//                    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+//                    String filePath = uploadDir + File.separator + fileName;
+//
+//
+//                    // 파일 저장
+//                    File dest = new File(filePath);
+//                    file.transferTo(dest);
+//
+//                    // 파일 경로와 이름 설정
+//                    ItemImage itemImage = new ItemImage();
+//                    itemImage.setFilePath(filePath);
+//                    itemImage.setFileName(fileName);
+//                    itemImage.setItem(item);
+//
+//                    itemImages.add(itemImage);
+//                    itemImageRepository.save(itemImage);
+//                    itemImageDTOs.add(convertToDTO(itemImage));
+//                }
+//            }
+////            itemImageRepository.saveAll(itemImages);
+//        }
+//        itemDTO.setItemImageDTOs(itemImageDTOs);
+//        return itemDTO;
+//    }
+
     public ItemDTO createItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
         Item item = convertToEntity(itemDTO);
         item = itemRepository.save(item);
         itemDTO.setId(item.getId());
 
-        if (files != null && !files.isEmpty()) {
-            List<ItemImage> itemImages = new ArrayList<>();
-            for (MultipartFile file : files) {
-                if (file != null && !file.isEmpty()) {
-                    // 파일 저장 경로 설정
-                    String uploadDir = System.getProperty("user.dir") + "//src//main//resources//imagefiles";
-                    File uploadDirFile = new File(uploadDir);
+        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(item, files);
+        itemDTO.setItemImageDTOs(itemImageDTOs);
 
-                    // UUID를 사용한 파일 이름 생성
-                    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-                    String filePath = uploadDir + File.separator + fileName;
-
-
-                    // 파일 저장
-                    File dest = new File(filePath);
-                    file.transferTo(dest);
-
-                    // 파일 경로와 이름 설정
-                    ItemImage itemImage = new ItemImage();
-                    itemImage.setFilePath(filePath);
-                    itemImage.setFileName(fileName);
-                    itemImage.setItem(item);
-
-                    itemImages.add(itemImage);
-                }
-            }
-            itemImageRepository.saveAll(itemImages);
-        }
         return itemDTO;
     }
 
@@ -162,54 +189,109 @@ public class ItemService {
     }
 
 
-    public ItemDTO updateItem(Long id, ItemDTO itemDTO, List<MultipartFile> files, List<Long> imageIdsToDelete) throws IOException {
-        Item existingItem = itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Item not found"));
+//    public ItemDTO updateItem(Long id, ItemDTO itemDTO, List<MultipartFile> files, List<Long> imageIdsToDelete) throws IOException {
+//        Item existingItem = itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Item not found"));
+//        existingItem.setItemName(itemDTO.getItemName());
+//        existingItem.setPrice(itemDTO.getPrice());
+//        existingItem.setGender(itemDTO.getGender());
+//
+//        // 이미지 삭제 처리
+//        if (imageIdsToDelete != null && !imageIdsToDelete.isEmpty()) {
+//            for (Long imageId : imageIdsToDelete) {
+//                Optional<ItemImage> imageOpt = itemImageRepository.findById(imageId);
+//                if (imageOpt.isPresent()) {
+//                    ItemImage image = imageOpt.get();
+//                    File file = new File(image.getFilePath());
+//                    if (file.exists()) {
+//                        file.delete();
+//                    }
+//                    itemImageRepository.delete(image);
+//                }
+//            }
+//        }
+//
+//        // 새 파일 저장 처리
+//        if (files != null && !files.isEmpty()) {
+//            List<ItemImage> itemImages = new ArrayList<>();
+//            for (MultipartFile file : files) {
+//                if (file != null && !file.isEmpty()) {
+//                    String uploadDir = System.getProperty("user.dir") + "//src//main//resources//imagefiles";
+//                    File uploadDirFile = new File(uploadDir);
+//
+//                    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+//                    String filePath = uploadDir + File.separator + fileName;
+//
+//                    File dest = new File(filePath);
+//                    file.transferTo(dest);
+//
+//                    ItemImage itemImage = new ItemImage();
+//                    itemImage.setFilePath(filePath);
+//                    itemImage.setFileName(fileName);
+//                    itemImage.setItem(existingItem);
+//
+//                    itemImages.add(itemImage);
+//                }
+//            }
+//            itemImageRepository.saveAll(itemImages);
+//        }
+//
+//        itemRepository.save(existingItem);
+//        return convertToDTO(existingItem);
+//    }
+
+    public ItemDTO updateItem(Long itemId, ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+        // 기존 아이템을 데이터베이스에서 조회
+        Item existingItem = itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        // ItemDTO의 내용으로 기존 아이템 업데이트
         existingItem.setItemName(itemDTO.getItemName());
-        existingItem.setPrice(itemDTO.getPrice());
         existingItem.setGender(itemDTO.getGender());
+        existingItem.setPrice(itemDTO.getPrice());
+        // 기타 필요한 필드 업데이트
+        itemRepository.save(existingItem);
 
-        // 이미지 삭제 처리
-        if (imageIdsToDelete != null && !imageIdsToDelete.isEmpty()) {
-            for (Long imageId : imageIdsToDelete) {
-                Optional<ItemImage> imageOpt = itemImageRepository.findById(imageId);
-                if (imageOpt.isPresent()) {
-                    ItemImage image = imageOpt.get();
-                    File file = new File(image.getFilePath());
-                    if (file.exists()) {
-                        file.delete();
-                    }
-                    itemImageRepository.delete(image);
-                }
-            }
-        }
+        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(existingItem, files);
+        itemDTO.setId(existingItem.getId());
+        itemDTO.setItemImageDTOs(itemImageDTOs);
 
-        // 새 파일 저장 처리
+        return itemDTO;
+    }
+
+    private List<ItemImageDTO> processFilesAndSaveImages(Item item, List<MultipartFile> files) throws IOException {
+        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
+
         if (files != null && !files.isEmpty()) {
             List<ItemImage> itemImages = new ArrayList<>();
             for (MultipartFile file : files) {
                 if (file != null && !file.isEmpty()) {
+                    // 파일 저장 경로 설정
                     String uploadDir = System.getProperty("user.dir") + "//src//main//resources//imagefiles";
                     File uploadDirFile = new File(uploadDir);
 
+                    // UUID를 사용한 파일 이름 생성
                     String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
                     String filePath = uploadDir + File.separator + fileName;
 
+                    // 파일 저장
                     File dest = new File(filePath);
                     file.transferTo(dest);
 
+                    // 파일 경로와 이름 설정
                     ItemImage itemImage = new ItemImage();
                     itemImage.setFilePath(filePath);
                     itemImage.setFileName(fileName);
-                    itemImage.setItem(existingItem);
+                    itemImage.setItem(item);
 
                     itemImages.add(itemImage);
+                    itemImageRepository.save(itemImage);
+                    itemImageDTOs.add(convertToDTO(itemImage));
                 }
             }
-            itemImageRepository.saveAll(itemImages);
+//        itemImageRepository.saveAll(itemImages);
         }
 
-        itemRepository.save(existingItem);
-        return convertToDTO(existingItem);
+        return itemImageDTOs;
     }
 
     // Delete Item
@@ -219,7 +301,7 @@ public class ItemService {
             Item item = optionalItem.get();
 
             // 파일 삭제
-            List<ItemImage> itemImages = itemImageRepository.findByItemId(id);
+            List<ItemImage> itemImages = itemImageRepository.findAllByItemId(id);
             for (ItemImage itemImage : itemImages) {
                 File file = new File(itemImage.getFilePath());
                 if (file.exists()) {
@@ -285,7 +367,7 @@ public class ItemService {
 
     //find all itemimages
     public List<ItemImageDTO> getAllItemImages(Long id) {
-        List<ItemImage> itemImages = itemImageRepository.findByItemId(id);
+        List<ItemImage> itemImages = itemImageRepository.findAllByItemId(id);
         List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
 
         for (ItemImage itemImage : itemImages) {
@@ -307,4 +389,6 @@ public class ItemService {
     }
 
     public void deleteItemImage(Long id) {itemImageRepository.deleteById(id);}
+
+
 }

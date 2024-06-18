@@ -29,44 +29,19 @@ public class ReviewService {
     private final ItemRepository itemRepository;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
-//    Long memeberId = 1L;
 
-    //댓글 생성
-//    public Long save(ReviewDTO reviewDTO){
-//        Optional<Item> optionalItem = itemRepository.findById(reviewDTO.getId());
-//        if(optionalItem.isPresent()){
-//            Item item = optionalItem.get();
-//            Review review = Review.toSaveEntity(reviewDTO, item);
-//            return reviewRepository.save(review).getId();
-//        }
-//        else{
-//            return null;
-//        }
-//    }
-//
-//    //전체 댓글 조회
-//    public List<ReviewDTO> findAll(Long itemId){
-//        Item item = itemRepository.findById(itemId).get();
-//        List<Review> reviewList = reviewRepository.findAllByItemOrderByIdAsc(item);
-//        List<ReviewDTO> reviewDTOList = new ArrayList<>();
-//        for(Review review : reviewList){
-//            ReviewDTO reviewDTO = ReviewDTO.toReviewDTO(review, memeberId, itemId);
-//            reviewDTOList.add(reviewDTO);
-//        }
-//        return reviewDTOList;
-//    }
 
     // 리뷰 생성
     @Transactional
     public ReviewDTO createReview(Long itemId, ReviewDTO reviewDTO) {
-        String username = reviewDTO.getUsername(); // 세션 스토리지에서 가져온 사용자의 username
+        // 세션 스토리지에서 가져온 사용자의 username
         // api 호출시 클라이언트가 세션트로리지에 사용자의 username을 저장한다고 함(?)- 확인
         // ReviewDTO에 저장된 username을 사용하여 회원을 조회
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM)); // 상품 조회
 
-        Member member = memberService.findByUsername(username); // 회원의 닉네임을 사용하여 회원 조회
+        Member member = memberService.findByUsername(reviewDTO.getUsername()); // 회원의 닉네임을 사용하여 회원 조회
 
         Review review = new Review();
         review.setTitle(reviewDTO.getTitle());
