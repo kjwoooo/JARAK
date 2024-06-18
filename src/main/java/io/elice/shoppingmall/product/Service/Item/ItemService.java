@@ -110,6 +110,7 @@ public class ItemService {
         itemImage.setId(itemImageDTO.getId());
         itemImage.setFileName(itemImageDTO.getFileName());
         itemImage.setFilePath(itemImageDTO.getFilePath());
+        itemImage.setIsMain(itemImageDTO.getIsMain());
         Optional<Item> item = itemRepository.findById(itemImageDTO.getItemId());
         item.ifPresent(itemImage::setItem);
         return itemImage;
@@ -121,17 +122,16 @@ public class ItemService {
                 .filePath(itemImage.getFilePath())
                 .fileName(itemImage.getFileName())
                 .itemId(itemImage.getItem().getId())
+                .isMain(itemImage.getIsMain())
                 .build();
     }
 
 
-    public ItemDTO createItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+    public ItemDTO createItem(ItemDTO itemDTO, MultipartFile mainFile, MultipartFile subFile) throws IOException {
         Item item = convertToEntity(itemDTO);
         item = itemRepository.save(item);
         itemDTO.setId(item.getId());
-        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(item, files);
-        itemDTO.setItemImageDTOs(itemImageDTOs);
-
+        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(item, mainFile, subFile);
         return itemDTO;
     }
 
@@ -159,7 +159,26 @@ public class ItemService {
     }
 
 
-    public ItemDTO updateItem(Long itemId, ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+//    public ItemDTO updateItem(Long itemId, ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+//        // 기존 아이템을 데이터베이스에서 조회
+//        Item existingItem = itemRepository.findById(itemId)
+//                .orElseThrow(() -> new RuntimeException("Item not found"));
+//
+//        // ItemDTO의 내용으로 기존 아이템 업데이트
+//        existingItem.setItemName(itemDTO.getItemName());
+//        existingItem.setGender(itemDTO.getGender());
+//        existingItem.setPrice(itemDTO.getPrice());
+//        // 기타 필요한 필드 업데이트
+//        itemRepository.save(existingItem);
+//
+//        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(existingItem, files);
+//        itemDTO.setId(existingItem.getId());
+//        itemDTO.setItemImageDTOs(itemImageDTOs);
+//
+//        return itemDTO;
+//    }
+
+        public ItemDTO updateItem(Long itemId, ItemDTO itemDTO, MultipartFile mainFile, MultipartFile subFile) throws IOException {
         // 기존 아이템을 데이터베이스에서 조회
         Item existingItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
@@ -171,49 +190,54 @@ public class ItemService {
         // 기타 필요한 필드 업데이트
         itemRepository.save(existingItem);
 
-        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(existingItem, files);
+        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(existingItem, mainFile, subFile);
         itemDTO.setId(existingItem.getId());
         itemDTO.setItemImageDTOs(itemImageDTOs);
 
         return itemDTO;
     }
 
-    private List<ItemImageDTO> processFilesAndSaveImages(Item item, List<MultipartFile> files) throws IOException {
+
+
+
+    private List<ItemImageDTO> processFilesAndSaveImages(Item item, MultipartFile mainFile, MultipartFile subFile) throws IOException {
         List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
 
-        if (files != null && !files.isEmpty()) {
-            List<ItemImage> itemImages = new ArrayList<>();
-            for (MultipartFile file : files) {
-                if (file != null && !file.isEmpty()) {
-                    // 파일 저장 경로 설정
-                    String uploadDir = System.getProperty("user.dir") + "//src//main//resources//mainimagefiles";
-                    File uploadDirFile = new File(uploadDir);
+        // 파일 저장 경로 설정
+        String uploadDir = System.getProperty("user.dir") + "//src//main//resources//mainimagefiles";
+        File uploadDirFile = new File(uploadDir);
 
-                    // UUID를 사용한 파일 이름 생성
-                    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-                    String filePath = uploadDir + File.separator + fileName;
+        // UUID를 사용한 파일 이름 생성
+        String mainFileName = UUID.randomUUID().toString() + "_" + mainFile.getOriginalFilename();
+        String mainFilePath = uploadDir + File.separator + mainFileName;
+        String subFileName = UUID.randomUUID().toString() + "_" + subFile.getOriginalFilename();
+        String subFilePath = uploadDir + File.separator + subFileName;
 
-                    // 파일 저장
-                    File dest = new File(filePath);
-                    file.transferTo(dest);
+        // 파일 저장
+        File mainDest = new File(mainFilePath);
+        mainFile.transferTo(mainDest);
+        File subDest = new File(subFilePath);
+        subFile.transferTo(subDest);
 
-                    // 파일 경로와 이름 설정
-                    ItemImage itemImage = new ItemImage();
-                    itemImage.setFilePath(filePath);
-                    itemImage.setFileName(fileName);
-                    itemImage.setItem(item);
+        // 파일 경로와 이름 설정
+        ItemImage mainImage = new ItemImage();
+        mainImage.setFilePath(mainFilePath);
+        mainImage.setFileName(mainFileName);
+        mainImage.setItem(item);
+        mainImage.setIsMain(true);
+        itemImageRepository.save(mainImage);
+        itemImageDTOs.add(convertToDTO(mainImage));
 
-                    itemImages.add(itemImage);
-                    itemImageRepository.save(itemImage);
-                    itemImageDTOs.add(convertToDTO(itemImage));
-                }
-            }
-//        itemImageRepository.saveAll(itemImages);
-        }
+        ItemImage subImage = new ItemImage();
+        subImage.setFilePath(subFilePath);
+        subImage.setFileName(subFileName);
+        subImage.setItem(item);
+        subImage.setIsMain(false);
+        itemImageRepository.save(subImage);
+        itemImageDTOs.add(convertToDTO(subImage));
 
         return itemImageDTOs;
     }
-
 
     // Delete Item
     public void deleteItem(Long id) {

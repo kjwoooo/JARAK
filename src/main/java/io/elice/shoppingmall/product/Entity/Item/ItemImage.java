@@ -18,8 +18,10 @@ public class ItemImage {
 
     private String filePath;
     private String fileName;
+    private Boolean isMain;
 
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
+
 }

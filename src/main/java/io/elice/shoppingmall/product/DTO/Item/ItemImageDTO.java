@@ -12,4 +12,5 @@ public class ItemImageDTO {
     private String filePath;
     private String fileName;
     private Long itemId;
+    private Boolean isMain;
 }

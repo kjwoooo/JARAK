@@ -22,8 +22,8 @@ public class ItemController {
 
 
     @PostMapping
-    public ItemDTO createItem(@RequestPart(value = "itemDTO") ItemDTO itemDTO, @RequestPart(value = "files") List<MultipartFile> files) throws IOException {
-        return itemService.createItem(itemDTO, files);
+    public ItemDTO createItem(@RequestPart(value = "itemDTO") ItemDTO itemDTO, @RequestPart(value = "mainFile") MultipartFile mainFile, @RequestPart(value = "subFile") MultipartFile subFile) throws IOException {
+        return itemService.createItem(itemDTO, mainFile, subFile);
     }
 
     // Get All Items
@@ -42,8 +42,9 @@ public class ItemController {
     @PutMapping("/{id}")
     public ItemDTO updateItem(@PathVariable Long id,
                               @RequestPart(value = "itemDTO") ItemDTO itemDTO,
-                              @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
-        return itemService.updateItem(id, itemDTO, files);
+                              @RequestPart(value = "mainFile", required = false) MultipartFile mainFile,
+                              @RequestPart(value = "subFile", required = false) MultipartFile subFile) throws IOException {
+        return itemService.updateItem(id, itemDTO, mainFile, subFile);
     }
 
     // Delete Item
