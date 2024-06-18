@@ -184,7 +184,7 @@ function Order() {
             });
             console.log('Order created:', response.data);
             toast.success('주문이 성공적으로 진행되었습니다!');
-            navigate('/mypage/orders'); // 주문 내역 조회 페이지로 이동
+            navigate('/order/complete'); // 주문 내역 조회 페이지로 이동
         } catch (error) {
             console.error('Failed to create order:', error);
             toast.error('주문 생성에 실패했습니다. 다시 시도해 주세요.');
