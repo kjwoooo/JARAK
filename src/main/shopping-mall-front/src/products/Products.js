@@ -36,13 +36,13 @@ function Products() {
     return result;
   };
 
-  const itemsInRows = chunkedItems(displayItems, 3);
+  const itemsInRows = Array.isArray(displayItems) ? chunkedItems(displayItems, 3) : [];
 
   return (
     <div className="Products">
-      {itemsInRows.map((row, rowIndex) => (
+      {Array.isArray(itemsInRows) && itemsInRows.map((row, rowIndex) => (
         <div className="row" key={rowIndex}>
-          {row.map((item, index) => (
+          {Array.isArray(row) && row.map((item, index) => (
             <Col xs key={index}>
               <img src={item.image} width="150px" height="150px" alt={item.itemName}></img>
               <Link style={{ textDecoration: "none" }} to={`/detail/${item.id}`} state={{ item }}>
