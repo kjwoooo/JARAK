@@ -26,7 +26,6 @@ public class CategoryController {
 
     /**
      *  하나의 카테고리 조회 <p>
-     *  CategoryDto의 생성자로 SubCategoryDto의 빈 리스트를 생성하고 있음 <P>
      *  ->  상위 카테고리에서 해당 서브카테고리 조회가능한지 확인
      */
     @GetMapping("/{id}")
@@ -43,7 +42,6 @@ public class CategoryController {
 
     /**카테고리 추가*/
     @PostMapping
-    // 단순 이름으로만 카테고리를 생성할지? 추후 추가적인 내용(설명, 분류)을 추가할지 몰라서 DTO로 구성
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
         return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
     }
