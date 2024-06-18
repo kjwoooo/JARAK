@@ -38,19 +38,6 @@ public class ItemController {
         return itemService.getItemById(id);
     }
 
-    // Update Item
-//    @PutMapping("/{id}")
-//    public ItemDTO updateItem(@PathVariable Long id, @RequestPart ItemDTO itemDTO, @RequestPart List<MultipartFile> files) throws IOException {
-//        return itemService.updateItem(id, itemDTO, files);
-//    }
-
-//    @PutMapping("/{id}")
-//    public ItemDTO updateItem(@PathVariable Long id,
-//                              @RequestPart(value = "itemDTO") ItemDTO itemDTO,
-//                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
-//                              @RequestPart(value = "imageIdsToDelete", required = false) List<Long> imageIdsToDelete) throws IOException {
-//        return itemService.updateItem(id, itemDTO, files, imageIdsToDelete);
-//    }
 
     @PutMapping("/{id}")
     public ItemDTO updateItem(@PathVariable Long id,

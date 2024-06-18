@@ -20,4 +20,5 @@ public class ItemDTO {
     private String gender;
     private Long categoryId;
     private List<ItemImageDTO> itemImageDTOs;
+    private List<ItemDetailDTO> itemDetailDTOs;
 }
