@@ -94,16 +94,16 @@ function Detail() {
                     <p className="price">{item.price.toLocaleString()} 원</p>
                     <Button variant="outline-secondary" onClick={handleOptionAdd}>옵션 추가</Button>
 
-                    {selectedOptions.map((option, index) => (
+                    {Array.isArray(selectedOptions) && selectedOptions.map((option, index) => (
                         <div key={index} className="option-selector">
                             <div className="dropdown-container">
-                                <DropdownButton id={`size-dropdown-${index}`} title={option.size || "사이즈"} className="dropdown-button" variant="secondary">
+                                <DropdownButton id={`size-dropdown-${index}`} title={option.size || "사이즈"} className="dropdown-button">
                                     {availableSizes.map((size, idx) => (
                                         <Dropdown.Item key={idx} onClick={() => handleSizeChange(index, size)}>{size}</Dropdown.Item>
                                     ))}
                                 </DropdownButton>
 
-                                <DropdownButton id={`color-dropdown-${index}`} title={option.color || "색상"} className="dropdown-button" variant="secondary">
+                                <DropdownButton id={`color-dropdown-${index}`} title={option.color || "색상"} className="dropdown-button">
                                     {option.size && getAvailableColors(option.size).map((color, idx) => (
                                         <Dropdown.Item key={idx} onClick={() => handleColorChange(index, color)}>{color}</Dropdown.Item>
                                     ))}
