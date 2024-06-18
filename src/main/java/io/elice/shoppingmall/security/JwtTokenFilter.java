@@ -41,6 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             if(jwtTokenCookie == null){
                 filterChain.doFilter(request, response);
+                return;
             }
 
             String jwtToken = jwtTokenCookie.getValue();
@@ -70,6 +71,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             response.addCookie(cookie);
 
         } catch(Exception e){
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT 토큰이 유효하지않거나 만료됨");
             util.tokenDestroy(response);
         }
 
