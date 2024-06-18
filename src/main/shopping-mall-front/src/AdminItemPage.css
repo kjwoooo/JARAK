@@ -1,0 +1,32 @@
+.admin-item-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-item-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.thumbnail-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.add-product-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+.modal-header, .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

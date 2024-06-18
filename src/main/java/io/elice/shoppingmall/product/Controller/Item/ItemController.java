@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.product.Controller.Item;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
 import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
@@ -21,10 +22,19 @@ public class ItemController {
     private ItemService itemService;
 
 
-    @PostMapping
-    public ItemDTO createItem(@RequestPart(value = "itemDTO") ItemDTO itemDTO, @RequestPart(value = "mainFile") MultipartFile mainFile, @RequestPart(value = "subFile") MultipartFile subFile) throws IOException {
-        return itemService.createItem(itemDTO, mainFile, subFile);
-    }
+//    @PostMapping
+//    public ItemDTO createItem(@RequestPart(value = "itemDTO") ItemDTO itemDTO, @RequestPart(value = "mainFile") MultipartFile mainFile, @RequestPart(value = "subFile") MultipartFile subFile) throws IOException {
+//        return itemService.createItem(itemDTO, mainFile, subFile);
+//    }
+@PostMapping
+public ItemDTO createItem(@RequestPart(value = "itemDTO") String itemDTOStr,
+                          @RequestPart(value = "mainFile") MultipartFile mainFile,
+                          @RequestPart(value = "subFile") MultipartFile subFile) throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    ItemDTO itemDTO = objectMapper.readValue(itemDTOStr, ItemDTO.class);
+    return itemService.createItem(itemDTO, mainFile, subFile);
+}
+
 
     // Get All Items
     @GetMapping
