@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.security;
 
 import io.elice.shoppingmall.exception.CustomException;
+import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -32,15 +33,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if(authorizationHeader == null){
-
-            if(request.getCookies() == null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
+        try{
             Cookie jwtTokenCookie = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(util.getJWT_COOKIE_NAME()))
                 .findFirst()
@@ -48,27 +41,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             if(jwtTokenCookie == null){
                 filterChain.doFilter(request, response);
-                return;
             }
 
             String jwtToken = jwtTokenCookie.getValue();
-            authorizationHeader = "Bearer " + jwtToken;
-        }
 
-        if(!authorizationHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request, response);
-            return;
-        }
 
-        String token = authorizationHeader.split(" ")[1];
+            if(util.isExpired(jwtToken)){
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-        try{
-        if(util.isExpired(token)){
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String username = util.getUsername(token);
+            String username = util.getUsername(jwtToken);
 
             Member member = memberService.findByUsername(username);
 
@@ -80,21 +63,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            String newToken = util.tokenExpireExtension(token);
+            String newToken = util.tokenExpireExtension(jwtToken);
             Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), newToken);
             cookie.setPath("/");
             cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
             response.addCookie(cookie);
 
-        } catch(CustomException | ExpiredJwtException e){
+        } catch(Exception e){
             util.tokenDestroy(response);
         }
 
         filterChain.doFilter(request, response);
-
-//        if(member == null){
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
     }
 }

@@ -31,9 +31,9 @@ public class SecurityConfig{
 
     private final JwtTokenUtil util;
     private final MemberService memberService;
-    private final PrincipalOauth2UserService principalOauth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailurHandler oAuth2AuthenticationFailurHandler;
+//    private final PrincipalOauth2UserService principalOauth2UserService;
+//    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+//    private final OAuth2AuthenticationFailurHandler oAuth2AuthenticationFailurHandler;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
@@ -67,19 +67,18 @@ public class SecurityConfig{
                 .hasAuthority(MemberAuthority.ADMIN.name())
 
             .anyRequest().permitAll()
-        ).exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+        );
 
-        http.oauth2Login()
-                .userInfoEndpoint()
-                    .userService(principalOauth2UserService)
-                        .and()
-                            .successHandler(oAuth2AuthenticationSuccessHandler);
+//        http.oauth2Login()
+//                .userInfoEndpoint()
+//                    .userService(principalOauth2UserService)
+//                        .and()
+//                            .successHandler(oAuth2AuthenticationSuccessHandler);
 //                                .and()
 //                                    .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
 
-        http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new JwtExceptionFilter(), JwtTokenFilter.class);
+        http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class).exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
         return http.build();
     }
