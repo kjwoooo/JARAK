@@ -54,7 +54,7 @@ const { mainBanner } = useBannerStore();
         <Route path={LINKS.MYPAGE.path} element={<MyPage/>}>
           <Route path='edit' element={<MemberEdit/>} />
           <Route path='orders' element={<Orders />} />
-          <Route path='order-detail' element={<OrderDetail />} />
+          <Route path='orders/order/:orderId' element={<OrderDetail />} />
         </Route>
 
         <Route path={LINKS.REGISTER.path} element={<RegisterPage />} />
