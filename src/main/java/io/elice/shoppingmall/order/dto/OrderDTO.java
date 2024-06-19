@@ -19,6 +19,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class OrderDTO {
+    private Long id;
+
     private Long memberId;
 
     private Integer price;

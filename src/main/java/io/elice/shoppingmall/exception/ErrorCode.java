@@ -29,6 +29,7 @@ public enum ErrorCode {
 
     EMPTY_CART(400, "장바구니에 상품이 없습니다."),
     CANNOT_MODIFY_CANCELLED_ORDER(400, "취소된 주문은 수정할 수 없습니다."),
+    CANNOT_MODIFY_ORDER_STATE(400, "상품이 발송되었거나 배송 완료된 주문은 배송지 변경이 불가합니다."),
     INVALID_ORDER_STATE(400, "유효하지 않은 주문 상태입니다."),
     ORDER_COUNT_ERROR(500, "주문 수를 조회하는 중 오류가 발생했습니다."),
     INVALID_PAGING_PARAMETERS(400, "페이지 매개변수가 유효하지 않습니다."),

@@ -1,7 +1,5 @@
 package io.elice.shoppingmall.order.service;
 
-import io.elice.shoppingmall.address.entity.Address;
-import io.elice.shoppingmall.address.entity.AddressDTO;
 import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
 import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
@@ -11,7 +9,6 @@ import io.elice.shoppingmall.cart.service.CartService;
 import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
-import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.dto.OrderDetailDTO;
 import io.elice.shoppingmall.order.entity.Order;
@@ -44,7 +41,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
     private final ItemService itemService;
-    private final AddressService addressService;
     private final CartService cartService;
     private final CartItemService cartItemService;
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
@@ -52,11 +48,10 @@ public class OrderService {
 
     @Autowired
     public OrderService(OrderRepository orderRepository, ItemRepository itemRepository, ItemService itemService,
-                        AddressService addressService, CartService cartService, CartItemService cartItemService) {
+                        CartService cartService, CartItemService cartItemService) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
         this.itemService = itemService;
-        this.addressService = addressService;
         this.cartService = cartService;
         this.cartItemService = cartItemService;
     }
@@ -103,6 +98,9 @@ public class OrderService {
         // Order 엔티티 생성
         Order order = orderDTO.toEntity();
         order.setMember(member);
+        if (order.getOrderState() == null) {
+            order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING 으로 설정
+        }
 
         List<CartItems> cartItems = getCartItems(member);
         if (cartItems.isEmpty()) {
@@ -111,10 +109,7 @@ public class OrderService {
 
         // 주문 상세 정보 생성
         List<OrderDetail> orderDetails = createOrderDetailsFromCartItems(cartItems, order);
-        order.setOrderDetails(orderDetails);
-
-        orderRepository.save(order);
-        return orderDTO;
+        return saveAndReturnOrder(order, orderDetails);
     }
 
     // 주문 수정 페이지 호출
@@ -129,13 +124,20 @@ public class OrderService {
     public OrderDTO updateOrder(Member member, Long orderId, OrderDTO orderDTO) {
         Order order = orderRepository.findByIdAndMemberId(orderId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
-
+        
+        // 주문 부분 취소 기능 구현시 수정 및 사용할 조건문
         // 주문 상태가 CANCELLED인 경우 수정 불가
+
         if (order.getOrderState() == OrderState.CANCELLED) {
             throw new CustomException(ErrorCode.CANNOT_MODIFY_CANCELLED_ORDER);
         }
 
-        // 주문 정보 업데이트
+        // 주문 상태가 PENDING 또는 CONFIRMED일 경우에만 수정 가능
+        if (order.getOrderState() != OrderState.PENDING && order.getOrderState() != OrderState.CONFIRMED) {
+            throw new CustomException(ErrorCode.CANNOT_MODIFY_ORDER_STATE);
+        }
+
+        // 주문 정보 업데이트 (배송 정보만 수정)
         order.setShippingCost(orderDTO.getShippingCost());
         order.setRecipientName(orderDTO.getRecipientName());
         order.setZipcode(orderDTO.getZipcode());
@@ -145,9 +147,8 @@ public class OrderService {
         order.setAddrName(orderDTO.getAddrName());
         order.setDeliveryReq(orderDTO.getDeliveryReq());
 
-        // 주문 상세 정보 업데이트
-        List<OrderDetail> orderDetails = createOrderDetailsFromOrderDTO(orderDTO, order);
-        return saveAndReturnOrder(order, orderDetails);
+        // 주문 저장 및 DTO 반환
+        return saveAndReturnOrder(order, order.getOrderDetails());
     }
 
     // 주문 취소(환불)
@@ -291,19 +292,9 @@ public class OrderService {
                         .quantity(cartItem.getQuantity())
                         .color(cartItem.getColor())
                         .size(cartItem.getSize())
+                        .orderState(order.getOrderState())
                         .build())
                 .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
-    }
-
-    // OrderDTO로부터 OrderDetail 생성
-    private List<OrderDetail> createOrderDetailsFromOrderDTO(OrderDTO orderDTO, Order order) {
-        return orderDTO.getOrderDetails().stream()
-                .map(orderDetailDTO -> {
-                    Item item = itemRepository.findById(orderDetailDTO.getItemId())
-                            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
-                    return orderDetailDTO.toEntity(order, item);
-                })
-                .toList();  // Stream.toList()로 변경하여 불변 리스트를 반환
     }
 
     // 예외 처리 헬퍼 메서드
