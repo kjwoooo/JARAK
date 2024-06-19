@@ -72,6 +72,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         } catch(Exception e){
             util.tokenDestroy(response);
+            filterChain.doFilter(request, response);
+            return;
         }
 
         filterChain.doFilter(request, response);
