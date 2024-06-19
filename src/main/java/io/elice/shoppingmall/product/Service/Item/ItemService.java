@@ -248,7 +248,7 @@ public class ItemService {
         List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
         // 파일 저장 경로 설정
 //        String uploadDir = System.getProperty("user.dir") + "/src/main/resources/mainimagefiles";
-        String uploadDir = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "mainimagefiles";
+        String uploadDir = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator  + "static" + File.separator + "mainimagefiles";
         // UUID를 사용한 파일 이름 생성
         String mainFileName = UUID.randomUUID().toString() + "_" + mainFile.getOriginalFilename();
         String mainFilePath = uploadDir + File.separator + mainFileName;
