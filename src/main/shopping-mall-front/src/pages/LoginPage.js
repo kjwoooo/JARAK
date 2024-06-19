@@ -2,7 +2,8 @@ import { Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../stores/useUserStore';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import Cookies from 'js-cookie';
 import './LoginPage.css';
 
@@ -33,7 +34,7 @@ function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/login', credentials);
+            const response = await apiInstance.post('/login', credentials);
             console.log('Login response:', response.data); // 로그인 응답 디버깅
             // 응답에 JWT 토큰이 포함되어 있지 않으므로 쿠키에서 JWT 토큰을 읽습니다.
             const jwtToken = Cookies.get('jwtToken');

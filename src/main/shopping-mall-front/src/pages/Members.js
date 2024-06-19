@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import { ListGroup, Button, Pagination } from 'react-bootstrap/';
 import './Members.css';
 
@@ -15,7 +16,7 @@ function Members() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await axios.get('/admin/members');
+        const response = await apiInstance.get('/admin/members');
         setMembers(response.data);
       } catch (error) {
         console.error("회원 불러오기 실패", error);
@@ -26,7 +27,7 @@ function Members() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/admin/members/${id}`);
+      await apiInstance.delete(`/admin/members/${id}`);
       setMembers(members.filter(member => member.id !== id));
       alert('회원이 삭제되었습니다.');
     } catch (error) {

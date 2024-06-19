@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Form, ListGroup } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import './Category.css';
 
 function Category() {
@@ -20,7 +21,7 @@ function Category() {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('/categories');
+            const response = await apiInstance.get('/categories');
             console.log('Fetched categories:', response.data); 
             setCategories(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
@@ -31,7 +32,7 @@ function Category() {
 
     const handleAddMainCategory = async () => {
         try {
-            await axios.post('/categories', { name: newCategoryName });
+            await apiInstance.post('/categories', { name: newCategoryName });
             setShowMainAddModal(false);
             setNewCategoryName('');
             fetchCategories();
@@ -43,7 +44,7 @@ function Category() {
 
     const handleAddSubCategory = async () => {
         try {
-            await axios.post('/categories', { name: newCategoryName, parentId: selectedMainCategory });
+            await apiInstance.post('/categories', { name: newCategoryName, parentId: selectedMainCategory });
             setShowSubAddModal(false);
             setNewCategoryName('');
             fetchCategories();
@@ -55,7 +56,7 @@ function Category() {
 
     const handleEditCategory = async () => {
         try {
-            await axios.put(`/categories/${editCategoryId}`, { name: editCategoryName, parentId: editCategoryParentId });
+            await apiInstance.put(`/categories/${editCategoryId}`, { name: editCategoryName, parentId: editCategoryParentId });
             setEditCategoryId(null);
             setEditCategoryName('');
             setEditCategoryParentId(null);
@@ -69,7 +70,7 @@ function Category() {
     const handleDeleteCategory = async (id) => {
         if (window.confirm("정말 삭제하시겠어요?")) {
             try {
-                await axios.delete(`/categories/${id}`);
+                await apiInstance.delete(`/categories/${id}`);
                 fetchCategories();
                 window.location.reload(); 
             } catch (error) {

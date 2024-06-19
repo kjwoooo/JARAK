@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './OrderDetail.css'; // 주문 상세 내역 페이지의 스타일
@@ -14,7 +15,7 @@ const OrderDetail = () => {
     useEffect(() => {
         const fetchOrderDetail = async () => {
             try {
-                const response = await axios.get(`/orders/order/${orderId}`);
+                const response = await apiInstance.get(`/orders/order/${orderId}`);
                 setOrderDetail(response.data);
                 setLoading(false);
             } catch (error) {

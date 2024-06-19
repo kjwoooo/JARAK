@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { NavDropdown, Navbar, Nav, Form, Container, Button } from 'react-bootstrap/';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api.js';
 import LINKS from '../links/links.js';
 import useUserStore from '../stores/useUserStore.js';
 
@@ -15,7 +16,7 @@ function NavigationBar() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('/categories');
+        const response = await apiInstance.get('/categories');
         setCategories(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("Failed to fetch categories", error);
@@ -27,7 +28,7 @@ function NavigationBar() {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/members-logout');
+      await apiInstance.post('/members-logout');
       logout();
       navigate(LINKS.HOME.path);
     } catch (error) {

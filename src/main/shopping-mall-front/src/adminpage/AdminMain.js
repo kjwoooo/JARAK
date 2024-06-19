@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import { Card, Button, Row, Col, Image } from 'react-bootstrap';
 import useUserStore from '../stores/useUserStore';
 import useBannerStore from '../stores/useBannerStore';
@@ -15,7 +16,7 @@ function AdminMain() {
   useEffect(() => {
     const fetchMemberCount = async () => {
       try {
-        const response = await axios.get('/admin/members');
+        const response = await apiInstance.get('/admin/members');
         setMemberCount(response.data.length);
       } catch (error) {
         console.error('멤버수를 가져오는데 실패했습니다.:', error);
@@ -24,7 +25,7 @@ function AdminMain() {
 
     const fetchOrderCount = async () => {
       try{
-        const response = await axios.get('/admin/orders/count');
+        const response = await apiInstance.get('/admin/orders/count');
         setOrderCount(response.data);
       }catch(error){
         console.error('주문수를 가져오는데 실패했습니다.:',error);
@@ -33,7 +34,7 @@ function AdminMain() {
 
     const fetchProductCount = async () => {
       try{
-        const response = await axios.get('/items');
+        const response = await apiInstance.get('/items');
         setProductCount(response.data.length);
       }catch(error){
         console.error('상품수를 가져오는데 실패했습니다.:',error);

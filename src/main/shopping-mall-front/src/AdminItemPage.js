@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table } from 'react-bootstrap';
-import axios from 'axios';
+import { apiInstance } from './util/api';
 import './AdminItemPage.css';
 
 function AdminItemPage() {
@@ -44,7 +44,7 @@ function AdminItemPage() {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('/items');
+            const response = await apiInstance.get('/items');
             setProducts(response.data);
         } catch (error) {
             console.error("상품 불러오기 실패:", error);
@@ -53,7 +53,7 @@ function AdminItemPage() {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('/categories');
+            const response = await apiInstance.get('/categories');
             const categoryData = response.data;
             setCategories(categoryData.filter(category => category.parentId === null));
             setSubCategories(categoryData.filter(category => category.parentId !== null));
@@ -64,7 +64,7 @@ function AdminItemPage() {
 
     const fetchSubCategories = async (parentId) => {
         try {
-            const response = await axios.get(`/categories/${parentId}/subcategories`);
+            const response = await apiInstance.get(`/categories/${parentId}/subcategories`);
             setSubCategories(response.data);
         } catch (error) {
             console.error("서브 카테고리 불러오기 실패:", error);
@@ -89,7 +89,7 @@ function AdminItemPage() {
         formData.append('subFile', subFile);
 
         try {
-            await axios.post('/items', formData, {
+            await apiInstance.post('/items', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -122,7 +122,7 @@ function AdminItemPage() {
     const handleDeleteProduct = async (id) => {
         if (window.confirm("정말 상품을 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`/items/${id}`);
+                await apiInstance.delete(`/items/${id}`);
                 fetchProducts();
             } catch (error) {
                 console.error("상품 삭제 실패:", error);
@@ -137,7 +137,7 @@ function AdminItemPage() {
 
     const handleAddStock = async () => {
         try {
-            await axios.post(`/items/${currentItemId}/details`, newStock);
+            await apiInstance.post(`/items/${currentItemId}/details`, newStock);
             setShowStockModal(false);
             setNewStock({
                 size: '',
@@ -153,7 +153,7 @@ function AdminItemPage() {
     const handleShowStockDetailsModal = async (itemId) => {
         setCurrentItemId(itemId);
         try {
-            const response = await axios.get(`/items/${itemId}/details`);
+            const response = await apiInstance.get(`/items/${itemId}/details`);
             setStockDetails(response.data);
             setShowStockDetailsModal(true);
         } catch (error) {
@@ -163,7 +163,7 @@ function AdminItemPage() {
 
     const handleShowEditStockModal = async (itemId, detailId) => {
         try {
-            const response = await axios.get(`/items/${itemId}/details/${detailId}`);
+            const response = await apiInstance.get(`/items/${itemId}/details/${detailId}`);
             setEditStock(response.data);
             setCurrentItemId(itemId);
             setShowEditStockModal(true);
@@ -174,7 +174,7 @@ function AdminItemPage() {
 
     const handleEditStock = async (detailId) => {
         try {
-            await axios.put(`/items/${currentItemId}/details/${detailId}`, editStock);
+            await apiInstance.put(`/items/${currentItemId}/details/${detailId}`, editStock);
             setShowEditStockModal(false);
             fetchProducts();
         } catch (error) {
@@ -185,7 +185,7 @@ function AdminItemPage() {
     const handleDeleteStock = async (itemId, detailId) => {
         if (window.confirm("정말 해당 재고를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`/items/${itemId}/details/${detailId}`);
+                await apiInstance.delete(`/items/${itemId}/details/${detailId}`);
                 setStockDetails(stockDetails.filter(detail => detail.id !== detailId));
             } catch (error) {
                 console.error("재고 삭제 실패:", error);
@@ -196,7 +196,7 @@ function AdminItemPage() {
     const handleShowEditProductModal = async (productId) => {
         setCurrentItemId(productId);
         try {
-            const response = await axios.get(`/items/${productId}`);
+            const response = await apiInstance.get(`/items/${productId}`);
             const productData = response.data;
             setEditProductName(productData.itemName);
             setEditProductPrice(productData.price);
@@ -221,7 +221,7 @@ function AdminItemPage() {
         formData.append('subFile', editSubFile);
 
         try {
-            await axios.put(`/items/${currentItemId}`, formData, {
+            await apiInstance.put(`/items/${currentItemId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import useUserStore from '../stores/useUserStore';
 import LINKS from '../links/links';
 import './MemberEdit.css';
@@ -48,7 +49,7 @@ function MemberEdit() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/members', formData);
+      await apiInstance.post('/members', formData);
       alert('회원정보가 수정되었습니다.');
     } catch (error) {
       console.error('회원정보 수정 실패:', error);
@@ -59,7 +60,7 @@ function MemberEdit() {
   const handleUnregister = async () => {
     if (window.confirm('정말 저희 쑈핑모올을 더 이상 이용하지 않으실건가요?')) {
       try {
-        await axios.delete('/unregister', { withCredentials: true });
+        await apiInstance.delete('/unregister', { withCredentials: true });
         logout();
         alert('회원 탈퇴가 완료되었습니다.');
         navigate(LINKS.HOME.path);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminOrder.css';
 import moment from "moment/moment";
@@ -31,7 +32,7 @@ const AdminOrder = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get('/orders', {
+            const response = await apiInstance.get('/orders', {
                 params: {
                     page: page,
                     size: 10,
@@ -54,7 +55,7 @@ const AdminOrder = () => {
 
     const handleStatusChange = async (id, status) => {
         try {
-            await axios.patch(`/admin/orders/${id}`, { status });
+            await apiInstance.patch(`/admin/orders/${id}`, { status });
             fetchOrders();
         } catch (error) {
             console.error('Failed to update status:', error);
@@ -73,7 +74,7 @@ const AdminOrder = () => {
 
     const deleteOrderData = async () => {
         try {
-            await axios.delete(`/admin/orders/${orderIdToDelete}`);
+            await apiInstance.delete(`/admin/orders/${orderIdToDelete}`);
             setOrders(orders.filter(order => order.id !== orderIdToDelete));
             closeModal();
         } catch (error) {

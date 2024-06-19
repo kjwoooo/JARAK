@@ -4,7 +4,8 @@ import { Form, Button, Modal, ListGroup } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useUserStore from '../stores/useUserStore.js';
 import './Order.css';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api.js';
 import Cookies from 'js-cookie';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -45,7 +46,7 @@ function Order() {
 
     const fetchAddresses = async () => {
         try {
-            const response = await axios.get('/addresses', { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+            const response = await apiInstance.get('/addresses', { headers: { 'Authorization': `Bearer ${jwtToken}` } });
             console.log('Fetched addresses:', response.data); // 서버로부터 받아온 데이터 구조 확인
             setAddresses(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
@@ -72,7 +73,7 @@ function Order() {
             return;
         }
         try {
-            const response = await axios.post('/addresses', newAddress, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+            const response = await apiInstance.post('/addresses', newAddress, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
             console.log('Added address:', response.data); // 추가된 데이터 구조 확인
             setAddresses([...addresses, response.data]);
             setNewAddress({
@@ -98,7 +99,7 @@ function Order() {
     const handleEditAddress = async (address) => {
         setEditAddressId(address.id);
         try {
-            const response = await axios.get(`/addresses/${address.id}`, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+            const response = await apiInstance.get(`/addresses/${address.id}`, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
             const addressData = response.data;
             setFormData({
                 recipientName: addressData.recipientName,
@@ -117,7 +118,7 @@ function Order() {
 
     const handleSaveEditedAddress = async () => {
         try {
-            await axios.post(`/addresses/${editAddressId}`, formData, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+            await apiInstance.post(`/addresses/${editAddressId}`, formData, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
             fetchAddresses();
             setShowEditAddressModal(false);
         } catch (error) {
@@ -129,7 +130,7 @@ function Order() {
         const confirmed = window.confirm("정말 주소를 삭제하시겠습니까?");
         if (!confirmed) return;
         try {
-            await axios.delete(`/addresses/${id}`, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+            await apiInstance.delete(`/addresses/${id}`, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
             setAddresses(addresses.filter(address => address.id !== id));
         } catch (error) {
             console.error('Failed to delete address:', error);
@@ -179,7 +180,7 @@ function Order() {
         };
 
         try {
-            const response = await axios.post('/orders', orderData, {
+            const response = await apiInstance.post('/orders', orderData, {
                 headers: { 'Authorization': `Bearer ${jwtToken}` }
             });
             console.log('Order created:', response.data);

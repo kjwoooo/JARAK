@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Col } from 'react-bootstrap/';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 
 function Products() {
   const [items, setItems] = useState([]);
@@ -12,7 +13,7 @@ function Products() {
   const { categoryId } = useParams();
 
   useEffect(() => {
-    axios.get('/items')
+    apiInstance.get('/items')
       .then((result) => {
         console.log(result.data);
         setItems(result.data);

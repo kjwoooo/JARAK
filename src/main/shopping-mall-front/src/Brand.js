@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, ListGroup } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from './util/api';
 import './Brand.css';
 
 function Brand() {
@@ -17,7 +18,7 @@ function Brand() {
 
     const fetchBrands = async () => {
         try {
-            const response = await axios.get('/brands');
+            const response = await apiInstance.get('/brands');
             setBrands(response.data);
         } catch (error) {
             console.error("브랜드 불러오기 실패:", error);
@@ -26,7 +27,7 @@ function Brand() {
 
     const handleAddBrand = async () => {
         try {
-            await axios.post('/brands', { name: newBrandName });
+            await apiInstance.post('/brands', { name: newBrandName });
             setShowAddModal(false);
             setNewBrandName('');
             fetchBrands();
@@ -37,7 +38,7 @@ function Brand() {
 
     const handleEditBrand = async () => {
         try {
-            await axios.put(`/brands/${editBrandId}`, { name: editBrandName });
+            await apiInstance.put(`/brands/${editBrandId}`, { name: editBrandName });
             setShowEditModal(false);
             setEditBrandId(null);
             setEditBrandName('');
@@ -50,7 +51,7 @@ function Brand() {
     const handleDeleteBrand = async (id) => {
         if (window.confirm("정말 브랜드를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`/brands/${id}`);
+                await apiInstance.delete(`/brands/${id}`);
                 fetchBrands();
             } catch (error) {
                 console.error("브랜드 삭제 실패:", error);

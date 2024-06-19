@@ -1,7 +1,8 @@
 import { Form, Button, Stack } from 'react-bootstrap';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import { apiInstance } from '../util/api';
 import './RegisterPage.css';
 import LINKS from '../links/links';
 
@@ -33,7 +34,7 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/register', formData);
+      const response = await apiInstance.post('/register', formData);
       console.log(response.data);
       navigate(LINKS.HOME.path);
     } catch (error) {
