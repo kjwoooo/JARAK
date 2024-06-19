@@ -94,6 +94,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOrigins("http://34.22.69.4")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .allowCredentials(true);
     }
 }
