@@ -143,7 +143,7 @@ button {
 
 .list-group-item div {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
 }
 
 .list-group-item .btn {
