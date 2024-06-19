@@ -2,17 +2,16 @@ package io.elice.shoppingmall.product.Entity.Review;
 
 
 import io.elice.shoppingmall.member.entity.Member;
-import io.elice.shoppingmall.product.DTO.RequestDTO;
-import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Request extends BaseEntity { //Member Entity 받으면 연관관계 매핑 마무리
@@ -27,7 +26,10 @@ public class Request extends BaseEntity { //Member Entity 받으면 연관관계
     private String content;
 
     @Column
-    private String reply;
+    private String username;
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL)
+    private List<Reply> replies;
 
     @ManyToOne
     @JoinColumn(name = "item_id")

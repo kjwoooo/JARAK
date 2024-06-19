@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.product.Entity.Item;
+package io.elice.shoppingmall.product.Entity.Review;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,24 +9,17 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ItemImage {
+@NoArgsConstructor
+public class ReviewImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
-
-    @Column
     private String filePath;
-
-    @Column
     private String fileName;
 
-    @Column(nullable = true)
-    private Boolean isMain;
-
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
-
+    @OneToOne
+    @JoinColumn(name = "review_id")
+    private Review review;
 }

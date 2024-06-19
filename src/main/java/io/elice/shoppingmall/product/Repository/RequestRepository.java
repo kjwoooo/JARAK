@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
+    List<Request> findAllByItemId(Long itemId);
+
     List<Request> findAllByItemOrderByIdAsc(Item item);
 }

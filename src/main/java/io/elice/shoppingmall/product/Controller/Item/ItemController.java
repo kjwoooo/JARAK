@@ -8,10 +8,17 @@ import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
 import io.elice.shoppingmall.product.Repository.Item.ItemImageRepository;
 import io.elice.shoppingmall.product.Service.Item.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -20,6 +27,7 @@ public class ItemController {
 
     @Autowired
     private ItemService itemService;
+    private ItemImageRepository itemImageRepository;
 
 
 //    @PostMapping
@@ -41,6 +49,7 @@ public ItemDTO createItem(@RequestPart(value = "itemDTO") String itemDTOStr,
     public List<ItemDTO> getAllItems() {
         return itemService.getAllItems();
     }
+
 
     // Get Item by ID
     @GetMapping("/{id}")
@@ -98,6 +107,7 @@ public ItemDTO createItem(@RequestPart(value = "itemDTO") String itemDTOStr,
     public List<ItemImageDTO> getAllItemImages(@PathVariable Long itemId){
         return itemService.getAllItemImages(itemId);
     }
+
 
     @GetMapping("/{itemId}/itemimages/{id}")
     public ItemImageDTO getItemImage(@PathVariable Long id){

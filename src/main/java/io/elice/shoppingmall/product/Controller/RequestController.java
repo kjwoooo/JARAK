@@ -1,30 +1,45 @@
 package io.elice.shoppingmall.product.Controller;
 
-import io.elice.shoppingmall.product.DTO.RequestDTO;
-import io.elice.shoppingmall.product.DTO.ReviewDTO;
+import io.elice.shoppingmall.product.DTO.review.RequestDTO;
+import io.elice.shoppingmall.product.Entity.Review.Request;
 import io.elice.shoppingmall.product.Service.RequestService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-@RequiredArgsConstructor
+@RestController
+@RequestMapping("/requests")
 public class RequestController {
-    private final RequestService requestService;
+    @Autowired
+    private RequestService requestService;
 
-//    @PostMapping("/request/save")
-//    public ResponseEntity save(@RequestBody RequestDTO requestDTO){
-//        Long saveResult = requestService.save(requestDTO);
-//        if(saveResult != null){
-//            List<RequestDTO> requestDTOList = requestService.findAll(requestDTO.getItemId());
-//            return new ResponseEntity<>(requestDTOList, HttpStatus.OK);
-//        }else{
-//            return new ResponseEntity<>("해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @GetMapping("/{itemId}")
+    public List<RequestDTO> getRequestsByItemId(Long itemId) {
+        return requestService.getRequestByItemId(itemId);
+    }
+
+    @GetMapping("/{itemId}/{id}")
+    public RequestDTO getRequestById(@PathVariable Long id) {
+        return requestService.getRequestById(id);
+    }
+
+    @PostMapping("/{itemId}")
+    public RequestDTO createRequest(@PathVariable Long itemId, @RequestBody RequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        return requestService.createRequest(itemId, requestDTO, userDetails.getUsername());
+    }
+
+    @PutMapping("/{id}")
+    public RequestDTO updateRequest(@PathVariable Long id, @RequestBody RequestDTO requestDTO) {
+        return requestService.updateRequest(id, requestDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteInquiry(@PathVariable Long id) {
+        requestService.deleteInquiry(id);
+        return ResponseEntity.noContent().build();
+    }
 }

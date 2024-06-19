@@ -1,55 +1,56 @@
 package io.elice.shoppingmall.product.Controller;
 
-import io.elice.shoppingmall.product.DTO.ReviewDTO;
+import io.elice.shoppingmall.member.entity.Member;
+import io.elice.shoppingmall.member.service.MemberService;
+import io.elice.shoppingmall.product.DTO.review.ReviewDTO;
+import io.elice.shoppingmall.product.Entity.Review.Review;
 import io.elice.shoppingmall.product.Service.ReviewService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-@RequiredArgsConstructor
+
+@RestController
 @RequestMapping("/reviews")
 public class ReviewController {
-    private final ReviewService reviewService;
 
-    // 리뷰 생성
+    @Autowired
+    private ReviewService reviewService;
+
+    @Autowired
+    private MemberService memberService;
+
     @PostMapping("/{itemId}")
-    public ResponseEntity<ReviewDTO> createReview(@PathVariable Long itemId, @RequestBody ReviewDTO reviewDTO) {
-        return new ResponseEntity<>(reviewService.createReview(itemId, reviewDTO), HttpStatus.CREATED);
+    public ReviewDTO createReview(@PathVariable Long itemId, @RequestBody ReviewDTO reviewDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        return reviewService.createReview(reviewDTO, userDetails.getUsername(), itemId);
     }
 
-    // 리뷰 조회(페이지네이션)
-    //FIX
-    @GetMapping("/{itemId}")
-//    public ResponseEntity<Page<ReviewDTO>> getReviews(@PathVariable Long itemId){
-//                                                      ,@PageableDefault(size = 5) Pageable pageable) {
-//        Page<ReviewDTO> reviews = reviewService.getReviews(itemId, pageable.getPageNumber(), pageable.getPageSize());
-//       Page<ReviewDTO> reviews = reviewService.getReviews(itemId);
-//        return new ResponseEntity<>(reviews, HttpStatus.OK);
-    public ResponseEntity<List<ReviewDTO>> getReviews(@PathVariable Long itemId){
-        List<ReviewDTO> reviewDTOs = reviewService.getReviews(itemId);
-        return new ResponseEntity<>(reviewDTOs, HttpStatus.OK);
-    }
-
-    // 리뷰 수정
     @PutMapping("/{reviewId}")
-    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDTO reviewDTO) {
-        return new ResponseEntity<>(reviewService.updateReview(reviewId, reviewDTO), HttpStatus.OK);
-
+    public ReviewDTO updateReview(@PathVariable Long reviewId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewDTO reviewDTO) {
+        return reviewService.updateReview(reviewId, reviewDTO, userDetails.getUsername());
     }
 
-    // 리뷰 삭제
-    @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
-        reviewService.deleteReview(reviewId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{id}")
+    public void deleteReview(@PathVariable Long id) {
+        reviewService.deleteReview(id);
     }
 
+    //특정상품의 모든 리뷰 조희
+    @GetMapping("/{itemId}")
+    public List<ReviewDTO> getAllReviews(@PathVariable Long itemId) {
+        return reviewService.getAllReviews(itemId);
+    }
+
+    @GetMapping("/review/{id}")
+    public ReviewDTO getReviewById(@PathVariable Long id) {
+        return reviewService.getReviewById(id);
+    }
+
+    @GetMapping("/myreview")
+    public List<ReviewDTO> getAllReviewsByusername(@AuthenticationPrincipal UserDetails userDetails){
+        return reviewService.getMyReviews(userDetails.getUsername());
+    }
 }

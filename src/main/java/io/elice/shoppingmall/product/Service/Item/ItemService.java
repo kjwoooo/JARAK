@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -56,20 +57,26 @@ public class ItemService {
 
     // 엔티티를 DTO로 변환하는 함수
     private ItemDTO convertToDTO(Item item) {
-
         List<ItemImage> itemImages = itemImageRepository.findAllByItemId(item.getId());
-        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
-        for(ItemImage itemImage : itemImages){
-            ItemImageDTO itemImageDTO = convertToDTO(itemImage);
-            itemImageDTOs.add(itemImageDTO);
-        }
+//        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
+//        for(ItemImage itemImage : itemImages){
+//            ItemImageDTO itemImageDTO = convertToDTO(itemImage);
+//            itemImageDTOs.add(itemImageDTO);
+//        }
+        List<ItemImageDTO> itemImageDTOs = itemImages.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
 
+//        List<ItemDetail> itemDetails = itemDetailRepository.findAllByItemId(item.getId());
+//        List<ItemDetailDTO> itemDetailDTOs = new ArrayList<>();
+//        for(ItemDetail itemDetail : itemDetails){
+//            ItemDetailDTO itemDetailDTO = convertToDTO(itemDetail);
+//            itemDetailDTOs.add(itemDetailDTO);
+//        }
         List<ItemDetail> itemDetails = itemDetailRepository.findAllByItemId(item.getId());
-        List<ItemDetailDTO> itemDetailDTOs = new ArrayList<>();
-        for(ItemDetail itemDetail : itemDetails){
-            ItemDetailDTO itemDetailDTO = convertToDTO(itemDetail);
-            itemDetailDTOs.add(itemDetailDTO);
-        }
+        List<ItemDetailDTO> itemDetailDTOs = itemDetails.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
 
         return ItemDTO.builder()
                 .id(item.getId())
@@ -126,15 +133,6 @@ public class ItemService {
                 .build();
     }
 
-
-    public ItemDTO createItem(ItemDTO itemDTO, MultipartFile mainFile, MultipartFile subFile) throws IOException {
-        Item item = convertToEntity(itemDTO);
-        item = itemRepository.save(item);
-        itemDTO.setId(item.getId());
-        List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(item, mainFile, subFile);
-        return itemDTO;
-    }
-
     // READ: 모든 상품 출력
     public List<ItemDTO> getAllItems() {
         List<Item> items = itemRepository.findAll();
@@ -178,6 +176,15 @@ public class ItemService {
 //        return itemDTO;
 //    }
 
+        public ItemDTO createItem(ItemDTO itemDTO, MultipartFile mainFile, MultipartFile subFile) throws IOException {
+            Item item = convertToEntity(itemDTO);
+            item = itemRepository.save(item);
+            itemDTO.setId(item.getId());
+            List<ItemImageDTO> itemImageDTOs = processFilesAndSaveImages(item, mainFile, subFile);
+            itemDTO.setItemImageDTOs(itemImageDTOs);
+            return itemDTO;
+        }
+
         public ItemDTO updateItem(Long itemId, ItemDTO itemDTO, MultipartFile mainFile, MultipartFile subFile) throws IOException {
         // 기존 아이템을 데이터베이스에서 조회
         Item existingItem = itemRepository.findById(itemId)
@@ -200,36 +207,69 @@ public class ItemService {
 
 
 
+//    private List<ItemImageDTO> processFilesAndSaveImages(Item item, MultipartFile mainFile, MultipartFile subFile) throws IOException {
+//        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
+//        // 파일 저장 경로 설정
+//        String uploadDir = System.getProperty("user.dir") + "//src//main//resources//mainimagefiles";
+//
+//        // UUID를 사용한 파일 이름 생성
+//        String mainFileName = UUID.randomUUID().toString() + "_" + mainFile.getOriginalFilename();
+//        String mainFilePath = uploadDir + File.separator + mainFileName;
+//        // 파일 저장
+//        mainFile.transferTo(new File(mainFilePath));
+//        // 파일 경로와 이름 설정
+//        ItemImage mainImage = new ItemImage();
+//        mainImage.setFilePath(mainFilePath);
+//        mainImage.setFileName(mainFileName);
+//        mainImage.setItem(item);
+//        mainImage.setIsMain(true);
+//        itemImageRepository.save(mainImage);
+//        itemImageDTOs.add(convertToDTO(mainImage));
+//
+//
+//        String subFileName = UUID.randomUUID().toString() + "_" + subFile.getOriginalFilename();
+//        String subFilePath = uploadDir + File.separator + subFileName;
+//
+//        File subDest = new File(subFilePath);
+//        subFile.transferTo(subDest);
+//
+//        ItemImage subImage = new ItemImage();
+//        subImage.setFilePath(subFilePath);
+//        subImage.setFileName(subFileName);
+//        subImage.setItem(item);
+//        subImage.setIsMain(false);
+//        itemImageRepository.save(subImage);
+//        itemImageDTOs.add(convertToDTO(subImage));
+//
+//        return itemImageDTOs;
+//    }
+
     private List<ItemImageDTO> processFilesAndSaveImages(Item item, MultipartFile mainFile, MultipartFile subFile) throws IOException {
         List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
-
         // 파일 저장 경로 설정
-        String uploadDir = System.getProperty("user.dir") + "//src//main//resources//mainimagefiles";
-        File uploadDirFile = new File(uploadDir);
-
+//        String uploadDir = System.getProperty("user.dir") + "/src/main/resources/mainimagefiles";
+        String uploadDir = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "mainimagefiles";
         // UUID를 사용한 파일 이름 생성
         String mainFileName = UUID.randomUUID().toString() + "_" + mainFile.getOriginalFilename();
         String mainFilePath = uploadDir + File.separator + mainFileName;
-        String subFileName = UUID.randomUUID().toString() + "_" + subFile.getOriginalFilename();
-        String subFilePath = uploadDir + File.separator + subFileName;
-
         // 파일 저장
-        File mainDest = new File(mainFilePath);
-        mainFile.transferTo(mainDest);
-        File subDest = new File(subFilePath);
-        subFile.transferTo(subDest);
-
+        mainFile.transferTo(new File(mainFilePath));
         // 파일 경로와 이름 설정
         ItemImage mainImage = new ItemImage();
-        mainImage.setFilePath(mainFilePath);
+        mainImage.setFilePath(mainFilePath); // 상대 경로만 저장
         mainImage.setFileName(mainFileName);
         mainImage.setItem(item);
         mainImage.setIsMain(true);
         itemImageRepository.save(mainImage);
         itemImageDTOs.add(convertToDTO(mainImage));
 
+        String subFileName = UUID.randomUUID().toString() + "_" + subFile.getOriginalFilename();
+        String subFilePath = uploadDir + File.separator + subFileName;
+
+        subFile.transferTo(new File(subFilePath));
+
         ItemImage subImage = new ItemImage();
-        subImage.setFilePath(subFilePath);
+        subImage.setFilePath(subFilePath); // 상대 경로만 저장
         subImage.setFileName(subFileName);
         subImage.setItem(item);
         subImage.setIsMain(false);
@@ -238,6 +278,7 @@ public class ItemService {
 
         return itemImageDTOs;
     }
+
 
     // Delete Item
     public void deleteItem(Long id) {
@@ -290,6 +331,11 @@ public class ItemService {
         return null; // Or throw an exception
     }
 
+    public ItemImageDTO getImageById(Long id){
+        ItemImage itemImage = itemImageRepository.findById(id).orElseThrow(() -> new RuntimeException("Item not found"));;
+        return convertToDTO(itemImage);
+    }
+
 
     // Update ItemDetail
     public ItemDetailDTO updateItemDetail(Long id, ItemDetailDTO itemDetailDTO) {
@@ -335,6 +381,5 @@ public class ItemService {
     }
 
     public void deleteItemImage(Long id) {itemImageRepository.deleteById(id);}
-
 
 }
