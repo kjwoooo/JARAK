@@ -38,7 +38,6 @@ function RegisterPage() {
       navigate(LINKS.HOME.path);
     } catch (error) {
       console.error('에러터졌어요', error);
-      // 에러 처리 로직 추가하면 될듯...
     }
   };
 

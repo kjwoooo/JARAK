@@ -19,7 +19,7 @@ function Products() {
         setDisplayItems(result.data.slice(0, itemsPerPage));
       })
       .catch((error) => {
-        console.error("Error fetching data: ", error);
+        console.error("상품데이터 못가져왔음요: ", error);
       });
   }, []);
 

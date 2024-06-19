@@ -115,7 +115,7 @@ function Detail() {
     const handleSizeChange = (index, size) => {
         const newOptions = [...selectedOptions];
         newOptions[index].size = size;
-        newOptions[index].color = null; // Reset color when size changes
+        newOptions[index].color = null;
         updateStockQuantity(newOptions, index, size, newOptions[index].color);
         setSelectedOptions(newOptions);
     };
