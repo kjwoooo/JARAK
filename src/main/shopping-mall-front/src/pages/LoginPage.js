@@ -38,6 +38,7 @@ function LoginPage() {
             console.log('Login response:', response.data); // 로그인 응답 디버깅
             // 응답에 JWT 토큰이 포함되어 있지 않으므로 쿠키에서 JWT 토큰을 읽습니다.
             const jwtToken = Cookies.get('jwtToken');
+            console.log('쿠키에 있는 토큰 : ',jwtToken);
             if (jwtToken) {
                 sessionStorage.setItem('user', JSON.stringify(response.data)); // 사용자 정보 세션 스토리지에 저장
                 login({ ...response.data, jwtToken }); // Zustand 상태 업데이트
