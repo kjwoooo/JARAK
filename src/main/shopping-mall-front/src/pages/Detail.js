@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table, Nav, DropdownButton, Dropdown } from 'react-bootstrap';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import useUserStore from '../stores/useUserStore.js';
 import './Detail.css';
 
@@ -19,11 +21,85 @@ function Detail() {
     }
 
     const handleBuyNow = () => {
-        // handle buy now logic
+        if (user) {
+            const cartKey = `cart_${user.id}`;
+            const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+            const duplicateItem = storedCartItems.find(storedItem => storedItem.itemId === item.itemId && compareOptions(storedItem.options, selectedOptions));
+
+            const navigateToOrders = () => {
+                const orderItem = {
+                    itemId: item.itemId,
+                    itemName: item.itemName,
+                    price: item.price,
+                    options: selectedOptions,
+                    quantity: selectedOptions.reduce((acc, option) => acc + option.quantity, 0)
+                };
+                navigate('/orders', {
+                    state: {
+                        cartItems: [orderItem],
+                        productTotal: orderItem.price * orderItem.quantity,
+                        shipping: 2500,
+                        total: orderItem.price * orderItem.quantity + 2500
+                    }
+                });
+            };
+
+            if (duplicateItem) {
+                if (window.confirm("장바구니에 이미 추가된 상품입니다. 장바구니로 이동하시겠습니까?")) {
+                    navigate('/carts');
+                } else {
+                    navigateToOrders();
+                }
+            } else {
+                navigateToOrders();
+            }
+        }
     };
 
     const handleAddToCart = () => {
-        // handle add to cart logic
+        if (user) {
+            if (selectedOptions.some(option => !option.size || !option.color)) {
+                toast.error("옵션을 먼저 선택해주세요");
+                return;
+            }
+            
+            const cartKey = `cart_${user.id}`;
+            const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+            const duplicateItem = storedCartItems.find(storedItem => storedItem.itemId === item.itemId && compareOptions(storedItem.options, selectedOptions));
+
+            if (duplicateItem) {
+                if (window.confirm("이미 장바구니에 추가된 상품입니다. 추가로 담으시겠습니까?")) {
+                    const updatedCartItems = storedCartItems.map(storedItem => 
+                        storedItem.itemId === item.itemId && compareOptions(storedItem.options, selectedOptions)
+                            ? { ...storedItem, quantity: storedItem.quantity + selectedOptions.reduce((acc, option) => acc + option.quantity, 0) }
+                            : storedItem
+                    );
+                    localStorage.setItem(cartKey, JSON.stringify(updatedCartItems));
+                    setSelectedOptions([]);
+                    toast.success("장바구니에 추가되었습니다!");
+                }
+            } else {
+                const newCartItem = {
+                    itemId: item.itemId,
+                    itemName: item.itemName,
+                    price: item.price,
+                    options: selectedOptions,
+                    quantity: selectedOptions.reduce((acc, option) => acc + option.quantity, 0)
+                };
+                const updatedCartItems = [...storedCartItems, newCartItem];
+                localStorage.setItem(cartKey, JSON.stringify(updatedCartItems));
+                setSelectedOptions([]);
+                toast.success("장바구니에 추가되었습니다!");
+            }
+        }
+    };
+
+    const compareOptions = (options1, options2) => {
+        if (options1.length !== options2.length) return false;
+        return options1.every((opt1, index) => 
+            opt1.size === options2[index].size && 
+            opt1.color === options2[index].color
+        );
     };
 
     const availableSizes = Array.from(new Set(item.itemDetailDTOs.map(detail => detail.size)));
@@ -85,6 +161,7 @@ function Detail() {
 
     return (
         <div className="container detail-container">
+            <ToastContainer />
             <div className="row">
                 <div className="col-md-6 detail-image">
                     <div className="image-placeholder"><img src={item.image} width="100%" alt={item.itemName} /></div>

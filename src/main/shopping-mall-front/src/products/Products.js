@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Col } from 'react-bootstrap/';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 function Products() {
@@ -9,6 +9,7 @@ function Products() {
   const [itemsOffset, setItemsOffset] = useState(0);
   const itemsPerPage = 9;
   const navigate = useNavigate();
+  const { categoryId } = useParams();
 
   useEffect(() => {
     axios.get('/items')
@@ -21,6 +22,16 @@ function Products() {
         console.error("Error fetching data: ", error);
       });
   }, []);
+
+  useEffect(() => {
+    if (categoryId) {
+      const filteredItems = items.filter(item => item.categoryId === parseInt(categoryId));
+      setDisplayItems(filteredItems.slice(0, itemsPerPage));
+      setItemsOffset(0);
+    } else {
+      setDisplayItems(items.slice(0, itemsPerPage));
+    }
+  }, [categoryId, items]);
 
   const loadMoreItems = () => {
     const newOffset = itemsOffset + itemsPerPage;

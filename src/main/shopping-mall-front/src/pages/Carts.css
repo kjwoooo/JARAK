@@ -44,6 +44,10 @@
     padding-left: 20px;
 }
 
+.item-info {
+    flex: 1;
+}
+
 .item-name {
     font-family: 'NanumGothic', sans-serif;
     font-size: 16px;
@@ -79,6 +83,7 @@
     font-family: 'NanumGothic', sans-serif;
     font-size: 16px;
     color: #000000;
+    margin-left: 20px;
 }
 
 .item-remove {

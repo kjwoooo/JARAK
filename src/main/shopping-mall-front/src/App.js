@@ -26,7 +26,7 @@ import Brand from './Brand.js';
 import AdminItemPage from './AdminItemPage.js';
 
 function App() {
-const { mainBanner } = useBannerStore();
+  const { mainBanner } = useBannerStore();
   return (
     <div className="App">
       <NavigationBar />
@@ -41,6 +41,7 @@ const { mainBanner } = useBannerStore();
           </>
         } />
         <Route path='/detail/:itemId' element={<Detail />} />
+        <Route path='/categories/:categoryId' element={<Products />} />
 
         <Route path={LINKS.ADMIN_PAGE.path} element={<AdminPage />}>
           <Route path='main' element={<AdminMain/>} />
@@ -73,13 +74,14 @@ const { mainBanner } = useBannerStore();
     </div>
   );
 }
+
 function About() {
   return (
     <div>
       <h4>데단헤! 앨리스 구름길 3기!</h4>
       <Outlet></Outlet>
     </div>
-  )
+  );
 }
 
 export default App;
