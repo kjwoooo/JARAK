@@ -21,13 +21,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 @ConditionalOnDefaultWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
-public class SecurityConfig{
+public class SecurityConfig implements WebMvcConfigurer {
 
     private final JwtTokenUtil util;
     private final MemberService memberService;
@@ -86,5 +88,12 @@ public class SecurityConfig{
     @Bean
     public static BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            .allowedOrigins("http://34.22.69.4")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }

@@ -69,8 +69,6 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<Member> login(@RequestBody MemberLogin memberLogin, HttpServletResponse response){
-        memberService.login(memberLogin, response);
-
         return new ResponseEntity<>(memberService.login(memberLogin, response), HttpStatus.OK);
     }
 
