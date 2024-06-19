@@ -133,9 +133,7 @@ public class MemberService {
 
         Cookie cookie = new Cookie(util.getJWT_COOKIE_NAME(), jwtToken);
         cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
-        cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setAttribute("SameSite", "None");
 
         response.addCookie(cookie);
     }

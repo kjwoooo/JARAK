@@ -99,8 +99,6 @@ public class JwtTokenUtil {
         Cookie cookie = new Cookie(getJWT_COOKIE_NAME(), null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
-        cookie.setSecure(true);
-        cookie.setAttribute("SameSite", "None");
         response.addCookie(cookie);
     }
 }
