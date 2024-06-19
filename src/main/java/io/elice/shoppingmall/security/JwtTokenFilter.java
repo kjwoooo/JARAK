@@ -48,6 +48,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
 
             if(util.isExpired(jwtToken)){
+                util.tokenDestroy(response);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -70,12 +71,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             cookie.setMaxAge(util.getJWT_COOKIE_MAX_AGE());
             response.addCookie(cookie);
 
-        } catch(Exception e){
-            util.tokenDestroy(response);
             filterChain.doFilter(request, response);
-            return;
-        }
 
-        filterChain.doFilter(request, response);
+        } catch(Exception e){
+            filterChain.doFilter(request, response);
+        }
     }
 }
