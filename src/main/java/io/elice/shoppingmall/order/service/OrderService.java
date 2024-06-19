@@ -98,9 +98,7 @@ public class OrderService {
         // Order 엔티티 생성
         Order order = orderDTO.toEntity();
         order.setMember(member);
-        if (order.getOrderState() == null) {
-            order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING 으로 설정
-        }
+        order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING 으로 설정
 
         List<CartItems> cartItems = getCartItems(member);
         if (cartItems.isEmpty()) {
