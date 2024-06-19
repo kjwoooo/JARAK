@@ -233,6 +233,13 @@ function AdminItemPage() {
         }
     };
 
+    const getMainImageSrc = (itemImageDTOs) => {
+        const mainImage = itemImageDTOs.find(image => image.isMain);
+        const mainImageSrc = mainImage ? `/mainimagefiles/${mainImage.fileName}` : '';
+        console.log(`Main image src for item: ${mainImageSrc}`);
+        return mainImageSrc;
+    };
+
     return (
         <div className="admin-item-container">
             <h2>상품 관리</h2>
@@ -251,7 +258,7 @@ function AdminItemPage() {
                     {products.map((product) => (
                         <tr key={product.id}>
                             <td>
-                                <img src={''} alt="thumbnail" className="thumbnail-img" />
+                                <img src={getMainImageSrc(product.itemImageDTOs)} alt="thumbnail" className="thumbnail-img" />
                             </td>
                             <td>{product.itemName}</td>
                             <td>{product.price}원</td>
