@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.option.entity;
+package io.elice.shoppingmall.product.Entity.Item;
 
 import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import jakarta.persistence.*;
@@ -7,14 +7,19 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Gender extends BaseEntity {
+@Builder
+public class ItemDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String genderName;
+    private String color;
+    private String size;
+    private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
 }
