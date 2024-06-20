@@ -66,22 +66,50 @@ public class ReviewService {
         return savedReivewDTO;
     }
 
-    @Transactional
-    public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO, String username) {
-        Review review = reviewRepository.findById(id).orElseThrow(() -> new RuntimeException("Review not found"));
-        review.setContent(reviewDTO.getContent());
-        review.setRate(reviewDTO.getRate());
-        review.setUsername(username);
+//    @Transactional
+//    public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO, String username) {
+//        Review review = reviewRepository.findById(id).orElseThrow(() -> new RuntimeException("Review not found"));
+//        review.setContent(reviewDTO.getContent());
+//        review.setRate(reviewDTO.getRate());
+//        review.setUsername(username);
+//
+//        Item item = itemRepository.findById(reviewDTO.getItemId())
+//                .orElseThrow(() -> new RuntimeException("Item not found"));
+//        review.setItem(item);
+//
+//        Member member = memberService.findByUsername(username);
+//        review.setMember(member);
+//
+//        Review updatedReview = reviewRepository.save(review);
+//        return convertToDTO(updatedReview);
+//    }
 
-        Item item = itemRepository.findById(reviewDTO.getItemId())
-                .orElseThrow(() -> new RuntimeException("Item not found"));
-        review.setItem(item);
+    public ReviewDTO updateReview(Long reviewId, ReviewDTO reviewDTO, String username, MultipartFile imageFile) throws IOException {
+        // 1. 기존 리뷰 정보 가져오기
+        Review existingReview = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REVIEW));
 
-        Member member = memberService.findByUsername(username);
-        review.setMember(member);
+        // 2. 이미지 파일 업로드 및 filePath 설정
+        if (imageFile != null) {
+            validateImageFile(imageFile);
+            List<String> imageFileInfo = s3Uploader.uploadFiles(imageFile, "itemImageDir");
+            reviewDTO.setFilePath(imageFileInfo.get(1));
+        }
 
-        Review updatedReview = reviewRepository.save(review);
-        return convertToDTO(updatedReview);
+        // 3. 리뷰 정보 업데이트
+        existingReview.setContent(reviewDTO.getContent());
+        existingReview.setRate(reviewDTO.getRate());
+
+        // 4. 리뷰의 사용자 정보 업데이트 (옵셔널하게 사용)
+        // Member member = memberService.findByUsername(username);
+        // existingReview.setMember(member);
+
+        // 5. 리뷰의 파일 경로 업데이트
+        existingReview.setFilePath(reviewDTO.getFilePath());
+
+        // 6. 리뷰 저장 및 DTO로 변환하여 반환
+        Review savedReview = reviewRepository.save(existingReview);
+        return convertToDTO(savedReview);
     }
 
     @Transactional

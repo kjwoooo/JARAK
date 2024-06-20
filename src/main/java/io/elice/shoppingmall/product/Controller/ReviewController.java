@@ -37,8 +37,11 @@ public class ReviewController {
 
     //review 수정
     @PutMapping("/{reviewId}")
-    public ReviewDTO updateReview(@PathVariable Long reviewId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewDTO reviewDTO) {
-        return reviewService.updateReview(reviewId, reviewDTO, userDetails.getUsername());
+    public ReviewDTO updateReview(@PathVariable Long reviewId,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  @RequestPart ReviewDTO reviewDTO,
+                                  @RequestPart(required = false) MultipartFile imageFile) throws IOException{
+        return reviewService.updateReview(reviewId, reviewDTO, userDetails.getUsername(), imageFile);
     }
 
     //review 삭제
