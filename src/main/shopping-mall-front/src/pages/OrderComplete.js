@@ -17,15 +17,6 @@ const OrderComplete = () => {
     return (
         <div>
             <Container className="section">
-                <Row className="cart-header">
-                    <Col>
-                        <p className="is-size-6">장바구니 &gt; 주문결제 &gt;</p>
-                    </Col>
-                    <Col>
-                        <h2 className="is-size-2">주문완료</h2>
-                    </Col>
-                </Row>
-
                 <Row className="justify-content-center order-complete-container-unique">
                     <Col md={6}>
                         <Card className="text-center order-complete-unique">
