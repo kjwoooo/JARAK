@@ -31,7 +31,7 @@ const AdminOrder = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get('/orders', {
+            const response = await axios.get('/admin/orders', {
                 params: {
                     page: page,
                     size: 10,
@@ -54,7 +54,7 @@ const AdminOrder = () => {
 
     const handleStatusChange = async (id, status) => {
         try {
-            await axios.patch(`/admin/orders/${id}`, { status });
+            await axios.put(`/admin/orders/${id}`, { status });
             fetchOrders();
         } catch (error) {
             console.error('Failed to update status:', error);
@@ -74,7 +74,7 @@ const AdminOrder = () => {
     const deleteOrderData = async () => {
         try {
             await axios.delete(`/admin/orders/${orderIdToDelete}`);
-            setOrders(orders.filter(order => order.id !== orderIdToDelete));
+            fetchOrders();
             closeModal();
         } catch (error) {
             console.error('Failed to delete order:', error);
@@ -87,75 +87,83 @@ const AdminOrder = () => {
 
     return (
         <div>
-            <Container className="section mt-4">
-                <div className="block account-header">
-                    <h1 className="subtitle is-4">주문 관리</h1>
+            <Container className="admin-section-unique">
+                <div className="admin-block-unique admin-account-header-unique">
+                    <h1 className="admin-subtitle-unique is-4">주문 관리</h1>
                 </div>
 
-                <nav className="level">
-                    <div className="level-item has-text-centered">
+                <nav className="admin-level-unique">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">총 주문 수</p>
-                            <p className="title" id="ordersCount">{summary.ordersCount}</p>
+                            <p className="admin-heading-unique">총 주문 수</p>
+                            <p className="admin-title-unique" id="ordersCount">{summary.ordersCount}</p>
                         </div>
                     </div>
-                    <div className="level-item has-text-centered">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">상품 준비 중</p>
-                            <p className="title" id="prepareCount">{summary.prepareCount}</p>
+                            <p className="admin-heading-unique">상품 준비 중</p>
+                            <p className="admin-title-unique" id="prepareCount">{summary.prepareCount}</p>
                         </div>
                     </div>
-                    <div className="level-item has-text-centered">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">상품 배송 중</p>
-                            <p className="title" id="deliveryCount">{summary.deliveryCount}</p>
+                            <p className="admin-heading-unique">상품 배송 중</p>
+                            <p className="admin-title-unique" id="deliveryCount">{summary.deliveryCount}</p>
                         </div>
                     </div>
-                    <div className="level-item has-text-centered">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">배송 완료</p>
-                            <p className="title" id="completeCount">{summary.completeCount}</p>
+                            <p className="admin-heading-unique">배송 완료</p>
+                            <p className="admin-title-unique" id="completeCount">{summary.completeCount}</p>
                         </div>
                     </div>
                 </nav>
 
-                <Container className="orders-container">
-                    <Row className="notification is-info is-light is-mobile orders-top">
-                        <Col md={2}>날짜</Col>
-                        <Col md={4}>주문 정보</Col>
-                        <Col md={2}>주문 총액</Col>
-                        <Col md={2}>상태 관리</Col>
-                        <Col md={2}>취소</Col>
-                    </Row>
+                <Container className="admin-orders-container-unique">
+                    <div className="admin-order-orders-top">
+                        <div className="admin-order-col-2">날짜</div>
+                        <div className="admin-order-col-4">주문 정보</div>
+                        <div className="admin-order-col-2">주문 총액</div>
+                        <div className="admin-order-col-2">상태 관리</div>
+                        <div className="admin-order-col-2">취소</div>
+                    </div>
                     {orders.map(order => (
-                        <Row className="orders-item" key={order.id}>
-                            <Col md={2}>
+                        <div
+                            className={`admin-order-orders-item ${order.orderState === 'CANCELLED' ? 'admin-cancelled-unique' : ''}`}
+                            key={order.id}>
+                            <div className="admin-order-col admin-order-col-2">
                                 {moment(order.createdAt).isValid()
                                     ? moment(order.createdAt).format('YYYY-MM-DD')
                                     : 'Invalid Date'}
-                            </Col>
-                            <Col md={4} className="order-summary">
+                            </div>
+                            <div className="admin-order-col admin-order-col-6 admin-order-summary-unique">
                                 {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
-                            </Col>
-                            <Col md={2}>{order.totalPrice.toLocaleString()}</Col>
-                            <Col md={2}>
-                                <Form.Control
-                                    as="select"
+                            </div>
+                            <div
+                                className="admin-order-col admin-order-col-2">{order.totalPrice ? order.totalPrice.toLocaleString() : 'N/A'}</div>
+                            <div className="admin-order-col admin-order-col-2">
+                                <select
                                     value={order.orderState}
                                     onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                    className={`status-select ${order.orderState.replace(" ", "-")}`}
+                                    className={`admin-status-select-unique ${order.orderState.replace(" ", "-")}`}
                                 >
-                                    <option className="has-background-danger-light has-text-danger" value="상품 준비중">상품 준비 중</option>
-                                    <option className="has-background-primary-light has-text-primary" value="상품 배송중">상품 배송 중</option>
-                                    <option className="has-background-grey-light" value="배송완료">배송 완료</option>
-                                </Form.Control>
-                            </Col>
-                            <Col md={2}>
-                                <Button variant="danger" onClick={() => openModal(order.id)}>주문 취소</Button>
-                            </Col>
-                        </Row>
+                                    <option value="상품 준비중">상품 준비 중</option>
+                                    <option value="상품 배송중">상품 배송 중</option>
+                                    <option value="배송완료">배송 완료</option>
+                                </select>
+                            </div>
+                            <div className="admin-order-col admin-order-col-2 admin-order-cancel-button-container">
+                                <button
+                                    className="admin-order-cancel-button"
+                                    onClick={() => openModal(order.id)}
+                                    disabled={order.orderState === 'CANCELLED'}
+                                >
+                                    주문 취소
+                                </button>
+                            </div>
+                        </div>
                     ))}
-                    <div className="pagination">
+                    <div className="admin-order-pagination">
                         <Button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
                             이전
                         </Button>

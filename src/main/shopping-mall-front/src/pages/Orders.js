@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
+import { Container, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
@@ -10,8 +10,8 @@ const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [orderIdToDelete, setOrderIdToDelete] = useState(null);
-    const [page, setPage] = useState(0); // 현재 페이지 번호
-    const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
     const orderStateMap = {
         PENDING: "주문 완료",
@@ -22,23 +22,23 @@ const Orders = () => {
     };
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await axios.get('/orders', {
-                    params: {
-                        page: page,
-                        size: 10
-                    }
-                });
-                setOrders(response.data.content);
-                setTotalPages(response.data.totalPages);
-            } catch (error) {
-                console.error('Failed to fetch orders:', error);
-            }
-        };
-
         fetchOrders();
     }, [page]);
+
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get('/orders', {
+                params: {
+                    page: page,
+                    size: 10
+                }
+            });
+            setOrders(response.data.content);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error('Failed to fetch orders:', error);
+        }
+    };
 
     const openModal = (id) => {
         setOrderIdToDelete(id);
@@ -52,8 +52,8 @@ const Orders = () => {
 
     const deleteOrderData = async () => {
         try {
-            await axios.delete(`/orders/${orderIdToDelete}`);
-            setOrders(orders.filter(order => order.id !== orderIdToDelete));
+            await axios.patch(`/orders/${orderIdToDelete}`);
+            fetchOrders();
             closeModal();
         } catch (error) {
             console.error('Failed to delete order:', error);
@@ -72,35 +72,41 @@ const Orders = () => {
 
     return (
         <div>
-            <section className="section">
+            <section className="order-section">
                 <Container>
-                    <div className="block account-header">
-                        <h1 className="subtitle is-4">주문조회</h1>
+                    <div className="order-account-header">
+                        <h1 className="order-subtitle">주문조회</h1>
                     </div>
-                    <Container className="orders-container">
-                        <Row className="notification is-info is-light is-mobile orders-top">
-                            <Col md={2}>주문 날짜</Col>
-                            <Col md={6}>주문 정보</Col>
-                            <Col md={2}>상태</Col>
-                            <Col md={2}>신청</Col>
-                        </Row>
+                    <Container className="order-orders-container">
+                        <div className="order-orders-top">
+                            <div className="order-col-2">주문 날짜</div>
+                            <div className="order-col-6">주문 정보</div>
+                            <div className="order-col-2">상태</div>
+                            <div className="order-col-2">신청</div>
+                        </div>
                         {orders.map(order => (
-                            <Row className="orders-item" key={order.id}>
-                                <Col md={2}>
+                            <div className={`order-orders-item ${order.orderState === 'CANCELLED' ? 'cancelled' : ''}`} key={order.id}>
+                                <div className="order-col order-col-2">
                                     {moment(order.createdAt).isValid()
                                         ? moment(order.createdAt).format('YYYY-MM-DD')
                                         : 'Invalid Date'}
-                                </Col>
-                                <Col md={6} className="order-summary" onClick={() => handleOrderClick(order.id)}>
+                                </div>
+                                <div className="order-col order-col-6 order-summary" onClick={() => handleOrderClick(order.id)}>
                                     {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
-                                </Col>
-                                <Col md={2}>{orderStateMap[order.orderState]}</Col>
-                                <Col md={2}>
-                                    <Button variant="danger" onClick={() => openModal(order.id)}>주문 취소</Button>
-                                </Col>
-                            </Row>
+                                </div>
+                                <div className="order-col order-col-2">{orderStateMap[order.orderState]}</div>
+                                <div className="order-col order-col-2 order-cancel-button-container">
+                                    <button
+                                        className="order-cancel-button"
+                                        onClick={() => openModal(order.id)}
+                                        disabled={order.orderState === 'CANCELLED'}
+                                    >
+                                        주문 취소
+                                    </button>
+                                </div>
+                            </div>
                         ))}
-                        <div className="pagination">
+                        <div className="order-pagination">
                             <Button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
                                 이전
                             </Button>

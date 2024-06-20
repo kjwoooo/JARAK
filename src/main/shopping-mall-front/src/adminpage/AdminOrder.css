@@ -1,154 +1,233 @@
 /* 기본 스타일 */
-.account-header {
+.admin-account-header-unique {
     border-bottom: 2px solid #dbdbdb;
     padding-top: 15px;
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-.account-header .subtitle {
+.admin-account-header-unique .admin-subtitle-unique {
     font-size: 24px;
     font-weight: bold;
 }
 
-.level {
+.admin-level-unique {
     display: flex;
     justify-content: space-between;
     padding: 1rem 0;
 }
 
-.level-item {
+.admin-level-item-unique {
     flex: 1;
     text-align: center;
 }
 
-.level-item .heading {
+.admin-level-item-unique .admin-heading-unique {
     font-size: 1.2rem;
     font-weight: 500;
     margin-bottom: 0.5rem;
 }
 
-.level-item .title {
+.admin-level-item-unique .admin-title-unique {
     font-size: 1.5rem;
     font-weight: bold;
 }
 
-.orders-container {
+.admin-orders-container-unique {
     padding: 1rem 0;
 }
 
-.orders-top {
-    font-weight: bold;
-    background-color: #e9f5fc;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-}
-
-.orders-item {
+.admin-order-orders-top {
+    display: flex;
     border-bottom: 1px solid #ddd;
     padding: 10px 0;
+    align-items: center;
+    font-weight: bold;
+    background-color: #e9f5fc;
+    border-radius: 5px;
 }
 
-.orders-item:last-child {
+.admin-order-col-2, .admin-order-col-4, .admin-order-col-6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    text-align: center;
+}
+
+.admin-order-col-2 {
+    width: 16.6667%;
+}
+
+.admin-order-col-4 {
+    width: 33.3333%;
+}
+
+.admin-order-col-6 {
+    width: 50%;
+}
+
+.admin-order-summary {
+    font-weight: bold;
+    cursor: pointer; /* 마우스 오버 시 클릭 버튼 */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.admin-order-summary:hover {
+    background-color: #f1f1f1; /* 마우스 오버 시 배경 색상 변경 */
+    color: #333; /* 마우스 오버 시 글자 색상 변경 */
+    text-decoration: underline; /* 마우스 오버 시 밑줄 표시 */
+}
+
+.admin-order-orders-item, .admin-order-orders-top {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    align-items: center; /* 중앙 정렬 추가 */
+}
+
+.admin-order-orders-item:last-child {
     border-bottom: none;
 }
 
-.order-summary {
+/* 추가 스타일 */
+.admin-order-account-header {
+    border-bottom: 2px solid #dbdbdb;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-order-account-header .admin-order-subtitle {
+    font-size: 24px;
     font-weight: bold;
 }
 
-.status-select {
-    width: 100%;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    appearance: none;
-}
-
-.status-select.상품-준비중 {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.status-select.상품-배송중 {
-    background-color: #cce5ff;
-    color: #004085;
-}
-
-.status-select.배송완료 {
-    background-color: #e2e3e5;
-    color: #383d41;
-}
-
-.buttons-container .btn {
-    margin-top: 1rem;
+/* 버튼 스타일 */
+.admin-order-btn {
     padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.btn-danger {
-    background-color: white;
-    color: #dbdbdb;
-    border: 1px solid #dbdbdb;
+.admin-order-btn:hover {
+    cursor: pointer;
 }
 
-.btn-danger:hover {
-    background-color: #dbdbdb;
-    color: white;
-}
-
-.btn-primary {
+.admin-order-btn-primary {
     background-color: #00d1b2;
     color: white;
     border: 1px solid #00d1b2;
 }
 
-.btn-primary:hover {
+.admin-order-btn-primary:hover {
     background-color: #00c4a7;
     color: white;
+    border: 1px solid #00c4a7;
+}
+
+.admin-order-cancel-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.admin-order-cancel-button {
+    background-color: #f8d7da; /* 연한 빨간색 배경 */
+    color: #721c24; /* 진한 빨간색 텍스트 */
+    border: 1px solid #f5c6cb; /* 연한 빨간색 테두리 */
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.admin-order-cancel-button:hover {
+    background-color: #f5c6cb; /* 마우스 오버 시 더 진한 빨간색 */
+    color: #721c24; /* 마우스 오버 시 진한 빨간색 텍스트 */
+}
+
+.admin-order-cancel-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(114, 28, 36, 0.25); /* 진한 빨간색 그림자 */
+}
+
+.admin-order-cancel-button:disabled {
+    background-color: #ddd; /* 비활성화 시 회색 배경 */
+    color: #aaa; /* 비활성화 시 회색 텍스트 */
+    border: 1px solid #ddd; /* 비활성화 시 회색 테두리 */
+    cursor: not-allowed; /* 비활성화 시 커서 모양 변경 */
 }
 
 /* 모달 스타일 */
-.modal-content {
+.admin-order-modal-content {
     border-radius: 10px;
     padding: 20px;
 }
 
-.modal-content .buttons {
+.admin-order-modal-content .admin-order-buttons {
     justify-content: flex-end;
 }
 
-.modal-content .buttons .btn {
+.admin-order-modal-content .admin-order-buttons .admin-order-btn {
     margin-left: 10px;
 }
 
-.modal-content p {
+.admin-order-modal-content p {
     margin-bottom: 20px;
     font-size: 18px;
     font-weight: bold;
 }
 
+/* 이전/다음 버튼 스타일 */
+.admin-order-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.admin-order-pagination button {
+    background-color: #00d1b2;
+    color: white;
+    border: 1px solid #00c4a7;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-order-pagination button:hover {
+    background-color: #00c4a7;
+}
+
+.admin-order-pagination span {
+    margin: 0 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.admin-order-pagination button[disabled] {
+    background-color: #ddd;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    .level {
-        flex-direction: column;
-    }
-
-    .orders-top, .orders-item {
+    .admin-order-orders-item,
+    .admin-order-orders-top {
         flex-direction: column;
         text-align: center;
     }
 
-    .buttons-container {
+    .admin-order-buttons {
         flex-direction: column;
     }
 
-    .buttons-container .btn {
+    .admin-order-buttons button {
         margin: 10px 0;
     }
 }
+

@@ -26,20 +26,20 @@ const OrderComplete = () => {
                 {/*    </Col>*/}
                 {/*</Row>*/}
 
-                <Row className="justify-content-center order-complete-container">
+                <Row className="justify-content-center order-complete-container-unique">
                     <Col md={6}>
-                        <Card className="text-center order-complete">
+                        <Card className="text-center order-complete-unique">
                             <Card.Body>
-                                <div className="icon-text">
+                                <div className="icon-text-unique">
                                     <i className="fas fa-circle-check text-success fa-3x"></i>
-                                    <Card.Title>주문이 완료되었습니다!</Card.Title>
+                                    <div className="order-complete-text">주문이 완료되었습니다!</div>
                                 </div>
-                                <div className="buttons-container">
+                                <div className="buttons-container-unique">
                                     <Button
                                         variant="light"
                                         size="lg"
                                         block
-                                        className="order-detail-button"
+                                        className="order-detail-button-unique"
                                         onClick={handleOrderDetailClick}
                                     >
                                         주문내역 보기
@@ -48,7 +48,7 @@ const OrderComplete = () => {
                                         variant="primary"
                                         size="lg"
                                         block
-                                        className="order-button"
+                                        className="order-button-unique"
                                         onClick={handleShoppingClick}
                                     >
                                         쇼핑 계속하기
