@@ -1,6 +1,5 @@
 package io.elice.shoppingmall.order.service;
 
-import io.elice.shoppingmall.address.service.AddressService;
 import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
 import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
 import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
@@ -280,18 +279,24 @@ public class OrderService {
         return cartItemDto.toEntity(cart, item);
     }
 
-    // CartItems로부터 OrderDetail 생성
+    // CartItems로부터 OrderDetail 생성 및 상품 수량 감소
     private List<OrderDetail> createOrderDetailsFromCartItems(List<CartItems> cartItems, Order order) {
         return cartItems.stream()
-                .map(cartItem -> OrderDetail.builder()
-                        .order(order)
-                        .item(cartItem.getItem_id())
-                        .price(cartItem.getItem_id().getPrice())
-                        .quantity(cartItem.getQuantity())
-                        .color(cartItem.getColor())
-                        .size(cartItem.getSize())
-                        .orderState(order.getOrderState())
-                        .build())
+                .map(cartItem -> {
+                    // 아이템 수량 감소
+//                    itemService.reduceQuantity(cartItem.getItem_id().getId(), cartItem.getQuantity());
+
+                    // OrderDetail 생성
+                    return OrderDetail.builder()
+                            .order(order)
+                            .item(cartItem.getItem_id())
+                            .price(cartItem.getItem_id().getPrice())
+                            .quantity(cartItem.getQuantity())
+                            .color(cartItem.getColor())
+                            .size(cartItem.getSize())
+                            .orderState(order.getOrderState())
+                            .build();
+                })
                 .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
     }
 
