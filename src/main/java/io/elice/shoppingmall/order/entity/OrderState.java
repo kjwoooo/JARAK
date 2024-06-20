@@ -1,9 +1,9 @@
 package io.elice.shoppingmall.order.entity;
 
 public enum OrderState {
-    PENDING,      // 주문 생성됨
-    CONFIRMED,    // 주문 확인됨
-    SHIPPED,      // 주문 발송됨
-    DELIVERED,    // 주문 고객에게 전달됨
-    CANCELLED     // 주문 취소됨
+    PENDING,      // 주문 완료
+    CONFIRMED,    // 주문 확인
+    SHIPPED,      // 상품 발송
+    DELIVERED,    // 배송 완료
+    CANCELLED     // 주문 취소
 }
