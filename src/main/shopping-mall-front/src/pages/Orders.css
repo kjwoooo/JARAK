@@ -1,115 +1,148 @@
 /* 기본 스타일 */
 .order-summary {
     font-weight: bold;
+    cursor: pointer; /* 마우스 오버 시 클릭 버튼 */
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.orders-item {
+.order-summary:hover {
+    background-color: #f1f1f1; /* 마우스 오버 시 배경 색상 변경 */
+    color: #333; /* 마우스 오버 시 글자 색상 변경 */
+    text-decoration: underline; /* 마우스 오버 시 밑줄 표시 */
+}
+
+.order-orders-item, .order-orders-top {
+    display: flex;
     border-bottom: 1px solid #ddd;
     padding: 10px 0;
+    align-items: center; /* 중앙 정렬 추가 */
 }
 
-.orders-item:last-child {
+.order-orders-item:last-child {
     border-bottom: none;
 }
 
-.orders-top {
+.order-orders-top {
     font-weight: bold;
     background-color: #e9f5fc;
-    padding: 10px;
     border-radius: 5px;
-    margin-bottom: 15px;
 }
 
-.buttons {
+.order-col-2, .order-col-6 {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* 중앙 정렬 추가 */
+    align-items: center;
+    padding: 5px;
+    text-align: center; /* 중앙 정렬 추가 */
 }
 
-.buttons button {
-    margin-right: 10px;
+.order-col-2 {
+    width: 16.6667%;
 }
 
-.mb-3 {
-    margin-bottom: 1rem;
+.order-col-6 {
+    width: 50%;
 }
 
 /* 추가 스타일 */
-.block.account-header {
+.order-account-header {
     border-bottom: 2px solid #dbdbdb;
     padding-top: 15px;
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-.block.account-header .subtitle {
+.order-account-header .order-subtitle {
     font-size: 24px;
     font-weight: bold;
 }
 
 /* 버튼 스타일 */
-.btn {
+.order-btn {
     padding: 10px 20px;
     font-size: 16px;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
 }
 
-.btn:hover {
+.order-btn:hover {
     cursor: pointer;
 }
 
-.btn-primary {
+.order-btn-primary {
     background-color: #00d1b2;
     color: white;
     border: 1px solid #00d1b2;
 }
 
-.btn-primary:hover {
+.order-btn-primary:hover {
     background-color: #00c4a7;
     color: white;
     border: 1px solid #00c4a7;
 }
 
-.btn-danger {
-    background-color: white;
-    color: #dbdbdb;
-    border: 1px solid #dbdbdb;
+.order-cancel-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.btn-danger:hover {
-    background-color: #dbdbdb;
-    color: white;
+.order-cancel-button {
+    background-color: #f8d7da; /* 연한 빨간색 배경 */
+    color: #721c24; /* 진한 빨간색 텍스트 */
+    border: 1px solid #f5c6cb; /* 연한 빨간색 테두리 */
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.order-cancel-button:hover {
+    background-color: #f5c6cb; /* 마우스 오버 시 더 진한 빨간색 */
+    color: #721c24; /* 마우스 오버 시 진한 빨간색 텍스트 */
+}
+
+.order-cancel-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(114, 28, 36, 0.25); /* 진한 빨간색 그림자 */
+}
+
+.order-cancel-button:disabled {
+    background-color: #ddd; /* 비활성화 시 회색 배경 */
+    color: #aaa; /* 비활성화 시 회색 텍스트 */
+    border: 1px solid #ddd; /* 비활성화 시 회색 테두리 */
+    cursor: not-allowed; /* 비활성화 시 커서 모양 변경 */
 }
 
 /* 모달 스타일 */
-.modal-content {
+.order-modal-content {
     border-radius: 10px;
     padding: 20px;
 }
 
-.modal-content .buttons {
+.order-modal-content .order-buttons {
     justify-content: flex-end;
 }
 
-.modal-content .buttons .btn {
+.order-modal-content .order-buttons .order-btn {
     margin-left: 10px;
 }
 
-.modal-content p {
+.order-modal-content p {
     margin-bottom: 20px;
     font-size: 18px;
     font-weight: bold;
 }
 
 /* 이전/다음 버튼 스타일 */
-.pagination {
+.order-pagination {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
 }
 
-.pagination button {
+.order-pagination button {
     background-color: #00d1b2;
     color: white;
     border: 1px solid #00c4a7;
@@ -119,17 +152,17 @@
     transition: background-color 0.3s ease;
 }
 
-.pagination button:hover {
+.order-pagination button:hover {
     background-color: #00c4a7;
 }
 
-.pagination span {
+.order-pagination span {
     margin: 0 10px;
     font-size: 1.2rem;
     color: #333;
 }
 
-.pagination button[disabled] {
+.order-pagination button[disabled] {
     background-color: #ddd;
     border-color: #ddd;
     cursor: not-allowed;
@@ -137,17 +170,17 @@
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    .orders-item,
-    .orders-top {
+    .order-orders-item,
+    .order-orders-top {
         flex-direction: column;
         text-align: center;
     }
 
-    .buttons {
+    .order-buttons {
         flex-direction: column;
     }
 
-    .buttons button {
+    .order-buttons button {
         margin: 10px 0;
     }
 }

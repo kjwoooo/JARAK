@@ -193,10 +193,10 @@ function Order() {
     };
 
     return (
-        <div className="order-container">
+        <div className="order-container-unique">
             <h1>ORDER</h1>
-            <div className="order-form">
-                <div className="shipping-info">
+            <div className="order-form-unique">
+                <div className="shipping-info-unique">
                     <h2>배송 정보</h2>
                     <Form>
                         <Form.Group controlId="formOrderCustomer">
@@ -233,18 +233,18 @@ function Order() {
                         </Form.Group>
                     </Form>
                 </div>
-                <div className="payment-info">
+                <div className="payment-info-unique">
                     <h2>결제 정보</h2>
                     {cartItems && cartItems.map((item, index) => (
-                        <div key={index} className="product-item">
-                            <p className="product-title">상품명: {item.title}</p>
-                            <p className="product-price">가격: {item.price.toLocaleString()} 원</p>
-                            <p className="product-quantity">수량: {item.quantity}</p>
+                        <div key={index} className="product-item-unique">
+                            <p className="product-title-unique">상품명: {item.title}</p>
+                            <p className="product-price-unique">가격: {item.price.toLocaleString()} 원</p>
+                            <p className="product-quantity-unique">수량: {item.quantity}</p>
                         </div>
                     ))}
-                    <p className="total-amount">총 상품 금액: {productTotal.toLocaleString()} 원</p>
-                    <p className="total-amount">배송비: {shipping.toLocaleString()} 원</p>
-                    <p className="total-amount">총 결제 금액: {total.toLocaleString()} 원</p>
+                    <p className="total-amount-unique">총 상품 금액: {productTotal.toLocaleString()} 원</p>
+                    <p className="total-amount-unique">배송비: {shipping.toLocaleString()} 원</p>
+                    <p className="total-amount-unique">총 결제 금액: {total.toLocaleString()} 원</p>
                     <Button variant="primary" onClick={handleSubmitOrder}>결제하기</Button>
                 </div>
             </div>

@@ -23,23 +23,23 @@ const Orders = () => {
     };
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await apiInstance.get('/orders', {
-                    params: {
-                        page: page,
-                        size: 10
-                    }
-                });
-                setOrders(response.data.content);
-                setTotalPages(response.data.totalPages);
-            } catch (error) {
-                console.error('Failed to fetch orders:', error);
-            }
-        };
-
         fetchOrders();
     }, [page]);
+
+    const fetchOrders = async () => {
+        try {
+            const response = await apiInstance.get('/orders', {
+                params: {
+                    page: page,
+                    size: 10
+                }
+            });
+            setOrders(response.data.content);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error('Failed to fetch orders:', error);
+        }
+    };
 
     const openModal = (id) => {
         setOrderIdToDelete(id);
@@ -53,7 +53,7 @@ const Orders = () => {
 
     const deleteOrderData = async () => {
         try {
-            await apiInstance.delete(`/orders/${orderIdToDelete}`);
+            await axios.delete(`/orders/${orderIdToDelete}`);
             setOrders(orders.filter(order => order.id !== orderIdToDelete));
             closeModal();
         } catch (error) {
