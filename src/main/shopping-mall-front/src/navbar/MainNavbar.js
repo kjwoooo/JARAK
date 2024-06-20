@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiInstance } from '../util/api.js';
 import LINKS from '../links/links.js';
 import useUserStore from '../stores/useUserStore.js';
+import MainLogo from '../images/메인로고.png';
 
 function NavigationBar() {
   const user = useUserStore(state => state.user);
@@ -60,7 +61,9 @@ function NavigationBar() {
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container fluid>
-        <Navbar.Brand href={LINKS.HOME.path}>쑈핑모올</Navbar.Brand>
+        <Navbar.Brand href={LINKS.HOME.path}><img src={MainLogo} alt='main-logo' height='50' width='70'/>
+          자락몰
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>

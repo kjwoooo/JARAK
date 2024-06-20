@@ -7,6 +7,7 @@ import useUserStore from '../stores/useUserStore.js';
 import { apiInstance } from '../util/api';
 import './Detail.css';
 import ReviewModal from '../ReviewModal.js';
+import GuideModal from '../GuideModal.js';
 
 function Detail() {
   const { state } = useLocation();
@@ -243,18 +244,18 @@ function Detail() {
       </div>
       <Nav justify variant="tabs" defaultActiveKey="detail">
         <Nav.Item>
-          <Nav.Link eventKey="detail" onClick={() => setModal('detail')}>DETAIL</Nav.Link>
+          <Nav.Link eventKey="detail" onClick={() => setModal('detail')}>상세정보</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link eventKey="review" onClick={() => setModal('review')}>REVIEW</Nav.Link>
+          <Nav.Link eventKey="review" onClick={() => setModal('review')}>리뷰</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link eventKey="qna" onClick={() => setModal('qna')}>Q&A</Nav.Link>
+          <Nav.Link eventKey="guide" onClick={() => setModal('guide')}>배송/교환/반품 안내</Nav.Link>
         </Nav.Item>
       </Nav>
       {modal === 'detail' && <DetailModal />}
       {modal === 'review' && <ReviewModal itemId={itemId} user={user} />}
-      {modal === 'qna' && <QnaModal />}
+      {modal === 'guide' && <GuideModal />}
     </div>
   );
 
@@ -262,14 +263,6 @@ function Detail() {
     return (
       <div className="Detail_DetailModal">
         <img src={getSubImageSrc(item.itemImageDTOs)} width="100%" alt="Sub Image" />
-      </div>
-    );
-  }
-
-  function QnaModal() {
-    return (
-      <div className="Detail_QnaModal">
-        <div>QnA 모달</div>
       </div>
     );
   }

@@ -97,13 +97,13 @@
   border-bottom: 2px solid #333;
 }
 
-.Detail_DetailModal, .Detail_ReviewModal, .Detail_QnaModal {
+.Detail_DetailModal, .Detail_ReviewModal, .Detail_GuideModal {
   padding: 20px;
   border: 1px solid #eee;
   margin-top: 20px;
 }
 
-.Detail_DetailModal div, .Detail_ReviewModal div, .Detail_QnaModal div {
+.Detail_DetailModal div, .Detail_ReviewModal div, .Detail_GuideModal div {
   font-size: 18px;
   margin-bottom: 10px;
 }

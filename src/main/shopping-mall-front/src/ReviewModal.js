@@ -34,6 +34,11 @@ function ReviewModal({ itemId, user }) {
   };
 
   const handleReviewSubmit = () => {
+    if (!user) {
+      toast.error("로그인한 사용자만 가능한 기능입니다!");
+      return;
+    }
+
     const formData = new FormData();
     const reviewDTO = {
       content: newReview,
@@ -181,7 +186,7 @@ function ReviewModal({ itemId, user }) {
               </div>
               <div className="Detail_review-center">
                 <div className="Detail_review-content">내용 : {review.content}</div>
-                {user.username === review.username && (
+                {user && user.username === review.username && (
                   <div className="Detail_review-actions">
                     <Button size="sm" onClick={() => handleReviewEdit(review)}>수정</Button>
                     <Button size="sm" variant="danger" onClick={() => handleReviewDelete(review.id)}>삭제</Button>
