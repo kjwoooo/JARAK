@@ -26,7 +26,14 @@ const BannerSlider = () => {
     <Slider {...settings}>
       {banners.map((banner, index) => (
         <div key={index}>
-          <img src={banner} alt={`Banner ${index + 1}`} className="banner-image" />
+          <img src={banner} alt={`Banner ${index + 1}`} className="banner-image" style={{
+                        height: '700px',
+                        width: '100%',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundColor: '#f0f0f0'
+                      }} />
         </div>
       ))}
     </Slider>
