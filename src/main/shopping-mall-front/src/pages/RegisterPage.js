@@ -44,7 +44,7 @@ function RegisterPage() {
 
   return (
     <div className='RegisterPage_Register'>
-      <div>회원가입페이지 뭐 그런느낌이에요</div>
+      <div>자락몰의 회원이 되어주세요!</div>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formName">

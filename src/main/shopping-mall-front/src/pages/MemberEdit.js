@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Spinner } from 'react-bootstrap';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 import useUserStore from '../stores/useUserStore';
 import LINKS from '../links/links';
@@ -82,34 +81,34 @@ function MemberEdit() {
   }
 
   return (
-    <Container className="MemberEdit">
+    <Container className="MemberEdit_MemberEdit">
       <h2>회원 정보 수정</h2>
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formDisplayName">
-          <Form.Label>이름</Form.Label>
-          <Form.Control type="text" name="displayName" value={formData.displayName} onChange={handleChange} />
+        <Form.Group controlId="formDisplayName" className="MemberEdit_form-group">
+          <Form.Label className="MemberEdit_form-label">이름</Form.Label>
+          <Form.Control type="text" name="displayName" value={formData.displayName} onChange={handleChange} className="MemberEdit_form-control" />
         </Form.Group>
-        <Form.Group controlId="formPassword">
-          <Form.Label>현재 비밀번호</Form.Label>
-          <Form.Control type="password" name="password" value={formData.password} onChange={handleChange} />
+        <Form.Group controlId="formPassword" className="MemberEdit_form-group">
+          <Form.Label className="MemberEdit_form-label">현재 비밀번호</Form.Label>
+          <Form.Control type="password" name="password" value={formData.password} onChange={handleChange} className="MemberEdit_form-control" />
         </Form.Group>
-        <Form.Group controlId="formModifyPassword">
-          <Form.Label>변경할 비밀번호</Form.Label>
-          <Form.Control type="password" name="modifyPassword" value={formData.modifyPassword} onChange={handleChange} />
+        <Form.Group controlId="formModifyPassword" className="MemberEdit_form-group">
+          <Form.Label className="MemberEdit_form-label">변경할 비밀번호</Form.Label>
+          <Form.Control type="password" name="modifyPassword" value={formData.modifyPassword} onChange={handleChange} className="MemberEdit_form-control" />
         </Form.Group>
-        <Form.Group controlId="formPhone">
-          <Form.Label>휴대폰번호</Form.Label>
-          <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
+        <Form.Group controlId="formPhone" className="MemberEdit_form-group">
+          <Form.Label className="MemberEdit_form-label">휴대폰번호</Form.Label>
+          <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} className="MemberEdit_form-control" />
         </Form.Group>
-        <Form.Group controlId="formGender" style={{ display: 'none' }}>
-          <Form.Label>성별값</Form.Label>
-          <Form.Control type="text" name="gender" value={formData.gender} onChange={handleChange} />
+        <Form.Group controlId="formGender" className="MemberEdit_form-group" style={{ display: 'none' }}>
+          <Form.Label className="MemberEdit_form-label">성별값</Form.Label>
+          <Form.Control type="text" name="gender" value={formData.gender} onChange={handleChange} className="MemberEdit_form-control" />
         </Form.Group>
-        <div className="btn-container">
-          <Button variant="primary" type="submit">
+        <div className="MemberEdit_btn-container">
+          <Button variant="primary" type="submit" className="MemberEdit_btn-primary">
             수정하기
           </Button>
-          <Button variant="danger" className="unregister-button" onClick={handleUnregister}>
+          <Button variant="danger" className="MemberEdit_unregister-button" onClick={handleUnregister}>
             회원탈퇴
           </Button>
         </div>

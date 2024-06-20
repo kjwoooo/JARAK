@@ -57,46 +57,46 @@ function Carts() {
     };
 
     return (
-        <div className="cart-page">
-            <h1 className="cart-title">CART</h1>
-            <div className="cart-container">
+        <div className="Carts_cart-page">
+            <h1 className="Carts_cart-title">CART</h1>
+            <div className="Carts_cart-container">
                 {cartItems.map((item, itemIndex) => (
                     item.options.map((option, optionIndex) => (
-                        <div key={`${itemIndex}-${optionIndex}`} className="cart-item">
-                            <div className="item-details">
-                                <div className="item-info">
-                                    <div className="item-name">
+                        <div key={`${itemIndex}-${optionIndex}`} className="Carts_cart-item">
+                            <div className="Carts_item-details">
+                                <div className="Carts_item-info">
+                                    <div className="Carts_item-name">
                                         {item.itemName} / {option.size} / {option.color}
                                     </div>
                                 </div>
-                                <div className="item-quantity">
+                                <div className="Carts_item-quantity">
                                     <button onClick={() => handleQuantityChange(itemIndex, optionIndex, -1)}>&lt;</button>
                                     <span>{option.quantity}</span>
                                     <button onClick={() => handleQuantityChange(itemIndex, optionIndex, 1)}>&gt;</button>
                                 </div>
-                                <div className="item-price">{(item.price * option.quantity).toLocaleString()} 원</div>
-                                <button className="item-remove" onClick={() => handleRemoveItem(itemIndex, optionIndex)}>x</button>
+                                <div className="Carts_item-price">{(item.price * option.quantity).toLocaleString()} 원</div>
+                                <button className="Carts_item-remove" onClick={() => handleRemoveItem(itemIndex, optionIndex)}>x</button>
                             </div>
                         </div>
                     ))
                 ))}
             </div>
-            <div className="order-sheet">
-                <div className="order-details">
-                    <div className="order-total">
+            <div className="Carts_order-sheet">
+                <div className="Carts_order-details">
+                    <div className="Carts_order-total">
                         <span>총 주문금액</span>
                         <span>{productTotal.toLocaleString()} 원</span>
                     </div>
-                    <div className="shipping">
+                    <div className="Carts_shipping">
                         <span>배송비</span>
                         <span>{SHIPPING.toLocaleString()} 원</span>
                     </div>
-                    <div className="total">
+                    <div className="Carts_total">
                         <span>합계</span>
                         <span>{total.toLocaleString()} 원</span>
                     </div>
                 </div>
-                <button className="order-button" onClick={handleOrder}>주문하기</button>
+                <button className="Carts_order-button" onClick={handleOrder}>주문하기</button>
             </div>
         </div>
     );

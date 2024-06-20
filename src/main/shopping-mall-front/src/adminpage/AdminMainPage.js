@@ -1,16 +1,15 @@
-import { ListGroup, Stack } from 'react-bootstrap/';
-import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
-import './Admin.css';
+import { ListGroup } from 'react-bootstrap/';
+import { useNavigate, Outlet } from 'react-router-dom';
 import LINKS from '../links/links';
-import Members from '../pages/Members';
+import './AdminMainPage.css';
 
 function AdminPage() {
     const navigate = useNavigate();
 
     return (
-        <div className='Admin'>
-            <div className='header'>헉! Admin Page임.</div>
-            <div className='left-menu'>
+        <div className='AdminMainPage_Admin'>
+            <div className='AdminMainPage_header'>헉! Admin Page임.</div>
+            <div className='AdminMainPage_left-menu'>
                 <ListGroup variant="flush">
                     <ListGroup.Item action onClick={() => { navigate(LINKS.ADMIN_PAGE.path + '/main') }}>관리자 메인</ListGroup.Item>
                     <ListGroup.Item action onClick={() => { navigate(LINKS.ADMIN_PAGE.path + '/member') }}>사용자 관리</ListGroup.Item>
@@ -21,10 +20,10 @@ function AdminPage() {
                     <ListGroup.Item></ListGroup.Item>
                 </ListGroup>
             </div>
-            <div className='content'>
+            <div className='AdminMainPage_content'>
                 <Outlet></Outlet>
             </div>
-            <div className='footer'></div>
+            <div className='AdminMainPage_footer'></div>
         </div>
     );
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 import { ListGroup, Button, Pagination } from 'react-bootstrap/';
 import './Members.css';
@@ -45,7 +44,8 @@ function Members() {
   const currentMembers = members.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div>
+    <div className='Members_members-container'>
+      <div className='Members_members-header'>회원 목록</div>
       <ListGroup>
         <ListGroup.Item>
           <div className="row">
@@ -57,13 +57,13 @@ function Members() {
           </div>
         </ListGroup.Item>
         {currentMembers.map((member) => (
-          <ListGroup.Item key={member.id}>
+          <ListGroup.Item key={member.id} className="Members_list-group-item">
             <div className="row">
               <div className="col-md-2">{member.username}</div>
               <div className="col-md-3">{member.loginInfo.email}</div>
               <div className="col-md-2">{member.phone}</div>
               <div className="col-md-2">{member.membership}</div>
-              <div className="col-md-3">
+              <div className="col-md-3 Members_actions">
                 {member.authority !== 'ADMIN' && (
                   <Button
                     variant="danger"
@@ -78,7 +78,7 @@ function Members() {
           </ListGroup.Item>
         ))}
       </ListGroup>
-      <Pagination>
+      <Pagination className="Members_pagination-container">
         {Array.from({ length: Math.ceil(members.length / ITEMS_PER_PAGE) }).map((_, index) => (
           <Pagination.Item
             key={index}

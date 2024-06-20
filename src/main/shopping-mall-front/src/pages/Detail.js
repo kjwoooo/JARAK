@@ -192,30 +192,30 @@ function Detail() {
     };
 
     return (
-        <div className="container detail-container">
+        <div className="Detail_detail-container">
             <ToastContainer />
             <div className="row">
-                <div className="col-md-6 detail-image">
-                    <div className="image-placeholder">
+                <div className="col-md-6 Detail_detail-image">
+                    <div className="Detail_image-placeholder">
                         <img src={getMainImageSrc(item.itemImageDTOs)} width="100%" alt={item.itemName} />
                     </div>
                 </div>
-                <div className="col-md-6 detail-info">
+                <div className="col-md-6 Detail_detail-info">
                     <h5>{brandName}</h5>
                     <h2>{item.itemName}</h2>
-                    <p className="price">{item.price.toLocaleString()} 원</p>
+                    <p className="Detail_price">{item.price.toLocaleString()} 원</p>
                     <Button variant="outline-secondary" ref={optionAddButtonRef} onClick={handleOptionAdd}>옵션 추가</Button>
 
                     {Array.isArray(selectedOptions) && selectedOptions.map((option, index) => (
-                        <div key={index} className="option-selector">
-                            <div className="dropdown-container">
-                                <DropdownButton id={`size-dropdown-${index}`} title={option.size || "사이즈"} className="dropdown-button">
+                        <div key={index} className="Detail_option-selector">
+                            <div className="Detail_dropdown-container">
+                                <DropdownButton id={`size-dropdown-${index}`} title={option.size || "사이즈"} className="Detail_dropdown-button">
                                     {availableSizes.map((size, idx) => (
                                         <Dropdown.Item key={idx} onClick={() => handleSizeChange(index, size)}>{size}</Dropdown.Item>
                                     ))}
                                 </DropdownButton>
 
-                                <DropdownButton id={`color-dropdown-${index}`} title={option.color || "색상"} className="dropdown-button">
+                                <DropdownButton id={`color-dropdown-${index}`} title={option.color || "색상"} className="Detail_dropdown-button">
                                     {option.size && getAvailableColors(option.size).map((color, idx) => (
                                         <Dropdown.Item key={idx} onClick={() => handleColorChange(index, color)}>{color}</Dropdown.Item>
                                     ))}
@@ -224,24 +224,24 @@ function Detail() {
 
                             {option.size && option.color && (
                                 <>
-                                    <p>현재 재고: {option.stockQuantity}</p>
-                                    <p>{item.itemName} / {option.size} / {option.color}</p>
-                                    <div className="quantity-selector">
+                                    <p className="Detail_current-stock">현재 재고: {option.stockQuantity}</p>
+                                    <p className="Detail_option-details">{item.itemName} / {option.size} / {option.color}</p>
+                                    <div className="Detail_quantity-selector">
                                         <Button variant="outline-secondary" onClick={() => handleDecreaseQuantity(index)}>{"<"}</Button>
-                                        <span className="quantity">{option.quantity}</span>
+                                        <span className="Detail_quantity">{option.quantity}</span>
                                         <Button variant="outline-secondary" onClick={() => handleIncreaseQuantity(index)}>{">"}</Button>
                                     </div>
-                                    <Button variant="danger" className="remove-option" onClick={() => handleOptionRemove(index)}>x</Button>
+                                    <Button variant="danger" className="Detail_remove-option" onClick={() => handleOptionRemove(index)}>x</Button>
                                 </>
                             )}
                         </div>
                     ))}
 
-                    <p className="total-price">총 상품 금액 {selectedOptions.reduce((acc, option) => acc + (item.price * option.quantity), 0).toLocaleString()} 원</p>
+                    <p className="Detail_total-price">총 상품 금액 {selectedOptions.reduce((acc, option) => acc + (item.price * option.quantity), 0).toLocaleString()} 원</p>
 
-                    <div className="buttons">
-                        <Button variant="outline-dark" className="add-to-cart" onClick={handleAddToCart}>Add to cart</Button>
-                        <Button variant="outline-dark" className="buy-now" onClick={handleBuyNow}>Buy now</Button>
+                    <div className="Detail_buttons">
+                        <Button variant="outline-dark" className="Detail_add-to-cart" onClick={handleAddToCart}>Add to cart</Button>
+                        <Button variant="outline-dark" className="Detail_buy-now" onClick={handleBuyNow}>Buy now</Button>
                     </div>
                 </div>
             </div>
@@ -264,7 +264,7 @@ function Detail() {
 
     function DetailModal() {
         return (
-            <div className="DetailModal">
+            <div className="Detail_DetailModal">
                 <img src={getSubImageSrc(item.itemImageDTOs)} width="100%" alt="Sub Image" />
             </div>
         );
@@ -272,7 +272,7 @@ function Detail() {
 
     function ReviewModal() {
         return (
-            <div className="ReviewModal">
+            <div className="Detail_ReviewModal">
                 <div>리뷰페이지 모달</div>
             </div>
         );
@@ -280,7 +280,7 @@ function Detail() {
 
     function QnaModal() {
         return (
-            <div className="QnaModal">
+            <div className="Detail_QnaModal">
                 <div>QnA 모달</div>
             </div>
         );

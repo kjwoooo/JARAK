@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Form, ListGroup } from 'react-bootstrap';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 import './Category.css';
 
@@ -89,9 +88,9 @@ function Category() {
         return categories
             .filter(category => category.parentId === parentId)
             .map(category => (
-                <div key={category.id} className="category-item">
+                <div key={category.id} className="Category_category-item">
                     <div>
-                        {parentId && <span className="indent">└</span>}
+                        {parentId && <span className="Category_indent">└</span>}
                         {category.name}
                         <Button size="sm" variant="secondary" onClick={() => handleEditButtonClick(category)}>수정</Button>
                         <Button size="sm" variant="danger" onClick={() => handleDeleteCategory(category.id)}>삭제</Button>
@@ -102,10 +101,10 @@ function Category() {
     };
 
     return (
-        <div className="category-container">
+        <div className="Category_category-container">
             <h2>카테고리</h2>
             <Button variant="primary" onClick={() => setShowAddModal(true)}>+</Button>
-            <div className="category-list">
+            <div className="Category_category-list">
                 {renderCategories()}
             </div>
 

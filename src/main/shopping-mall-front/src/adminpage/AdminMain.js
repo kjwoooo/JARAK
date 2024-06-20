@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 import { Card, Button, Row, Col, Image } from 'react-bootstrap';
 import useUserStore from '../stores/useUserStore';
@@ -59,10 +58,10 @@ function AdminMain() {
   };
 
   return (
-    <div className="admin-main">
+    <div className="AdminMain_admin-main">
       <Row>
         <Col md={3}>
-          <Card className="admin-info">
+          <Card className="AdminMain_admin-info">
             <Card.Body>
               <Card.Title>관리자 정보</Card.Title>
               <Card.Text>
@@ -73,7 +72,7 @@ function AdminMain() {
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="stat-card">
+          <Card className="AdminMain_stat-card">
             <Card.Body>
               <Card.Title>회원 수</Card.Title>
               <Card.Text>{memberCount}</Card.Text>
@@ -81,7 +80,7 @@ function AdminMain() {
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="stat-card">
+          <Card className="AdminMain_stat-card">
             <Card.Body>
               <Card.Title>상품 수</Card.Title>
               <Card.Text>{productCount}</Card.Text>
@@ -89,7 +88,7 @@ function AdminMain() {
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="stat-card">
+          <Card className="AdminMain_stat-card">
             <Card.Body>
               <Card.Title>주문 수</Card.Title>
               <Card.Text>{orderCount}</Card.Text>
@@ -97,7 +96,7 @@ function AdminMain() {
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="stat-card">
+          <Card className="AdminMain_stat-card">
             <Card.Body>
               <Card.Title>리뷰 수</Card.Title>
               <Card.Text>0</Card.Text>
@@ -107,12 +106,12 @@ function AdminMain() {
       </Row>
       <Row>
         <Col>
-          <Card className="banner-card">
+          <Card className="AdminMain_banner-card">
             <Card.Body>
               <Card.Title>현재 메인 페이지 배너</Card.Title>
               <Image src={mainBanner} fluid />
               <Button variant="secondary" className="mt-2">
-                <label htmlFor="mainBannerUpload" className="custom-file-upload">
+                <label htmlFor="mainBannerUpload" className="AdminMain_custom-file-upload">
                   수정
                 </label>
               </Button>

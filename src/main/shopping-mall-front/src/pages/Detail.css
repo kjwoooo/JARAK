@@ -1,9 +1,9 @@
-.detail-container {
+.Detail_detail-container {
   margin-top: 20px;
   font-family: 'Arial', sans-serif;
 }
 
-.detail-image {
+.Detail_detail-image {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,70 +12,70 @@
   border: 1px solid #eee;
 }
 
-.image-placeholder img {
+.Detail_image-placeholder img {
   max-width: 100%;
   height: auto;
 }
 
-.detail-info {
+.Detail_detail-info {
   padding: 20px;
   border: 1px solid #eee;
 }
 
-.detail-info h2 {
+.Detail_detail-info h2 {
   font-size: 24px;
   margin-bottom: 10px;
 }
 
-.detail-info .price {
+.Detail_price {
   font-size: 20px;
   color: #333;
   margin-bottom: 20px;
 }
 
-.dropdown-container {
+.Detail_dropdown-container {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
   align-items: center;
 }
 
-.dropdown-button {
+.Detail_dropdown-button {
   width: 150px; /* Fixed width for dropdown buttons */
 }
 
-.dropdown-button .dropdown-toggle {
+.Detail_dropdown-button .dropdown-toggle {
   width: 100%; /* Ensure the toggle button inside the dropdown also takes up full width */
   text-align: left; /* Align text to the left */
 }
 
-.detail-info .quantity-selector {
+.Detail_quantity-selector {
   display: flex;
   align-items: center;
   gap: 5px;
   margin-top: 10px;
 }
 
-.detail-info .quantity-selector .quantity {
+.Detail_quantity {
   width: 30px;
   text-align: center;
 }
 
-.detail-info .remove-option {
+.Detail_remove-option {
   margin-top: 10px;
 }
 
-.detail-info .total-price {
+.Detail_total-price {
   font-size: 18px;
   font-weight: bold;
   margin-top: 20px;
 }
 
-.detail-info .buttons {
+.Detail_buttons {
   margin-top: 20px;
 }
 
-.detail-info .buttons .btn {
+.Detail_buttons .btn {
   width: 150px;
   margin-right: 10px;
 }
@@ -97,18 +97,18 @@
   border-bottom: 2px solid #333;
 }
 
-.DetailModal, .ReviewModal, .QnaModal {
+.Detail_DetailModal, .Detail_ReviewModal, .Detail_QnaModal {
   padding: 20px;
   border: 1px solid #eee;
   margin-top: 20px;
 }
 
-.DetailModal div, .ReviewModal div, .QnaModal div {
+.Detail_DetailModal div, .Detail_ReviewModal div, .Detail_QnaModal div {
   font-size: 18px;
   margin-bottom: 10px;
 }
 
-.option-selector {
+.Detail_option-selector {
   border: 1px solid #ddd;
   padding: 10px;
   border-radius: 5px;
@@ -117,7 +117,7 @@
   position: relative;
 }
 
-.option-selector .remove-option {
+.Detail_remove-option {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -125,12 +125,12 @@
   font-size: 12px;
 }
 
-.current-stock {
+.Detail_current-stock {
   font-size: 14px;
   color: #666;
 }
 
-.option-details {
+.Detail_option-details {
   font-size: 16px;
   font-weight: bold;
   margin-top: 10px;
