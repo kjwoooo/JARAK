@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminOrder.css';

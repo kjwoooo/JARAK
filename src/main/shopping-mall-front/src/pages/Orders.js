@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 import moment from 'moment';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -23,23 +22,23 @@ const Orders = () => {
     };
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await apiInstance.get('/orders', {
-                    params: {
-                        page: page,
-                        size: 10
-                    }
-                });
-                setOrders(response.data.content);
-                setTotalPages(response.data.totalPages);
-            } catch (error) {
-                console.error('Failed to fetch orders:', error);
-            }
-        };
-
         fetchOrders();
     }, [page]);
+
+    const fetchOrders = async () => {
+        try {
+            const response = await apiInstance.get('/orders', {
+                params: {
+                    page: page,
+                    size: 10
+                }
+            });
+            setOrders(response.data.content);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error('Failed to fetch orders:', error);
+        }
+    };
 
     const openModal = (id) => {
         setOrderIdToDelete(id);

@@ -54,6 +54,9 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         http.authorizeHttpRequests(authorize -> authorize
 
+                // Swagger 관련 요청 모두 허용
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                 //NOTE: 일반회원, 관리자 모두 접근 가능
                 .requestMatchers("/unregister", "/logout", "/token-refresh")
                 .hasAnyAuthority(MemberAuthority.USER.name(), MemberAuthority.ADMIN.name())
