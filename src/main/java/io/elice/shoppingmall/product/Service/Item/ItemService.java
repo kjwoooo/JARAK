@@ -203,6 +203,13 @@ public class ItemService {
         existingItem.setItemName(itemDTO.getItemName());
         existingItem.setGender(itemDTO.getGender());
         existingItem.setPrice(itemDTO.getPrice());
+        Brand brand = brandRepository.findById(itemDTO.getBrandId())
+                        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_BRAND));
+        existingItem.setBrand(brand);
+        Category category = categoryRepository.findById(itemDTO.getCategoryId())
+                        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
+        existingItem.setCategory(category);
+
         // 기타 필요한 필드 업데이트
         itemRepository.save(existingItem);
         itemImageRepository.deleteAllByItemId(existingItem.getId());
@@ -290,18 +297,20 @@ public class ItemService {
 
 
     // Update ItemDetail
+    @Transactional
     public ItemDetailDTO updateItemDetail(Long id, ItemDetailDTO itemDetailDTO) {
-        Optional<ItemDetail> optionalItemDetail = itemDetailRepository.findById(id);
-        if (optionalItemDetail.isPresent()) {
-            ItemDetail itemDetail = optionalItemDetail.get();
-            itemDetail.setColor(itemDetailDTO.getColor());
-            itemDetail.setSize(itemDetailDTO.getSize());
-            itemDetail.setQuantity(itemDetailDTO.getQuantity());
 
-            itemDetail = itemDetailRepository.save(itemDetail);
-            return convertToDTO(itemDetail);
-        }
-        return null; // Or throw an exception
+        ItemDetail itemDetail = itemDetailRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM_DETAIL));
+
+        itemDetail.setColor(itemDetailDTO.getColor());
+        itemDetail.setSize(itemDetailDTO.getSize());
+        itemDetail.setQuantity(itemDetailDTO.getQuantity());
+
+        ItemDetail updatedItemDetail = itemDetailRepository.save(itemDetail);
+        ItemDetailDTO updatedItemDetailDTO = convertToDTO(updatedItemDetail);
+
+        return updatedItemDetailDTO;
     }
 
     // Delete ItemDetail
