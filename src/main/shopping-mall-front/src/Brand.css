@@ -1,4 +1,4 @@
-.brand-container {
+.brand_container {
     padding: 20px;
     max-width: 400px;
     margin: 0 auto;
@@ -7,7 +7,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.brand-container h2 {
+.brand_container h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -16,11 +16,11 @@
     font-weight: bold;
 }
 
-.brand-list {
+.brand_list {
     margin-top: 10px;
 }
 
-.brand-item {
+.brand_item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -31,16 +31,16 @@
     background-color: #fff;
 }
 
-.brand-buttons {
+.brand_buttons {
     display: flex;
     gap: 10px;
 }
 
-.brand-buttons button {
+.brand_buttons button {
     margin-left: 5px;
 }
 
-.modal-header, .modal-footer {
+.brand_modal-header, .brand_modal-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;

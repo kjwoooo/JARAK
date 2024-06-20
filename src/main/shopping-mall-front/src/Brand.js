@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, ListGroup } from 'react-bootstrap';
-// import axios from 'axios';
 import { apiInstance } from './util/api';
 import './Brand.css';
 
@@ -60,13 +59,13 @@ function Brand() {
     };
 
     return (
-        <div className="brand-container">
+        <div className="brand_container">
             <h2>브랜드 목록 <Button variant="primary" onClick={() => setShowAddModal(true)}>+</Button></h2>
-            <ListGroup className="brand-list">
+            <ListGroup className="brand_list">
                 {brands.map((brand) => (
-                    <ListGroup.Item key={brand.id} className="brand-item">
+                    <ListGroup.Item key={brand.id} className="brand_item">
                         {brand.name}
-                        <div className="brand-buttons">
+                        <div className="brand_buttons">
                             <Button size="sm" variant="secondary" onClick={() => {
                                 setEditBrandId(brand.id);
                                 setEditBrandName(brand.name);
