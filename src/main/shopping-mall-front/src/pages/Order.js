@@ -50,6 +50,10 @@ function Order() {
         }
     }, [user, jwtToken]);
 
+    useEffect(() => {
+        console.log('cartItems:', cartItems);
+    }, [cartItems]);
+
     const fetchAddresses = async () => {
         try {
             const response = await apiInstance.get('/addresses', { headers: { 'Authorization': `Bearer ${jwtToken}` } });

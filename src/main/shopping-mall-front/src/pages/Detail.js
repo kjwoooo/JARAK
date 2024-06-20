@@ -47,11 +47,11 @@ function Detail() {
     if (user) {
       const cartKey = `cart_${user.id}`;
       const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-      const duplicateItem = storedCartItems.find(storedItem => storedItem.itemId === item.itemId && compareOptions(storedItem.options, selectedOptions));
+      const duplicateItem = storedCartItems.find(storedItem => storedItem.id === item.id && compareOptions(storedItem.options, selectedOptions));
 
       const navigateToOrders = () => {
         const orderItem = {
-          itemId: item.itemId,
+          itemId: item.id,
           itemName: item.itemName,
           price: item.price,
           options: selectedOptions,
@@ -89,12 +89,12 @@ function Detail() {
     if (user) {
       const cartKey = `cart_${user.id}`;
       const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-      const duplicateItem = storedCartItems.find(storedItem => storedItem.itemId === item.itemId && compareOptions(storedItem.options, selectedOptions));
+      const duplicateItem = storedCartItems.find(storedItem => storedItem.id === item.id && compareOptions(storedItem.options, selectedOptions));
 
       if (duplicateItem) {
         if (window.confirm("이미 장바구니에 추가된 상품입니다. 추가로 담으시겠습니까?")) {
           const updatedCartItems = storedCartItems.map(storedItem => 
-            storedItem.itemId === item.itemId && compareOptions(storedItem.options, selectedOptions)
+            storedItem.id === item.id && compareOptions(storedItem.options, selectedOptions)
               ? { ...storedItem, quantity: storedItem.quantity + selectedOptions.reduce((acc, option) => acc + option.quantity, 0) }
               : storedItem
           );
@@ -104,7 +104,7 @@ function Detail() {
         }
       } else {
         const newCartItem = {
-          itemId: item.itemId,
+          itemId: item.id,
           itemName: item.itemName,
           price: item.price,
           options: selectedOptions,
