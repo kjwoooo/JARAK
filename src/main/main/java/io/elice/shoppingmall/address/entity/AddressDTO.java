@@ -1,0 +1,34 @@
+package io.elice.shoppingmall.address.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class AddressDTO {
+    private String recipientName;
+    private String zipcode;
+    private String addr;
+    private String addrDetail;
+    private String recipientTel;
+    private String addrName;
+    private String deliveryReq;
+
+    public Address toEntity(){
+        Address address = new Address();
+
+        address.setRecipientName(recipientName);
+        address.setZipcode(zipcode);
+        address.setAddr(addr);
+        address.setAddrDetail(addrDetail);
+        address.setRecipientTel(recipientTel);
+        address.setAddrName(addrName);
+        address.setDeliveryReq(deliveryReq);
+
+        return address;
+    }
+}

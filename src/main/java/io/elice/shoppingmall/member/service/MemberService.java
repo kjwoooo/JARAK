@@ -218,4 +218,5 @@ public class MemberService {
 
         return new MemberResponseDTO(memberRepository.save(oldMember));
     }
+
 }
