@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table } from 'react-bootstrap';
-import { apiInstance } from './util/api';
+import { apiInstance } from '../util/api';
 import './AdminItemPage.css';
 
 function AdminItemPage() {

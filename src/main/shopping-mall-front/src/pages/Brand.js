@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, ListGroup } from 'react-bootstrap';
-import { apiInstance } from './util/api';
+import { apiInstance } from '../util/api';
 import './Brand.css';
 
 function Brand() {

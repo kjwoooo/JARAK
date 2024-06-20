@@ -22,8 +22,8 @@ import OrderDetail from './pages/OrderDetail';
 import AdminOrder from './adminpage/AdminOrder';
 import Category from './pages/Category.js';
 import Carts from './pages/Carts.js';
-import Brand from './Brand.js';
-import AdminItemPage from './AdminItemPage.js';
+import Brand from './pages/Brand.js';
+import AdminItemPage from './adminpage/AdminItemPage.js';
 
 function App() {
   const { mainBanner } = useBannerStore();
