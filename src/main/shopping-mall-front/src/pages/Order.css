@@ -152,3 +152,8 @@
     background-color: #fff;
   }
 }
+
+.order-custom-zipcode {
+  max-width: 384px; 
+  flex-shrink: 1; 
+}
