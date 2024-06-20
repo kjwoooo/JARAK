@@ -18,7 +18,6 @@ public class ReviewDTO {
     private String title;
     private String content;
     private Double rate;
-//    private ReviewImageDTO reviewImageDTO;
+    private String filePath;
     private LocalDateTime createdAt;
-
 }

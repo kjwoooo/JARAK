@@ -1,16 +1,18 @@
 package io.elice.shoppingmall.product.Service;
 
+import io.elice.shoppingmall.S3.S3Uploader;
 import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
+import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
 import io.elice.shoppingmall.product.DTO.review.ReviewDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
+import io.elice.shoppingmall.product.Entity.Item.ItemImage;
 import io.elice.shoppingmall.product.Entity.Review.Review;
-import io.elice.shoppingmall.product.Entity.Review.ReviewImage;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import io.elice.shoppingmall.product.Repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,22 +36,27 @@ public class ReviewService {
     private MemberService memberService;
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private S3Uploader s3Uploader;
 
 
     @Transactional
-    public ReviewDTO createReview(ReviewDTO reviewDTO, String username, Long itemId) {
+    public ReviewDTO createReview(ReviewDTO reviewDTO, String username, Long itemId, MultipartFile imageFile) throws IOException {
 //    public ReviewDTO createReview(ReviewDTO reviewDTO) {
+        validateImageFile(imageFile);
+        List<String> imageFileInfo = s3Uploader.uploadFiles(imageFile, "itemImageDir");
         Review review = new Review();
         review.setTitle(reviewDTO.getTitle());
         review.setContent(reviewDTO.getContent());
         review.setRate(reviewDTO.getRate());
         review.setUsername(username);
+        review.setFilePath(imageFileInfo.get(1));
 
         Member member = memberService.findByUsername(username);
         review.setMember(member);
 
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
         review.setItem(item);
 
         Review savedReview = reviewRepository.save(review);
@@ -119,6 +126,19 @@ public class ReviewService {
         reviewDTO.setRate(review.getRate());
         reviewDTO.setItemId(review.getItem().getId());
         reviewDTO.setUsername(review.getMember().getUsername());
+        reviewDTO.setFilePath(review.getFilePath());
+        reviewDTO.setCreatedAt(review.getCreatedAt());
         return reviewDTO;
+    }
+
+    private void validateImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new CustomException(ErrorCode.INVALID_IMAGE_FILE);
+        }
+    }
+
+    public Double getAverageRateByItemId(Long itemId) {
+        return reviewRepository.findAverageRateByItemId(itemId);
     }
 }

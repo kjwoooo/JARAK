@@ -16,7 +16,7 @@ public class ItemImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(length = 2048)
     private String filePath;
 
     @Column

@@ -31,6 +31,9 @@ public class Review extends BaseEntity { //member entity 받으면 연관관계 
     @Column
     private String username;
 
+    @Column(length = 2048)
+    private String filePath;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
