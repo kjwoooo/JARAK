@@ -31,7 +31,7 @@ public class ReviewController {
     public ReviewDTO createReview(@PathVariable Long itemId,
                                   @RequestPart ReviewDTO reviewDTO,
                                   @AuthenticationPrincipal UserDetails userDetails,
-                                  @RequestPart MultipartFile imageFile) throws IOException {
+                                  @RequestPart(required = false) MultipartFile imageFile) throws IOException {
         return reviewService.createReview(reviewDTO, userDetails.getUsername(), itemId, imageFile);
     }
 

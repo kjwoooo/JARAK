@@ -42,15 +42,16 @@ public class ReviewService {
 
     @Transactional
     public ReviewDTO createReview(ReviewDTO reviewDTO, String username, Long itemId, MultipartFile imageFile) throws IOException {
-//    public ReviewDTO createReview(ReviewDTO reviewDTO) {
-        validateImageFile(imageFile);
-        List<String> imageFileInfo = s3Uploader.uploadFiles(imageFile, "itemImageDir");
+        if (imageFile != null) {
+            validateImageFile(imageFile);
+            List<String> imageFileInfo = s3Uploader.uploadFiles(imageFile, "itemImageDir");
+            reviewDTO.setFilePath(imageFileInfo.get(1));
+        }
+
         Review review = new Review();
-        review.setTitle(reviewDTO.getTitle());
         review.setContent(reviewDTO.getContent());
         review.setRate(reviewDTO.getRate());
         review.setUsername(username);
-        review.setFilePath(imageFileInfo.get(1));
 
         Member member = memberService.findByUsername(username);
         review.setMember(member);
@@ -58,7 +59,7 @@ public class ReviewService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
         review.setItem(item);
-
+        review.setFilePath(reviewDTO.getFilePath());
         Review savedReview = reviewRepository.save(review);
         ReviewDTO savedReivewDTO = convertToDTO(review);
         savedReivewDTO.setUsername(username);
@@ -68,7 +69,6 @@ public class ReviewService {
     @Transactional
     public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO, String username) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new RuntimeException("Review not found"));
-        review.setTitle(reviewDTO.getTitle());
         review.setContent(reviewDTO.getContent());
         review.setRate(reviewDTO.getRate());
         review.setUsername(username);
@@ -121,7 +121,6 @@ public class ReviewService {
     private ReviewDTO convertToDTO(Review review) {
         ReviewDTO reviewDTO = new ReviewDTO();
         reviewDTO.setId(review.getId());
-        reviewDTO.setTitle(review.getTitle());
         reviewDTO.setContent(review.getContent());
         reviewDTO.setRate(review.getRate());
         reviewDTO.setItemId(review.getItem().getId());

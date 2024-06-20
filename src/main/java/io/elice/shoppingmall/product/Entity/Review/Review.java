@@ -19,9 +19,6 @@ public class Review extends BaseEntity { //member entity 받으면 연관관계 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
-    private String title;
-
     @Column(nullable = false, length = 200)
     private String content;
 
