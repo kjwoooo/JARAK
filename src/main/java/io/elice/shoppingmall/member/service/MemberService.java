@@ -160,7 +160,6 @@ public class MemberService {
     public String delete(Long id){
         Member member = findByIdToMember(id);
         memberRepository.delete(member);
-        loginInfoService.delete(member.getLoginInfo());
         return "회원 정보 삭제";
     }
 

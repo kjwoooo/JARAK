@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Schema(description = "주소 정보")
 public class AddressResponseDTO {
-    @Schema(description = "주소 id")
+    @Schema(description = "주소 고유 번호")
     private Long id;
     @Schema(description = "회원 고유 번호")
     private Long memberId;
