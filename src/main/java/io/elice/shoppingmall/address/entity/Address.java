@@ -47,4 +47,14 @@ public class Address {
 
     @Column(nullable = false)
     private String deliveryReq;
+
+    public void updateAddress(AddressDTO addressDTO){
+        recipientName = addressDTO.getRecipientName();
+        zipcode = addressDTO.getZipcode();
+        addr = addressDTO.getAddr();
+        addrDetail = addressDTO.getAddrDetail();
+        recipientTel = addressDTO.getRecipientTel();
+        addrName = addressDTO.getAddrName();
+        deliveryReq = addressDTO.getDeliveryReq();
+    }
 }

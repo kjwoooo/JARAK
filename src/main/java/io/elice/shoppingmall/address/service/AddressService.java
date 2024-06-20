@@ -143,15 +143,22 @@ public class AddressService {
         Member member = memberService.findByUsername(username);
         Address[] addresses = new Address[1];
 
-        addressRepository.findById(id).ifPresentOrElse(oldAddress -> {
-            Address newAddress = addressDTO.toEntity();
-            newAddress.setMember(member);
-            newAddress.setId(oldAddress.getId());
+        Address address = addressRepository.findById(id).orElseGet(Address::new);
+        address.updateAddress(addressDTO);
+        address.setMember(member);
 
-            addresses[0] = save(newAddress);
-        },() -> save(member, addressDTO));
+        return save(address);
 
-        return addresses[0];
+
+//        addressRepository.findById(id).ifPresentOrElse(oldAddress -> {
+//            Address newAddress = addressDTO.toEntity();
+//            newAddress.setMember(member);
+//            newAddress.setId(oldAddress.getId());
+//
+//            addresses[0] = save(newAddress);
+//        },() -> save(member, addressDTO));
+//
+//        return addresses[0];
     }
 
     public AddressResponseDTO saveAndReturnResponseDTO(String username, Long id, AddressDTO addressDTO){
