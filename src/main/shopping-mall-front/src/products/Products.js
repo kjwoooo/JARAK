@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Col } from 'react-bootstrap/';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 
 function Products() {
@@ -50,13 +49,18 @@ function Products() {
 
   const itemsInRows = Array.isArray(displayItems) ? chunkedItems(displayItems, 3) : [];
 
+  const getMainImageSrc = (itemImageDTOs) => {
+    const mainImage = itemImageDTOs.find(image => image.isMain);
+    return mainImage ? mainImage.filePath : '';
+  };
+
   return (
     <div className="Products">
       {Array.isArray(itemsInRows) && itemsInRows.map((row, rowIndex) => (
         <div className="row" key={rowIndex}>
           {Array.isArray(row) && row.map((item, index) => (
             <Col xs key={index}>
-              <img src={item.image} width="150px" height="150px" alt={item.itemName}></img>
+              <img src={getMainImageSrc(item.itemImageDTOs)} width="150px" height="150px" alt={item.itemName}></img>
               <Link style={{ textDecoration: "none" }} to={`/detail/${item.id}`} state={{ item }}>
                 <h4>{item.itemName}</h4>
               </Link>

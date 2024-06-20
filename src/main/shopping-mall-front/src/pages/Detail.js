@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Modal, Form, Table, Nav, DropdownButton, Dropdown } from 'react-bootstrap';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useUserStore from '../stores/useUserStore.js';
+import { apiInstance } from '../util/api';
 import './Detail.css';
 
 function Detail() {
@@ -12,15 +13,35 @@ function Detail() {
     const { itemId } = useParams();
     const navigate = useNavigate();
     const user = useUserStore(state => state.user);
-
+    
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [modal, setModal] = useState('detail');
+    const [brandName, setBrandName] = useState('');
+    const optionAddButtonRef = useRef(null);
+
+    useEffect(() => {
+        if (item && item.brandId) {
+            apiInstance.get(`/brands/${item.brandId}`)
+                .then(response => {
+                    setBrandName(response.data.name);
+                })
+                .catch(error => {
+                    console.error("브랜드 정보를 가져오는데 실패했습니다:", error);
+                });
+        }
+    }, [item]);
 
     if (!item) {
         return <div>상품 정보를 불러오는 중입니다...</div>;
     }
 
     const handleBuyNow = () => {
+        if (selectedOptions.length === 0 || selectedOptions.some(option => !option.size || !option.color)) {
+            toast.error("옵션을 먼저 선택해주세요!");
+            optionAddButtonRef.current.focus();
+            return;
+        }
+
         if (user) {
             const cartKey = `cart_${user.id}`;
             const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
@@ -57,12 +78,13 @@ function Detail() {
     };
 
     const handleAddToCart = () => {
+        if (selectedOptions.length === 0 || selectedOptions.some(option => !option.size || !option.color)) {
+            toast.error("옵션을 먼저 선택해주세요!");
+            optionAddButtonRef.current.focus();
+            return;
+        }
+
         if (user) {
-            if (selectedOptions.some(option => !option.size || !option.color)) {
-                toast.error("옵션을 먼저 선택해주세요");
-                return;
-            }
-            
             const cartKey = `cart_${user.id}`;
             const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
             const duplicateItem = storedCartItems.find(storedItem => storedItem.itemId === item.itemId && compareOptions(storedItem.options, selectedOptions));
@@ -159,17 +181,30 @@ function Detail() {
         setSelectedOptions(newOptions);
     };
 
+    const getMainImageSrc = (itemImageDTOs) => {
+        const mainImage = itemImageDTOs.find(image => image.isMain);
+        return mainImage ? mainImage.filePath : '';
+    };
+
+    const getSubImageSrc = (itemImageDTOs) => {
+        const subImage = itemImageDTOs.find(image => !image.isMain);
+        return subImage ? subImage.filePath : '';
+    };
+
     return (
         <div className="container detail-container">
             <ToastContainer />
             <div className="row">
                 <div className="col-md-6 detail-image">
-                    <div className="image-placeholder"><img src={item.image} width="100%" alt={item.itemName} /></div>
+                    <div className="image-placeholder">
+                        <img src={getMainImageSrc(item.itemImageDTOs)} width="100%" alt={item.itemName} />
+                    </div>
                 </div>
                 <div className="col-md-6 detail-info">
+                    <h5>{brandName}</h5>
                     <h2>{item.itemName}</h2>
                     <p className="price">{item.price.toLocaleString()} 원</p>
-                    <Button variant="outline-secondary" onClick={handleOptionAdd}>옵션 추가</Button>
+                    <Button variant="outline-secondary" ref={optionAddButtonRef} onClick={handleOptionAdd}>옵션 추가</Button>
 
                     {Array.isArray(selectedOptions) && selectedOptions.map((option, index) => (
                         <div key={index} className="option-selector">
@@ -230,8 +265,7 @@ function Detail() {
     function DetailModal() {
         return (
             <div className="DetailModal">
-                <div>상품 사진 및 설명</div>
-                <p>{item.itemName}</p>
+                <img src={getSubImageSrc(item.itemImageDTOs)} width="100%" alt="Sub Image" />
             </div>
         );
     }
