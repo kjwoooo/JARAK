@@ -173,6 +173,21 @@
   letter-spacing: 1px;
 }
 
+.order-product-image-container {
+  width: 100px; /* 너비를 적절히 조정 */
+  height: 100px; /* 높이를 적절히 조정 */
+  overflow: hidden; /* 이미지가 컨테이너를 넘지 않도록 */
+  border-radius: 8px; /* 둥근 모서리 적용 */
+  margin-right: 3rem; /* 이미지와 텍스트 사이의 간격 */
+}
+
+.order-product-image-unique {
+  width: 100%; /* 이미지 너비를 컨테이너에 맞춤 */
+  height: 100%; /* 이미지 높이를 컨테이너에 맞춤 */
+  object-fit: cover; /* 이미지 비율을 유지하며 컨테이너에 맞춤 */
+  border-radius: 8px; /* 이미지에도 둥근 모서리 적용 */
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .order-form-unique {

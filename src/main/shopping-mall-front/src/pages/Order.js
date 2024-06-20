@@ -19,6 +19,7 @@ function Order() {
     const [showEditAddressModal, setShowEditAddressModal] = useState(false);
     const [editAddressId, setEditAddressId] = useState(null);
     const [customDeliveryReq, setCustomDeliveryReq] = useState(false);
+    const [itemImages, setItemImages] = useState({});
 
     const jwtToken = Cookies.get('jwtToken'); // 쿠키에서 JWT 토큰 가져오기
 
@@ -53,6 +54,25 @@ function Order() {
     useEffect(() => {
         console.log('cartItems:', cartItems);
     }, [cartItems]);
+
+    useEffect(() => {
+        cartItems.forEach(item => {
+            fetchItemImages(item.itemId);
+        });
+    }, [cartItems]);
+
+    const fetchItemImages = async (itemId) => {
+        try {
+            const response = await apiInstance.get(`/items/${itemId}/itemimages`);
+            console.log('Fetched images for item', itemId, response.data); // 데이터 확인을 위한 로그 추가
+            setItemImages(prevState => ({
+                ...prevState,
+                [itemId]: response.data
+            }));
+        } catch (error) {
+            console.error('Failed to fetch item images:', error);
+        }
+    };
 
     const fetchAddresses = async () => {
         try {
@@ -194,9 +214,10 @@ function Order() {
         window.location.reload();
     };
 
-    const getMainImageSrc = (itemImageDTOs) => {
-        if (!itemImageDTOs) return '';
-        const mainImage = itemImageDTOs.find(image => image.isMain);
+    const getMainImageSrc = (itemId) => {
+        const images = itemImages[itemId];
+        if (!images) return '';
+        const mainImage = images.find(image => image.isMain);
         return mainImage ? mainImage.filePath : '';
     };
 
@@ -309,7 +330,7 @@ function Order() {
                         item.options.map((option, optionIndex) => (
                             <div key={`${itemIndex}-${optionIndex}`} className="order-product-item-unique d-flex">
                                 <div className="order-product-image-container">
-                                    <img src={getMainImageSrc(item.itemImageDTOs)} alt={item.itemName} className="order-product-image-unique" />
+                                    <img src={getMainImageSrc(item.itemId)} alt={item.itemName} className="order-product-image-unique" />
                                 </div>
                                 <div className="order-product-details-unique">
                                     <p className="order-product-title-unique">상품: {item.itemName} / {option.size} / {option.color} </p>
