@@ -3,12 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Modal, ListGroup } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useUserStore from '../stores/useUserStore.js';
-import './Order.css';
-// import axios from 'axios';
 import { apiInstance } from '../util/api.js';
 import Cookies from 'js-cookie';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './Order.css';
 
 function Order() {
     const location = useLocation();

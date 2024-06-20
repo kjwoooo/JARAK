@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
 import { apiInstance } from '../util/api';
 import moment from 'moment';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -53,7 +52,7 @@ const Orders = () => {
 
     const deleteOrderData = async () => {
         try {
-            await axios.delete(`/orders/${orderIdToDelete}`);
+            await apiInstance.delete(`/orders/${orderIdToDelete}`);
             setOrders(orders.filter(order => order.id !== orderIdToDelete));
             closeModal();
         } catch (error) {
