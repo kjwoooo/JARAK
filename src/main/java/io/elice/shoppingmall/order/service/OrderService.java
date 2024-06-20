@@ -59,7 +59,9 @@ public class OrderService {
     public Page<OrderDTO> getOrdersByMemberId(Long memberId, int pageNumber, int pageSize) {
         validatePagingParameters(pageNumber, pageSize);
 
-        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize);
+        // 페이지 요청 시 id를 기준으로 내림차순 정렬하여 최신 주문이 먼저 나오도록 설정
+        Pageable pageableRequest = PageRequest.of(pageNumber, pageSize, Sort.by("id").descending());
+
         Page<Order> pagedOrders = orderRepository.findByMemberIdOrderByIdDesc(memberId, pageableRequest);
 
         validatePagedOrders(pagedOrders);

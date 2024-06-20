@@ -1,5 +1,3 @@
-/* AdminOrder.css */
-
 /* General Styles */
 .admin-section-unique {
     padding: 20px;
@@ -56,7 +54,8 @@
 }
 
 .admin-order-orders-top {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 3fr 2fr 2fr 2fr;
     padding: 10px 0;
     border-bottom: 2px solid #dee2e6;
     font-weight: bold;
@@ -64,28 +63,15 @@
 }
 
 .admin-order-orders-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 3fr 2fr 2fr 2fr;
     padding: 10px 0;
     border-bottom: 1px solid #dee2e6;
     align-items: center;
 }
 
 .admin-order-col {
-    padding: 0 10px;
-    flex: 1;
     text-align: center;
-}
-
-.admin-order-col-2 {
-    flex: 2;
-}
-
-.admin-order-col-4 {
-    flex: 4;
-}
-
-.admin-order-col-6 {
-    flex: 6;
 }
 
 .admin-order-summary-unique {
@@ -139,26 +125,61 @@
     cursor: not-allowed;
 }
 
-/* Modal Styles */
-.modal-content {
-    border-radius: 8px;
+/*!* Modal Styles *!*/
+/*.modal-content {*/
+/*    border-radius: 8px;*/
+/*}*/
+
+/*.modal-header {*/
+/*    background-color: #f8d7da;*/
+/*    border-bottom: 1px solid #dc3545;*/
+/*}*/
+
+/*.modal-title {*/
+/*    color: #dc3545;*/
+/*}*/
+
+/*.modal-footer .btn-secondary {*/
+/*    background-color: #6c757d;*/
+/*    border: none;*/
+/*}*/
+
+/*.modal-footer .btn-danger {*/
+/*    background-color: #dc3545;*/
+/*    border: none;*/
+/*}*/
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .admin-order-orders-top, .admin-order-orders-item {
+        grid-template-columns: 1fr 2fr 2fr 2fr;
+    }
+
+    .admin-order-summary-unique {
+        text-align: left;
+    }
 }
 
-.modal-header {
-    background-color: #f8d7da;
-    border-bottom: 1px solid #dc3545;
-}
+@media (max-width: 768px) {
+    .admin-level-unique {
+        flex-direction: column;
+    }
 
-.modal-title {
-    color: #dc3545;
-}
+    .admin-level-item-unique {
+        margin: 10px 0;
+    }
 
-.modal-footer .btn-secondary {
-    background-color: #6c757d;
-    border: none;
-}
+    .admin-order-orders-top, .admin-order-orders-item {
+        font-size: 14px;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
 
-.modal-footer .btn-danger {
-    background-color: #dc3545;
-    border: none;
+    .admin-order-pagination {
+        flex-direction: column;
+    }
+
+    .admin-order-pagination button {
+        width: 100%;
+        margin: 5px 0;
+    }
 }
