@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiInstance } from '../util/api.js';
 import LINKS from '../links/links.js';
 import useUserStore from '../stores/useUserStore.js';
-import MainLogo from '../images/메인로고.png';
+import MainLogo from '../images/main-logo.png';
 
 function NavigationBar() {
   const user = useUserStore(state => state.user);
