@@ -18,13 +18,15 @@ function Order() {
     const [showAddAddressModal, setShowAddAddressModal] = useState(false);
     const [showEditAddressModal, setShowEditAddressModal] = useState(false);
     const [editAddressId, setEditAddressId] = useState(null);
+    const [customDeliveryReq, setCustomDeliveryReq] = useState(false);
 
     const jwtToken = Cookies.get('jwtToken'); // 쿠키에서 JWT 토큰 가져오기
 
     const [formData, setFormData] = useState({
         orderCustomer: user ? user.displayName : '',
         phone: '',
-        address: ''
+        address: '',
+        deliveryReq: ''
     });
     const [addresses, setAddresses] = useState([]);
     const [newAddress, setNewAddress] = useState({
@@ -57,6 +59,23 @@ function Order() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+    };
+
+    const handleDeliveryReqChange = (e) => {
+        const value = e.target.value;
+        if (value === 'custom') {
+            setCustomDeliveryReq(true);
+            setFormData({
+                ...formData,
+                deliveryReq: ''
+            });
+        } else {
+            setCustomDeliveryReq(false);
+            setFormData({
+                ...formData,
+                deliveryReq: value
+            });
+        }
     };
 
     const handleNewAddressChange = (e) => {
@@ -195,7 +214,7 @@ function Order() {
         <div className="order-container-unique">
             <h1>ORDER</h1>
             <div className="order-form-unique">
-                <div className="shipping-info-unique">
+                <div className="order-shipping-info-unique">
                     <h2>배송 정보</h2>
                     <Form>
                         <Form.Group controlId="formOrderCustomer">
@@ -228,23 +247,47 @@ function Order() {
                         </Form.Group>
                         <Form.Group controlId="formDeliveryReq">
                             <Form.Label>배송요청사항</Form.Label>
-                            <Form.Control type="text" name="deliveryReq" value={formData.deliveryReq} onChange={handleChange} readOnly />
+                            <Form.Control
+                                as="select"
+                                name="deliveryReq"
+                                value={customDeliveryReq ? 'custom' : formData.deliveryReq}
+                                onChange={handleDeliveryReqChange}
+                            >
+                                <option value="문 앞에 두고 가주세요">문 앞에 두고 가주세요</option>
+                                <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+                                <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
+                                <option value="custom">직접 입력</option>
+                            </Form.Control>
+                            {customDeliveryReq && (
+                                <Form.Control
+                                    type="text"
+                                    name="deliveryReq"
+                                    placeholder="배송 요청 사항을 입력하세요"
+                                    value={formData.deliveryReq}
+                                    onChange={handleChange}
+                                />
+                            )}
                         </Form.Group>
                     </Form>
                 </div>
-                <div className="payment-info-unique">
+                <div className="order-payment-info-unique">
                     <h2>결제 정보</h2>
-                    {cartItems && cartItems.map((item, index) => (
-                        <div key={index} className="product-item-unique">
-                            <p className="product-title-unique">상품명: {item.title}</p>
-                            <p className="product-price-unique">가격: {item.price.toLocaleString()} 원</p>
-                            <p className="product-quantity-unique">수량: {item.quantity}</p>
+                    {cartItems?.map(item => (
+                        <div key={item.id} className="order-product-item-unique">
+                            <p className="order-product-title-unique">상품명: {item.title}</p>
+                            <p className="order-product-price-unique">가격: {item.price?.toLocaleString()} 원</p>
+                            <p className="order-product-quantity-unique">수량: {item.quantity}</p>
                         </div>
                     ))}
-                    <p className="total-amount-unique">총 상품 금액: {productTotal.toLocaleString()} 원</p>
-                    <p className="total-amount-unique">배송비: {shipping.toLocaleString()} 원</p>
-                    <p className="total-amount-unique">총 결제 금액: {total.toLocaleString()} 원</p>
-                    <Button variant="primary" onClick={handleSubmitOrder}>결제하기</Button>
+                    <p className="order-total-amount-unique">총 상품 금액: {productTotal.toLocaleString()} 원</p>
+                    <p className="order-total-amount-unique">배송비: {shipping.toLocaleString()} 원</p>
+                    <p className="order-total-amount-unique">총 결제 금액: {total.toLocaleString()} 원</p>
+                    <button
+                        className="custom-button-primary submit-order-button"
+                        onClick={handleSubmitOrder}
+                    >
+                        결제하기
+                    </button>
                 </div>
             </div>
 
@@ -258,8 +301,8 @@ function Order() {
                         {addresses.length > 0 ? addresses.filter(address => {
                             console.log('Filtering address:', address);
                             return address.memberId === user.id;
-                        }).map((address, index) => (
-                            <ListGroup.Item key={index} action onClick={() => handleSelectAddress(address)} className="d-flex justify-content-between align-items-center">
+                        }).map(address => (
+                            <ListGroup.Item key={address.id} action onClick={() => handleSelectAddress(address)} className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <p><strong>{address.addrName}</strong></p>
                                     <p>{address.addr} {address.addrDetail}</p>

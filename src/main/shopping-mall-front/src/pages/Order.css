@@ -1,164 +1,132 @@
-.order-container {
-  padding: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+/* Order.css */
 
-.order-container h1 {
-  font-family: 'Cormorant', serif;
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.order-form {
+/* 전체 컨테이너 스타일 */
+.order-container-unique {
   display: flex;
-  justify-content: space-between;
-}
-
-.shipping-info,
-.payment-info {
-  flex: 1;
-  margin: 20px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.shipping-info h2,
-.payment-info h2 {
-  font-family: 'Cormorant', serif;
-  border-bottom: 1px solid #000;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-.shipping-info .form-group,
-.payment-info .form-group {
-  margin-bottom: 15px;
-}
-
-.shipping-info .form-label,
-.payment-info .form-label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.shipping-info .form-control,
-.payment-info .form-control {
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.d-flex {
-  display: flex;
+  flex-direction: column;
   align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
 }
 
-.d-flex .form-control {
-  flex: 1;
-  margin-right: 10px;
+/* 제목 스타일 */
+.order-container-unique h1 {
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
 }
 
-button {
-  white-space: nowrap;
-}
-
-.modal-footer {
+/* 폼 컨테이너 스타일 */
+.order-form-unique {
   display: flex;
-  justify-content: flex-end;
+  width: 100%;
+  max-width: 1200px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.modal-body .form-group {
+/* 좌측 섹션 스타일 */
+.order-shipping-info-unique, .order-payment-info-unique {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 배송 정보 섹션 스타일 */
+.order-shipping-info-unique {
+  border-right: 1px solid #ddd;
+}
+
+.order-shipping-info-unique h2, .order-payment-info-unique h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00aaff;
+}
+
+/* 결제 정보 섹션 스타일 */
+.order-payment-info-unique {
+  background-color: #f1faff;
+}
+
+/* 폼 그룹 스타일 */
+.order-shipping-info-unique .form-group, .order-payment-info-unique .form-group {
   margin-bottom: 15px;
 }
 
-.modal-body .form-label {
+.order-shipping-info-unique .form-label, .order-payment-info-unique .form-label {
   font-weight: bold;
-  margin-bottom: 5px;
+  color: #333;
 }
 
-.modal-body .form-control {
-  border-radius: 0;
-  box-shadow: none;
+/* 배송 요청사항 커스텀 입력 필드 스타일 */
+.order-shipping-info-unique .custom-delivery-req {
+  margin-top: 10px;
 }
 
-/* 추가 스타일 */
-.shipping-info {
-  border-right: none;
-}
-
-.payment-info {
-  border-left: none;
-}
-
-.payment-info p {
-  margin-bottom: 10px;
-}
-
-.payment-info .product-item {
+/* 상품 항목 스타일 */
+.order-product-item-unique {
+  padding: 10px;
   border-bottom: 1px solid #ddd;
-  padding: 10px 0;
 }
 
-.payment-info .product-item:last-child {
+.order-product-item-unique:last-child {
   border-bottom: none;
 }
 
-.payment-info .product-title {
-  font-weight: bold;
+.order-product-title-unique, .order-product-price-unique, .order-product-quantity-unique {
+  margin: 5px 0;
+  color: #333;
 }
 
-.payment-info .product-price,
-.payment-info .product-quantity {
-  margin-left: 10px;
-}
-
-.payment-info .total-amount {
-  margin-top: 20px;
-  font-weight: bold;
-}
-
-.payment-info button {
-  width: 100%;
-  padding: 10px 0;
+/* 총 금액 스타일 */
+.order-total-amount-unique {
   font-size: 18px;
-}
-
-/* Modal 스타일 */
-.modal-title {
   font-weight: bold;
+  margin: 10px 0;
+  color: #333;
 }
 
-.modal-body {
-  max-height: 400px;
-  overflow-y: auto;
+/* 결제 버튼 스타일 */
+/* Add to Order.css */
+
+.custom-button-primary {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
 }
 
-.list-group-item {
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
+.custom-button-primary:hover {
+  background-color: #0056b3;
 }
 
-.list-group-item div {
-  display: flex;
-  /* flex-direction: column; */
-}
-
-.list-group-item .btn {
-  margin-left: 10px;
+.submit-order-button {
+  margin-top: 20px;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-  .order-form {
+  .order-form-unique {
     flex-direction: column;
   }
 
-  .shipping-info,
-  .payment-info {
-    margin: 10px 0;
+  .order-shipping-info-unique {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .order-payment-info-unique {
+    background-color: #fff;
   }
 }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import moment from "moment/moment";
 import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
 import { apiInstance } from '../util/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminOrder.css';
-import moment from "moment/moment";
 
 const AdminOrder = () => {
     const [orders, setOrders] = useState([]);
