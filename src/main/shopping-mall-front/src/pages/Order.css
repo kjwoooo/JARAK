@@ -87,20 +87,55 @@
   margin-top: 10px;
 }
 
-/* 상품 항목 스타일 */
+/* 상품 이미지 스타일 */
 .order-product-item-unique {
-  padding: 10px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
   border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
 }
 
 .order-product-item-unique:last-child {
   border-bottom: none;
 }
 
-.order-product-title-unique, .order-product-price-unique, .order-product-quantity-unique {
+.order-product-image-container {
+  margin-right: 15px;
+}
+
+.order-product-image-unique {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.order-product-details-unique {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.order-product-title-unique,
+.order-product-price-unique,
+.order-product-quantity-unique {
   margin: 5px 0;
-  color: #555;
-  font-size: 14px;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.order-product-title-unique {
+  font-size: 18px;
+  color: #000;
+}
+
+.order-product-price-unique,
+.order-product-quantity-unique {
+  font-size: 16px;
+  color: #666;
 }
 
 /* 총 금액 스타일 */
@@ -108,6 +143,7 @@
   font-size: 20px;
   font-weight: bold;
   margin: 10px 0;
+  padding-top: 10px;
   color: #333;
 }
 
@@ -154,6 +190,6 @@
 }
 
 .order-custom-zipcode {
-  max-width: 384px; 
+  max-width: 376px;
   flex-shrink: 1; 
 }
