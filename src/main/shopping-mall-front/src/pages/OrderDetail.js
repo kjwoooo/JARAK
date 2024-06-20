@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { apiInstance } from '../util/api';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './OrderDetail.css'; // 주문 상세 내역 페이지의 스타일
+import './OrderDetail.css';
 
 const OrderDetail = () => {
     const { orderId } = useParams();
