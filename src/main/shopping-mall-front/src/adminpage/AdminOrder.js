@@ -137,7 +137,7 @@ const AdminOrder = () => {
                             <Col md={4} className="order-summary">
                                 {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
                             </Col>
-                            <Col md={2}>{order.totalPrice.toLocaleString()}</Col>
+                            <Col md={2}>{order.totalPrice ? order.totalPrice.toLocaleString() : 'N/A'}</Col>
                             <Col md={2}>
                                 <Form.Control
                                     as="select"

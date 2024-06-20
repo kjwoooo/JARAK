@@ -1,8 +1,24 @@
 /* 기본 스타일 */
 .order-summary {
+    display: flex;
+    align-items: center;
     font-weight: bold;
     cursor: pointer; /* 마우스 오버 시 클릭 버튼 */
     transition: background-color 0.3s, color 0.3s;
+}
+
+.order-item-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer; /* 마우스 오버 시 클릭 버튼 */
+    transition: transform 0.3s, box-shadow 0.3s; /* 애니메이션 추가 */
+}
+
+.order-item-image:hover {
+    transform: scale(1.05); /* 마우스 오버 시 이미지 확대 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 마우스 오버 시 그림자 추가 */
 }
 
 .order-summary:hover {
@@ -28,7 +44,7 @@
     border-radius: 5px;
 }
 
-.order-col-2, .order-col-6 {
+.order-col-1, .order-col-2, .order-col-3, .order-col-4, .order-col-6 {
     display: flex;
     justify-content: center; /* 중앙 정렬 추가 */
     align-items: center;
@@ -36,12 +52,30 @@
     text-align: center; /* 중앙 정렬 추가 */
 }
 
+.order-col-1 {
+    width: 8.3333%;
+}
+
 .order-col-2 {
     width: 16.6667%;
 }
 
+.order-col-3 {
+    width: 25%;
+}
+
+.order-col-4 {
+    width: 33.3333%;
+}
+
 .order-col-6 {
     width: 50%;
+}
+
+.order-summary-text {
+    display: flex;
+    align-items: center;
+    text-align: left;
 }
 
 /* 추가 스타일 */
@@ -166,6 +200,14 @@
     background-color: #ddd;
     border-color: #ddd;
     cursor: not-allowed;
+}
+
+/* 주문 내역이 없을 때 */
+.no-orders {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    color: #888;
 }
 
 /* 반응형 디자인 */

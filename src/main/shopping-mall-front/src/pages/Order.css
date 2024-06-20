@@ -5,16 +5,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background-color: #f9f9f9;
+  padding: 40px 20px;
+  background-color: #f0f0f0;
 }
 
 /* 제목 스타일 */
 .order-container-unique h1 {
-  margin-bottom: 20px;
-  font-size: 32px;
-  font-weight: bold;
+  margin-bottom: 2rem;
+  font-size: 36px;
+  font-weight: 700;
+  font-family: fantasy;
   color: #333;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 /* 폼 컨테이너 스타일 */
@@ -23,9 +26,10 @@
   width: 100%;
   max-width: 1200px;
   background: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
+  padding: 20px;
 }
 
 /* 좌측 섹션 스타일 */
@@ -37,29 +41,45 @@
 
 /* 배송 정보 섹션 스타일 */
 .order-shipping-info-unique {
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #eee;
 }
 
 .order-shipping-info-unique h2, .order-payment-info-unique h2 {
   margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #00aaff;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
 }
 
 /* 결제 정보 섹션 스타일 */
 .order-payment-info-unique {
-  background-color: #f1faff;
+  background-color: #fafafa;
 }
 
 /* 폼 그룹 스타일 */
 .order-shipping-info-unique .form-group, .order-payment-info-unique .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .order-shipping-info-unique .form-label, .order-payment-info-unique .form-label {
   font-weight: bold;
-  color: #333;
+  color: #555;
+  font-size: 16px;
+}
+
+.order-shipping-info-unique .form-control, .order-payment-info-unique .form-control {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.order-shipping-info-unique .form-control:focus, .order-payment-info-unique .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* 배송 요청사항 커스텀 입력 필드 스타일 */
@@ -70,7 +90,7 @@
 /* 상품 항목 스타일 */
 .order-product-item-unique {
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
 }
 
 .order-product-item-unique:last-child {
@@ -79,20 +99,19 @@
 
 .order-product-title-unique, .order-product-price-unique, .order-product-quantity-unique {
   margin: 5px 0;
-  color: #333;
+  color: #555;
+  font-size: 14px;
 }
 
 /* 총 금액 스타일 */
 .order-total-amount-unique {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   margin: 10px 0;
   color: #333;
 }
 
 /* 결제 버튼 스타일 */
-/* Add to Order.css */
-
 .custom-button-primary {
   display: block;
   width: 100%;
@@ -100,19 +119,22 @@
   font-size: 18px;
   font-weight: bold;
   color: #fff;
-  background-color: #007bff;
+  background-color: #00c4a7;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
+  transition: background-color 0.3s ease;
 }
 
 .custom-button-primary:hover {
-  background-color: #0056b3;
+  background-color: #009b87;
 }
 
 .submit-order-button {
   margin-top: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* 반응형 디자인 */
@@ -123,7 +145,7 @@
 
   .order-shipping-info-unique {
     border-right: none;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
   }
 
   .order-payment-info-unique {
