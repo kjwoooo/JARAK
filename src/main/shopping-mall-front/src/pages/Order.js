@@ -24,8 +24,14 @@ function Order() {
 
     const [formData, setFormData] = useState({
         orderCustomer: user ? user.displayName : '',
-        phone: '',
-        addr: ''
+        recipientName: '',
+        addrName: '',
+        recipientTel: '',
+        zipcode: '',
+        addr: '',
+        addrDetail: '',
+        deliveryReq: '',
+        phone: ''
     });
     const [addresses, setAddresses] = useState([]);
     const [newAddress, setNewAddress] = useState({
@@ -35,6 +41,7 @@ function Order() {
         zipcode: '', // 우편번호
         addr: '', // 주소
         addrDetail: '', // 상세주소
+        deliveryReq: ''
     });
 
     useEffect(() => {
@@ -98,7 +105,8 @@ function Order() {
                 recipientTel: '',
                 zipcode: '',
                 addr: '',
-                addrDetail: ''
+                addrDetail: '',
+                deliveryReq: ''
             });
             setShowAddAddressModal(false);
         } catch (error) {
@@ -122,7 +130,8 @@ function Order() {
                 recipientTel: addressData.recipientTel,
                 zipcode: addressData.zipcode,
                 addr: addressData.addr,
-                addrDetail: addressData.addrDetail
+                addrDetail: addressData.addrDetail,
+                deliveryReq: ''
             });
             setShowEditAddressModal(true);
         } catch (error) {
@@ -196,8 +205,11 @@ function Order() {
             addrDetail: formData.addrDetail,
             recipientTel: formData.recipientTel,
             addrName: formData.addrName,
-            deliveryReq: formData.deliveryReq
+            deliveryReq: formData.deliveryReq || '' // 빈 값 처리
         };
+
+        console.log('Order Data:', JSON.stringify(orderData, null, 2)); // 요청 데이터 출력 (formatted)
+        console.log('JWT Token:', jwtToken); // 토큰 출력
 
         try {
             const response = await apiInstance.post('/orders', orderData, {
@@ -206,11 +218,18 @@ function Order() {
                     'Content-Type': 'application/json'
                 }
             });
+            console.log('Response:', response.data); // 응답 데이터 출력
             toast.success('주문이 성공적으로 진행되었습니다!');
             navigate('/orders/complete'); // 주문 내역 조회 페이지로 이동
         } catch (error) {
-            console.error('Failed to create order:', error.response ? error.response.data : error.message);
-            toast.error('주문 생성에 실패했습니다. 다시 시도해 주세요.');
+            if (error.response) {
+                console.error('Failed to create order:', error.response.status, error.response.data);
+                toast.error(`주문 생성에 실패했습니다: ${error.response.data.message || '다시 시도해 주세요.'}`);
+            } else {
+                console.error('Failed to create order:', error.message);
+                toast.error('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+            }
+            console.error('Error Object:', error); // 전체 오류 객체 출력
         }
     };
 
@@ -258,9 +277,10 @@ function Order() {
                             <Form.Control
                                 as="select"
                                 name="deliveryReq"
-                                value={customDeliveryReq ? 'custom' : formData.deliveryReq}
+                                value={formData.deliveryReq || ''}
                                 onChange={handleDeliveryReqChange}
                             >
+                                <option value="" disabled>배송 요청 사항을 선택하세요</option>
                                 <option value="문 앞에 두고 가주세요">문 앞에 두고 가주세요</option>
                                 <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
                                 <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
@@ -276,21 +296,24 @@ function Order() {
                                 />
                             )}
                         </Form.Group>
+
                     </Form>
                 </div>
                 <div className="order-payment-info-unique">
                     <h2>결제 정보</h2>
-                    {cartItems.map(item => (
-                        <div key={item.id} className="order-product-item-unique d-flex">
-                            <div className="order-product-image-container">
-                                <img src={getMainImageSrc(item.itemImageDTOs)} alt={item.itemName} className="order-product-image-unique" />
+                    {cartItems.map((item, itemIndex) => (
+                        item.options.map((option, optionIndex) => (
+                            <div key={`${itemIndex}-${optionIndex}`} className="order-product-item-unique d-flex">
+                                <div className="order-product-image-container">
+                                    <img src={getMainImageSrc(item.itemImageDTOs)} alt={item.itemName} className="order-product-image-unique" />
+                                </div>
+                                <div className="order-product-details-unique">
+                                    <p className="order-product-title-unique">상품: {item.itemName} / {option.size} / {option.color} </p>
+                                    <p className="order-product-price-unique">가격: {item.price?.toLocaleString()} 원</p>
+                                    <p className="order-product-quantity-unique">수량: {option.quantity}</p>
+                                </div>
                             </div>
-                            <div className="order-product-details-unique">
-                                <p className="order-product-title-unique">상품명: {item.itemName}</p>
-                                <p className="order-product-price-unique">가격: {item.price?.toLocaleString()} 원</p>
-                                <p className="order-product-quantity-unique">수량: {item.quantity}</p>
-                            </div>
-                        </div>
+                        ))
                     ))}
                     <p className="order-total-amount-unique">총 상품 금액: {productTotal.toLocaleString()} 원</p>
                     <p className="order-total-amount-unique">배송비: {shipping.toLocaleString()} 원</p>
