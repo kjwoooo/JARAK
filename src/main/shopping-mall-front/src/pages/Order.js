@@ -340,7 +340,7 @@ function Order() {
                         <Form.Group controlId="formZipcode">
                             <Form.Label>우편번호</Form.Label>
                             <div className="d-flex">
-                                <Form.Control type="text" name="zipcode" value={newAddress.zipcode} onChange={handleNewAddressChange} readOnly />
+                            <Form.Control type="text" name="zipcode" value={newAddress.zipcode} onChange={handleNewAddressChange} readOnly className="order-custom-zipcode" />
                                 <Button variant="secondary" onClick={handlePostcode}>주소찾기</Button>
                             </div>
                         </Form.Group>
