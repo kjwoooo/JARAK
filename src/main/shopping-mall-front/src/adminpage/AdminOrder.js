@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import moment from "moment/moment";
-import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
-import { apiInstance } from '../util/api';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Container, Button, Modal } from 'react-bootstrap';
+import { apiInstance } from '../util/api.js';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminOrder.css';
+import moment from 'moment';
 
 const AdminOrder = () => {
     const [orders, setOrders] = useState([]);
@@ -17,47 +19,59 @@ const AdminOrder = () => {
     const [orderIdToDelete, setOrderIdToDelete] = useState(null);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
-    const orderStateMap = {
-        PENDING: "주문 완료",
-        CONFIRMED: "주문 확인",
-        SHIPPED: "상품 발송",
-        DELIVERED: "배송 완료",
-        CANCELLED: "주문 취소"
-    };
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        fetchOrders();
-    }, [page]);
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
+        setLoading(true);
         try {
-            const response = await apiInstance.get('/orders', {
+            const response = await apiInstance.get('/admin/orders', {
                 params: {
                     page: page,
                     size: 10,
                 },
             });
-            setOrders(response.data.content);
+            const ordersData = response.data.content;
+            setOrders(ordersData);
             setTotalPages(response.data.totalPages);
-
-            const summaryData = {
-                ordersCount: response.data.totalElements,
-                prepareCount: response.data.content.filter(order => orderStateMap[order.orderState] === '주문 확인').length,
-                deliveryCount: response.data.content.filter(order => orderStateMap[order.orderState] === '상품 발송').length,
-                completeCount: response.data.content.filter(order => orderStateMap[order.orderState] === '배송 완료').length,
-            };
-            setSummary(summaryData);
+            updateSummary(ordersData);
         } catch (error) {
             console.error('Failed to fetch orders:', error);
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [page]);
 
-    const handleStatusChange = async (id, status) => {
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
+
+    const updateSummary = useCallback((orders) => {
+        const summaryData = {
+            ordersCount: orders.length,
+            prepareCount: orders.filter(order => order.orderState === 'PENDING').length,
+            deliveryCount: orders.filter(order => order.orderState === 'SHIPPED').length,
+            completeCount: orders.filter(order => order.orderState === 'DELIVERED').length,
+        };
+        setSummary(summaryData);
+    }, []);
+
+    const handleStatusChange = async (orderId, newState) => {
         try {
-            await apiInstance.patch(`/admin/orders/${id}`, { status });
-            fetchOrders();
+            const response = await apiInstance.put(`/admin/orders/${orderId}?orderState=${encodeURIComponent(newState)}`);
+
+            if (response.status === 200) {
+                const updatedOrders = orders.map(order =>
+                    order.id === orderId ? { ...order, orderState: newState } : order
+                );
+                setOrders(updatedOrders);
+                updateSummary(updatedOrders);
+                toast.success('주문 상태가 성공적으로 변경되었습니다.');
+            } else {
+                toast.error('주문 상태 변경에 실패했습니다.');
+            }
         } catch (error) {
-            console.error('Failed to update status:', error);
+            console.error('Failed to change order status:', error);
+            toast.error('주문 상태 변경 중 오류가 발생했습니다.');
         }
     };
 
@@ -74,10 +88,16 @@ const AdminOrder = () => {
     const deleteOrderData = async () => {
         try {
             await apiInstance.delete(`/admin/orders/${orderIdToDelete}`);
-            setOrders(orders.filter(order => order.id !== orderIdToDelete));
+            setOrders(prevOrders => {
+                const updatedOrders = prevOrders.filter(order => order.id !== orderIdToDelete);
+                updateSummary(updatedOrders);
+                return updatedOrders;
+            });
             closeModal();
+            toast.success('주문이 성공적으로 삭제되었습니다.');
         } catch (error) {
             console.error('Failed to delete order:', error);
+            toast.error('주문 삭제 중 오류가 발생했습니다.');
         }
     };
 
@@ -87,75 +107,90 @@ const AdminOrder = () => {
 
     return (
         <div>
-            <Container className="section mt-4">
-                <div className="block account-header">
-                    <h1 className="subtitle is-4">주문 관리</h1>
+            <Container className="admin-section-unique">
+                <div className="admin-block-unique admin-account-header-unique">
+                    <h1 className="admin-subtitle-unique is-4">주문 관리</h1>
                 </div>
 
-                <nav className="level">
-                    <div className="level-item has-text-centered">
+                <nav className="admin-level-unique">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">총 주문 수</p>
-                            <p className="title" id="ordersCount">{summary.ordersCount}</p>
+                            <p className="admin-heading-unique">총 주문 수</p>
+                            <p className="admin-title-unique" id="ordersCount">{summary.ordersCount}</p>
                         </div>
                     </div>
-                    <div className="level-item has-text-centered">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">상품 준비 중</p>
-                            <p className="title" id="prepareCount">{summary.prepareCount}</p>
+                            <p className="admin-heading-unique">상품 준비 중</p>
+                            <p className="admin-title-unique" id="prepareCount">{summary.prepareCount}</p>
                         </div>
                     </div>
-                    <div className="level-item has-text-centered">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">상품 배송 중</p>
-                            <p className="title" id="deliveryCount">{summary.deliveryCount}</p>
+                            <p className="admin-heading-unique">상품 배송 중</p>
+                            <p className="admin-title-unique" id="deliveryCount">{summary.deliveryCount}</p>
                         </div>
                     </div>
-                    <div className="level-item has-text-centered">
+                    <div className="admin-level-item-unique has-text-centered">
                         <div>
-                            <p className="heading">배송 완료</p>
-                            <p className="title" id="completeCount">{summary.completeCount}</p>
+                            <p className="admin-heading-unique">배송 완료</p>
+                            <p className="admin-title-unique" id="completeCount">{summary.completeCount}</p>
                         </div>
                     </div>
                 </nav>
 
-                <Container className="orders-container">
-                    <Row className="notification is-info is-light is-mobile orders-top">
-                        <Col md={2}>날짜</Col>
-                        <Col md={4}>주문 정보</Col>
-                        <Col md={2}>주문 총액</Col>
-                        <Col md={2}>상태 관리</Col>
-                        <Col md={2}>취소</Col>
-                    </Row>
-                    {orders.map(order => (
-                        <Row className="orders-item" key={order.id}>
-                            <Col md={2}>
-                                {moment(order.createdAt).isValid()
-                                    ? moment(order.createdAt).format('YYYY-MM-DD')
-                                    : 'Invalid Date'}
-                            </Col>
-                            <Col md={4} className="order-summary">
-                                {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
-                            </Col>
-                            <Col md={2}>{order.totalPrice ? order.totalPrice.toLocaleString() : 'N/A'}</Col>
-                            <Col md={2}>
-                                <Form.Control
-                                    as="select"
-                                    value={order.orderState}
-                                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                    className={`status-select ${order.orderState.replace(" ", "-")}`}
-                                >
-                                    <option className="has-background-danger-light has-text-danger" value="상품 준비중">상품 준비 중</option>
-                                    <option className="has-background-primary-light has-text-primary" value="상품 배송중">상품 배송 중</option>
-                                    <option className="has-background-grey-light" value="배송완료">배송 완료</option>
-                                </Form.Control>
-                            </Col>
-                            <Col md={2}>
-                                <Button variant="danger" onClick={() => openModal(order.id)}>주문 취소</Button>
-                            </Col>
-                        </Row>
-                    ))}
-                    <div className="pagination">
+                <Container className="admin-orders-container-unique">
+                    <div className="admin-order-orders-top">
+                        <div className="admin-order-col-2">주문 날짜</div>
+                        <div className="admin-order-col-4">주문 정보</div>
+                        <div className="admin-order-col-2">주문 총액</div>
+                        <div className="admin-order-col-2">주문 상태 관리</div>
+                        <div className="admin-order-col-2">주문 삭제</div>
+                    </div>
+                    {loading ? (
+                        <div>Loading...</div>
+                    ) : orders.length === 0 ? (
+                        <div className="no-orders">주문 내역이 없습니다</div>
+                    ) : (
+                        orders.map(order => (
+                            <div
+                                className={`admin-order-orders-item ${order.orderState === 'CANCELLED' ? 'admin-cancelled-unique' : ''}`}
+                                key={order.id}>
+                                <div className="admin-order-col admin-order-col-2">
+                                    {moment(order.createdAt).isValid()
+                                        ? moment(order.createdAt).format('YYYY-MM-DD')
+                                        : 'Invalid Date'}
+                                </div>
+                                <div className="admin-order-col admin-order-col-4 admin-order-summary-unique">
+                                    {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
+                                </div>
+                                <div
+                                    className="admin-order-col admin-order-col-2">{order.price ? order.price.toLocaleString() + " 원" : '-'}</div>
+                                <div className="admin-order-col admin-order-col-2">
+                                    <select
+                                        value={order.orderState}
+                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                        className={`admin-status-select-unique ${order.orderState.replace(" ", "-")}`}
+                                    >
+                                        <option value="PENDING">주문 완료</option>
+                                        <option value="CONFIRMED">주문 확인</option>
+                                        <option value="SHIPPED">상품 발송</option>
+                                        <option value="DELIVERED">배송 완료</option>
+                                        <option value="CANCELLED">주문 취소</option>
+                                    </select>
+                                </div>
+                                <div className="admin-order-col admin-order-col-2 admin-order-cancel-button-container">
+                                    <button
+                                        className="admin-order-cancel-button"
+                                        onClick={() => openModal(order.id)}
+                                    >
+                                        주문 삭제
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                    <div className="order-pagination">
                         <Button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
                             이전
                         </Button>
@@ -169,10 +204,10 @@ const AdminOrder = () => {
 
             <Modal show={showModal} onHide={closeModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>주문 취소 확인</Modal.Title>
+                    <Modal.Title>주문 삭제 확인</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>주문 삭제 시 복구할 수 없습니다. 정말로 취소하시겠습니까?</p>
+                    <p>주문 삭제 시 복구할 수 없습니다. 정말로 삭제하시겠습니까?</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={closeModal}>
@@ -183,6 +218,8 @@ const AdminOrder = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            <ToastContainer />
         </div>
     );
 };

@@ -7,7 +7,6 @@ import './AdminMain.css';
 
 function AdminMain() {
   const user = useUserStore(state => state.user);
-  const { mainBanner, setMainBanner } = useBannerStore();
   const [memberCount, setMemberCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [productCount, setProductCount] = useState(0);
@@ -44,18 +43,7 @@ function AdminMain() {
     fetchMemberCount();
     fetchOrderCount();
   }, []);
-  
 
-  const handleMainBannerChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setMainBanner(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   return (
     <div className="AdminMain_admin-main">
@@ -95,37 +83,8 @@ function AdminMain() {
             </Card.Body>
           </Card>
         </Col>
-        <Col md={3}>
-          <Card className="AdminMain_stat-card">
-            <Card.Body>
-              <Card.Title>리뷰 수</Card.Title>
-              <Card.Text>0</Card.Text>
-            </Card.Body>
-          </Card>
-        </Col>
       </Row>
-      <Row>
-        <Col>
-          <Card className="AdminMain_banner-card">
-            <Card.Body>
-              <Card.Title>현재 메인 페이지 배너</Card.Title>
-              <Image src={mainBanner} fluid />
-              <Button variant="secondary" className="mt-2">
-                <label htmlFor="mainBannerUpload" className="AdminMain_custom-file-upload">
-                  수정
-                </label>
-              </Button>
-              <input
-                id="mainBannerUpload"
-                type="file"
-                style={{ display: 'none' }}
-                accept="image/*"
-                onChange={handleMainBannerChange}
-              />
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+
     </div>
   );
 }

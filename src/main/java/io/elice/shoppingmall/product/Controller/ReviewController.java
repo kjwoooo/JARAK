@@ -1,22 +1,19 @@
 package io.elice.shoppingmall.product.Controller;
 
-import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.product.DTO.review.ReviewDTO;
-import io.elice.shoppingmall.product.Entity.Review.Review;
 import io.elice.shoppingmall.product.Service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -31,24 +28,33 @@ public class ReviewController {
     @Autowired
     private MemberService memberService;
 
+    //review 생성
     @Operation(summary = "새로운 리뷰 생성", description = "로그인한 회원이 상품에 대한 리뷰 작성을 요청합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "작성 성공"),
     })
     @PostMapping("/{itemId}")
-    public ReviewDTO createReview(@PathVariable Long itemId, @RequestBody ReviewDTO reviewDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        return reviewService.createReview(reviewDTO, userDetails.getUsername(), itemId);
+    public ReviewDTO createReview(@PathVariable Long itemId,
+                                  @RequestPart ReviewDTO reviewDTO,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  @RequestPart(required = false) MultipartFile imageFile) throws IOException {
+        return reviewService.createReview(reviewDTO, userDetails.getUsername(), itemId, imageFile);
     }
 
+    //review 수정
     @Operation(summary = "리뷰 수정", description = "로그인한 회원이 작성했던 리뷰를 수정합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "수정 성공"),
     })
     @PutMapping("/{reviewId}")
-    public ReviewDTO updateReview(@PathVariable Long reviewId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewDTO reviewDTO) {
-        return reviewService.updateReview(reviewId, reviewDTO, userDetails.getUsername());
+    public ReviewDTO updateReview(@PathVariable Long reviewId,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  @RequestPart ReviewDTO reviewDTO,
+                                  @RequestPart(required = false) MultipartFile imageFile) throws IOException{
+        return reviewService.updateReview(reviewId, reviewDTO, userDetails.getUsername(), imageFile);
     }
 
+    //review 삭제
     @Operation(summary = "리뷰 삭제", description = "상품에 대한 리뷰의 삭제를 요청합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "삭제 성공"),

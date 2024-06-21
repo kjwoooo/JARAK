@@ -19,9 +19,6 @@ public class Review extends BaseEntity { //member entity 받으면 연관관계 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
-    private String title;
-
     @Column(nullable = false, length = 200)
     private String content;
 
@@ -30,6 +27,9 @@ public class Review extends BaseEntity { //member entity 받으면 연관관계 
 
     @Column
     private String username;
+
+    @Column(length = 2048)
+    private String filePath;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

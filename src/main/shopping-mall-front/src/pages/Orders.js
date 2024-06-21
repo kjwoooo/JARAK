@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, Modal } from 'react-bootstrap';
+import { Container, Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { apiInstance } from '../util/api.js';
@@ -10,6 +10,7 @@ const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [orderIdToDelete, setOrderIdToDelete] = useState(null);
+    const [refundReason, setRefundReason] = useState(''); // 취소 사유 상태 추가
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
@@ -48,11 +49,13 @@ const Orders = () => {
     const closeModal = () => {
         setShowModal(false);
         setOrderIdToDelete(null);
+        setRefundReason(''); // 모달 닫을 때 취소 사유 초기화
     };
 
     const deleteOrderData = async () => {
+        const reason = refundReason || '';
         try {
-            await apiInstance.patch(`/orders/${orderIdToDelete}`);
+            await apiInstance.patch(`/orders/${orderIdToDelete}`, { refundReason: reason });
             fetchOrders();
             closeModal();
         } catch (error) {
@@ -136,7 +139,16 @@ const Orders = () => {
                     <Modal.Title>주문 취소 확인</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>주문 취소 시 복구할 수 없습니다. 정말로 취소하시겠습니까?</p>
+                    <Form.Group controlId="refundReason">
+                        <Form.Label>취소 사유</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={refundReason}
+                            onChange={(e) => setRefundReason(e.target.value)}
+                            placeholder="취소 사유를 입력해주세요"
+                        />
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={closeModal}>

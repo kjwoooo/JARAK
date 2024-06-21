@@ -34,8 +34,8 @@ public class S3Uploader {
     }
 
     // UUID를 사용해 파일 이름을 변경해 저장
-    public List<String> upload(File uploadFile, String filePath) {
-        String fileName = filePath + File.separator + UUID.randomUUID() + uploadFile.getName();
+    public List<String> upload(File uploadFile, String dirName) {
+        String fileName = dirName + File.separator + UUID.randomUUID() + "_" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
 
         // List to hold the fileName and uploadImageUrl

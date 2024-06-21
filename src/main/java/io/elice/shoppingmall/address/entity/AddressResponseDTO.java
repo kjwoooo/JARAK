@@ -36,7 +36,7 @@ public class AddressResponseDTO {
         this.zipcode = address.getZipcode();
         this.addr = address.getAddr();
         this.addrDetail = address.getAddrDetail();
-        this.recipientTel = address.getAddrDetail();
+        this.recipientTel = address.getRecipientTel();
         this.addrName = address.getAddrName();
         this.deliveryReq = address.getDeliveryReq();
     }

@@ -1,6 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import { Routes, Route, Outlet } from 'react-router-dom';
-import BgImg from './images/bg.png';
 import { Container } from 'react-bootstrap/';
 import Detail from './pages/Detail.js';
 import AdminPage from './adminpage/AdminMainPage.js';
@@ -14,7 +13,6 @@ import Members from './pages/Members.js';
 import MemberEdit from './pages/MemberEdit.js';
 import MyPage from './pages/MyPage.js';
 import AdminMain from './adminpage/AdminMain.js';
-import useBannerStore from './stores/useBannerStore';
 import Order from './pages/Order.js';
 import OrderComplete from './pages/OrderComplete';
 import Orders from './pages/Orders.js';
@@ -24,17 +22,20 @@ import Category from './pages/Category.js';
 import Carts from './pages/Carts.js';
 import Brand from './pages/Brand.js';
 import AdminItemPage from './adminpage/AdminItemPage.js';
+import BannerSlider from './BannerSlider.js';
+import useBannerStore from './stores/useBannerStore';
 
 function App() {
-  const { mainBanner } = useBannerStore();
+  const { currentBanner } = useBannerStore();
   return (
     <div className="App">
       <NavigationBar />
       <Routes>
         <Route path={LINKS.HOME.path} element={
           <>
-            <div className='main-bg' style={{ backgroundImage: 'url(' + mainBanner + ')' }}></div>
-            <div>전체상품목록</div>
+            <div className="banner-container">
+              <BannerSlider />
+            </div>
             <Container>
               <Products />
             </Container>

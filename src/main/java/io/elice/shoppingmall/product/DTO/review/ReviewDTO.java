@@ -15,10 +15,8 @@ public class ReviewDTO {
     private Long id;
     private Long itemId;
     private String username; // 작성자 아이디(추가)
-    private String title;
     private String content;
     private Double rate;
-//    private ReviewImageDTO reviewImageDTO;
+    private String filePath;
     private LocalDateTime createdAt;
-
 }
