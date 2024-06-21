@@ -52,10 +52,6 @@ function Order() {
     }, [user, jwtToken]);
 
     useEffect(() => {
-        console.log('cartItems:', cartItems);
-    }, [cartItems]);
-
-    useEffect(() => {
         cartItems.forEach(item => {
             fetchItemImages(item.itemId);
         });
@@ -64,7 +60,6 @@ function Order() {
     const fetchItemImages = async (itemId) => {
         try {
             const response = await apiInstance.get(`/items/${itemId}/itemimages`);
-            console.log('Fetched images for item', itemId, response.data); // 데이터 확인을 위한 로그 추가
             setItemImages(prevState => ({
                 ...prevState,
                 [itemId]: response.data
@@ -77,7 +72,6 @@ function Order() {
     const fetchAddresses = async () => {
         try {
             const response = await apiInstance.get('/addresses', { headers: { 'Authorization': `Bearer ${jwtToken}` } });
-            console.log('Fetched addresses:', response.data); // 서버로부터 받아온 데이터 구조 확인
             setAddresses(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error('Failed to fetch addresses:', error);
@@ -113,15 +107,12 @@ function Order() {
     };
 
     const handleAddAddress = async () => {
-        console.log('User:', user); // 유저 정보 확인
-        console.log('JWT Token:', jwtToken); // JWT 토큰 확인
         if (!jwtToken || jwtToken.split('.').length !== 3) {
             console.error('Invalid JWT Token');
             return;
         }
         try {
             const response = await apiInstance.post('/addresses', newAddress, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
-            console.log('Added address:', response.data); // 추가된 데이터 구조 확인
             setAddresses([...addresses, response.data]);
             setNewAddress({
                 recipientName: '',
@@ -248,9 +239,6 @@ function Order() {
             orderDetailDTOs
         };
 
-        console.log('Order Request Data:', JSON.stringify(orderRequestDTO, null, 2)); // 요청 데이터 출력 (formatted)
-        console.log('JWT Token:', jwtToken); // 토큰 출력
-
         try {
             const response = await apiInstance.post('/orders', orderRequestDTO, {
                 headers: {
@@ -258,19 +246,15 @@ function Order() {
                     'Content-Type': 'application/json; charset=utf-8'
                 }
             });
-            console.log('Response:', response.data); // 응답 데이터 출력
             toast.success('주문이 성공적으로 진행되었습니다!');
             clearPurchasedItemsFromLocalStorage(cartItems, user.id);
             navigate('/orders/complete'); // 주문 내역 조회 페이지로 이동
         } catch (error) {
             if (error.response) {
-                console.error('Failed to create order:', error.response.status, error.response.data);
                 toast.error(`주문 생성에 실패했습니다: ${error.response.data.message || '다시 시도해 주세요.'}`);
             } else {
-                console.error('Failed to create order:', error.message);
                 toast.error('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
             }
-            console.error('Error Object:', error); // 전체 오류 객체 출력
         }
     };
 
@@ -293,10 +277,6 @@ function Order() {
                         <Form.Group controlId="formOrderCustomer">
                             <Form.Label>주문고객</Form.Label>
                             <Form.Control type="text" name="orderCustomer" value={formData.orderCustomer} onChange={handleChange} />
-                        </Form.Group>
-                        <Form.Group controlId="formPhone">
-                            <Form.Label>휴대폰 번호</Form.Label>
-                            <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
                         </Form.Group>
                         <Form.Group controlId="formAddrName">
                             <Form.Label>배송지명</Form.Label>
@@ -324,19 +304,7 @@ function Order() {
                         </Form.Group>
                         <Form.Group controlId="formDeliveryReq">
                             <Form.Label>배송요청사항</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="deliveryReq"
-                                value={formData.deliveryReq || ''}
-                                onChange={handleDeliveryReqChange}
-                            >
-                                <option value="" disabled>배송 요청 사항을 선택하세요</option>
-                                <option value="문 앞에 두고 가주세요">문 앞에 두고 가주세요</option>
-                                <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
-                                <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
-                                <option value="custom">직접 입력</option>
-                            </Form.Control>
-                            {customDeliveryReq && (
+                            {customDeliveryReq ? (
                                 <Form.Control
                                     type="text"
                                     name="deliveryReq"
@@ -344,9 +312,21 @@ function Order() {
                                     value={formData.deliveryReq}
                                     onChange={handleChange}
                                 />
+                            ) : (
+                                <Form.Control
+                                    as="select"
+                                    name="deliveryReq"
+                                    value={formData.deliveryReq || ''}
+                                    onChange={handleDeliveryReqChange}
+                                >
+                                    <option value="" disabled>배송 요청 사항을 선택하세요</option>
+                                    <option value="문 앞에 두고 가주세요">문 앞에 두고 가주세요</option>
+                                    <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+                                    <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
+                                    <option value="custom">직접 입력</option>
+                                </Form.Control>
                             )}
                         </Form.Group>
-
                     </Form>
                 </div>
                 <div className="order-payment-info-unique">

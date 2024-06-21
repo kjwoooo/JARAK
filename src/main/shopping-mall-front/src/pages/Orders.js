@@ -55,7 +55,12 @@ const Orders = () => {
     const deleteOrderData = async () => {
         const reason = refundReason || '';
         try {
-            await apiInstance.patch(`/orders/${orderIdToDelete}`, { refundReason: reason });
+            await apiInstance.patch(`/orders/${orderIdToDelete}`, { refundReason: reason }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log('refundReason:', refundReason);
             fetchOrders();
             closeModal();
         } catch (error) {
@@ -104,7 +109,7 @@ const Orders = () => {
                                         <img src={order.repItemImage} className="order-item-image" alt="대표 상품"/>
                                     </div>
                                     <div className="order-col order-col-3 order-summary" onClick={() => handleOrderClick(order.id)}>
-                                        {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
+                                        {order.orderDetails.length === 1 ? order.repItemName : `${order.repItemName} 외 ${order.orderDetails.length - 1}건`}
                                     </div>
                                     <div
                                         className="order-col order-col-2">{order.price ? order.price.toLocaleString() + " 원" : '-'}</div>
@@ -123,7 +128,7 @@ const Orders = () => {
                         )}
                         <div className="order-pagination">
                             <Button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
-                                이전
+                            이전
                             </Button>
                             <span>{page + 1} / {totalPages}</span>
                             <Button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages - 1}>

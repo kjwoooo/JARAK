@@ -35,7 +35,7 @@ const AdminOrder = () => {
             setTotalPages(response.data.totalPages);
             updateSummary(ordersData);
         } catch (error) {
-            console.error('Failed to fetch orders:', error);
+            toast.error('Failed to fetch orders');
         } finally {
             setLoading(false);
         }
@@ -70,7 +70,6 @@ const AdminOrder = () => {
                 toast.error('주문 상태 변경에 실패했습니다.');
             }
         } catch (error) {
-            console.error('Failed to change order status:', error);
             toast.error('주문 상태 변경 중 오류가 발생했습니다.');
         }
     };
@@ -96,7 +95,6 @@ const AdminOrder = () => {
             closeModal();
             toast.success('주문이 성공적으로 삭제되었습니다.');
         } catch (error) {
-            console.error('Failed to delete order:', error);
             toast.error('주문 삭제 중 오류가 발생했습니다.');
         }
     };
@@ -162,7 +160,7 @@ const AdminOrder = () => {
                                         : 'Invalid Date'}
                                 </div>
                                 <div className="admin-order-col admin-order-col-4 admin-order-summary-unique">
-                                    {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
+                                    {order.orderDetails.length === 1 ? order.repItemName : `${order.repItemName} 외 ${order.orderDetails.length - 1}건`}
                                 </div>
                                 <div
                                     className="admin-order-col admin-order-col-2">{order.price ? order.price.toLocaleString() + " 원" : '-'}</div>
