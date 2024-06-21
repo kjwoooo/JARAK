@@ -23,13 +23,9 @@ public class ShoppingMallApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-					.allowedOrigins("http://34.22.69.4")
-					.allowedMethods(
-						HttpMethod.GET.name(),
-						HttpMethod.HEAD.name(),
-						HttpMethod.POST.name(),
-						HttpMethod.PUT.name(),
-						HttpMethod.DELETE.name())
+					.allowedOriginPatterns("*")
+					.allowedMethods("*")
+					.allowedHeaders("*")
 					.allowCredentials(true);
 			}
 		};
