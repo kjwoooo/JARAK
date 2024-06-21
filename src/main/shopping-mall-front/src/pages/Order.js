@@ -19,14 +19,20 @@ function Order() {
     const [showEditAddressModal, setShowEditAddressModal] = useState(false);
     const [editAddressId, setEditAddressId] = useState(null);
     const [customDeliveryReq, setCustomDeliveryReq] = useState(false);
+    const [itemImages, setItemImages] = useState({});
 
     const jwtToken = Cookies.get('jwtToken'); // 쿠키에서 JWT 토큰 가져오기
 
     const [formData, setFormData] = useState({
         orderCustomer: user ? user.displayName : '',
-        phone: '',
-        address: '',
-        deliveryReq: ''
+        recipientName: '',
+        addrName: '',
+        recipientTel: '',
+        zipcode: '',
+        addr: '',
+        addrDetail: '',
+        deliveryReq: '',
+        phone: ''
     });
     const [addresses, setAddresses] = useState([]);
     const [newAddress, setNewAddress] = useState({
@@ -36,7 +42,7 @@ function Order() {
         zipcode: '', // 우편번호
         addr: '', // 주소
         addrDetail: '', // 상세주소
-        deliveryReq: '' // 배송요청사항
+        deliveryReq: ''
     });
 
     useEffect(() => {
@@ -44,6 +50,29 @@ function Order() {
             fetchAddresses();
         }
     }, [user, jwtToken]);
+
+    useEffect(() => {
+        console.log('cartItems:', cartItems);
+    }, [cartItems]);
+
+    useEffect(() => {
+        cartItems.forEach(item => {
+            fetchItemImages(item.itemId);
+        });
+    }, [cartItems]);
+
+    const fetchItemImages = async (itemId) => {
+        try {
+            const response = await apiInstance.get(`/items/${itemId}/itemimages`);
+            console.log('Fetched images for item', itemId, response.data); // 데이터 확인을 위한 로그 추가
+            setItemImages(prevState => ({
+                ...prevState,
+                [itemId]: response.data
+            }));
+        } catch (error) {
+            console.error('Failed to fetch item images:', error);
+        }
+    };
 
     const fetchAddresses = async () => {
         try {
@@ -126,7 +155,7 @@ function Order() {
                 zipcode: addressData.zipcode,
                 addr: addressData.addr,
                 addrDetail: addressData.addrDetail,
-                deliveryReq: addressData.deliveryReq
+                deliveryReq: ''
             });
             setShowEditAddressModal(true);
         } catch (error) {
@@ -162,8 +191,8 @@ function Order() {
             addrName: address.addrName,
             recipientTel: address.recipientTel,
             zipcode: address.zipcode,
-            address: `${address.addr} ${address.addrDetail}`,
-            deliveryReq: address.deliveryReq
+            addr: address.addr,
+            addrDetail: address.addrDetail
         });
         setShowAddressModal(false);
     };
@@ -185,6 +214,13 @@ function Order() {
         window.location.reload();
     };
 
+    const getMainImageSrc = (itemId) => {
+        const images = itemImages[itemId];
+        if (!images) return '';
+        const mainImage = images.find(image => image.isMain);
+        return mainImage ? mainImage.filePath : '';
+    };
+
     const handleSubmitOrder = async () => {
         const orderData = {
             shippingCost: shipping,
@@ -194,19 +230,31 @@ function Order() {
             addrDetail: formData.addrDetail,
             recipientTel: formData.recipientTel,
             addrName: formData.addrName,
-            deliveryReq: formData.deliveryReq
+            deliveryReq: formData.deliveryReq || '' // 빈 값 처리
         };
+
+        console.log('Order Data:', JSON.stringify(orderData, null, 2)); // 요청 데이터 출력 (formatted)
+        console.log('JWT Token:', jwtToken); // 토큰 출력
 
         try {
             const response = await apiInstance.post('/orders', orderData, {
-                headers: { 'Authorization': `Bearer ${jwtToken}` }
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                    'Content-Type': 'application/json'
+                }
             });
-            console.log('Order created:', response.data);
+            console.log('Response:', response.data); // 응답 데이터 출력
             toast.success('주문이 성공적으로 진행되었습니다!');
-            navigate('/order/complete'); // 주문 내역 조회 페이지로 이동
+            navigate('/orders/complete'); // 주문 내역 조회 페이지로 이동
         } catch (error) {
-            console.error('Failed to create order:', error);
-            toast.error('주문 생성에 실패했습니다. 다시 시도해 주세요.');
+            if (error.response) {
+                console.error('Failed to create order:', error.response.status, error.response.data);
+                toast.error(`주문 생성에 실패했습니다: ${error.response.data.message || '다시 시도해 주세요.'}`);
+            } else {
+                console.error('Failed to create order:', error.message);
+                toast.error('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+            }
+            console.error('Error Object:', error); // 전체 오류 객체 출력
         }
     };
 
@@ -243,16 +291,21 @@ function Order() {
                         </Form.Group>
                         <Form.Group controlId="formAddress">
                             <Form.Label>배송 주소</Form.Label>
-                            <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} readOnly />
+                            <Form.Control type="text" name="addr" value={formData.addr} onChange={handleChange} readOnly />
+                        </Form.Group>
+                        <Form.Group controlId="formAddressDetail">
+                            <Form.Label>배송 상세 주소</Form.Label>
+                            <Form.Control type="text" name="addrDetail" value={formData.addrDetail} onChange={handleChange} readOnly />
                         </Form.Group>
                         <Form.Group controlId="formDeliveryReq">
                             <Form.Label>배송요청사항</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="deliveryReq"
-                                value={customDeliveryReq ? 'custom' : formData.deliveryReq}
+                                value={formData.deliveryReq || ''}
                                 onChange={handleDeliveryReqChange}
                             >
+                                <option value="" disabled>배송 요청 사항을 선택하세요</option>
                                 <option value="문 앞에 두고 가주세요">문 앞에 두고 가주세요</option>
                                 <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
                                 <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
@@ -268,16 +321,24 @@ function Order() {
                                 />
                             )}
                         </Form.Group>
+
                     </Form>
                 </div>
                 <div className="order-payment-info-unique">
                     <h2>결제 정보</h2>
-                    {cartItems?.map(item => (
-                        <div key={item.id} className="order-product-item-unique">
-                            <p className="order-product-title-unique">상품명: {item.title}</p>
-                            <p className="order-product-price-unique">가격: {item.price?.toLocaleString()} 원</p>
-                            <p className="order-product-quantity-unique">수량: {item.quantity}</p>
-                        </div>
+                    {cartItems.map((item, itemIndex) => (
+                        item.options.map((option, optionIndex) => (
+                            <div key={`${itemIndex}-${optionIndex}`} className="order-product-item-unique d-flex">
+                                <div className="order-product-image-container">
+                                    <img src={getMainImageSrc(item.itemId)} alt={item.itemName} className="order-product-image-unique" />
+                                </div>
+                                <div className="order-product-details-unique">
+                                    <p className="order-product-title-unique">상품: {item.itemName} / {option.size} / {option.color} </p>
+                                    <p className="order-product-price-unique">가격: {item.price?.toLocaleString()} 원</p>
+                                    <p className="order-product-quantity-unique">수량: {option.quantity}</p>
+                                </div>
+                            </div>
+                        ))
                     ))}
                     <p className="order-total-amount-unique">총 상품 금액: {productTotal.toLocaleString()} 원</p>
                     <p className="order-total-amount-unique">배송비: {shipping.toLocaleString()} 원</p>
@@ -340,7 +401,7 @@ function Order() {
                         <Form.Group controlId="formZipcode">
                             <Form.Label>우편번호</Form.Label>
                             <div className="d-flex">
-                            <Form.Control type="text" name="zipcode" value={newAddress.zipcode} onChange={handleNewAddressChange} readOnly className="order-custom-zipcode" />
+                                <Form.Control type="text" name="zipcode" value={newAddress.zipcode} onChange={handleNewAddressChange} readOnly className="order-custom-zipcode" />
                                 <Button variant="secondary" onClick={handlePostcode}>주소찾기</Button>
                             </div>
                         </Form.Group>
@@ -351,10 +412,6 @@ function Order() {
                         <Form.Group controlId="formAddrDetail">
                             <Form.Label>상세주소</Form.Label>
                             <Form.Control type="text" name="addrDetail" value={newAddress.addrDetail} onChange={handleNewAddressChange} />
-                        </Form.Group>
-                        <Form.Group controlId="formDeliveryReq">
-                            <Form.Label>배송요청사항</Form.Label>
-                            <Form.Control type="text" name="deliveryReq" value={newAddress.deliveryReq} onChange={handleNewAddressChange} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -396,10 +453,6 @@ function Order() {
                         <Form.Group controlId="formAddrDetail">
                             <Form.Label>상세주소</Form.Label>
                             <Form.Control type="text" name="addrDetail" value={formData.addrDetail} onChange={handleEditAddressChange} />
-                        </Form.Group>
-                        <Form.Group controlId="formDeliveryReq">
-                            <Form.Label>배송요청사항</Form.Label>
-                            <Form.Control type="text" name="deliveryReq" value={formData.deliveryReq} onChange={handleEditAddressChange} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
