@@ -55,7 +55,8 @@ function Detail() {
           itemName: item.itemName,
           price: item.price,
           options: [option],
-          quantity: option.quantity
+          quantity: option.quantity,
+          mainImage: getMainImageSrc(item.itemImageDTOs) // Add image URL
         }));
         const productTotal = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
         const total = productTotal + 2500;
@@ -111,7 +112,8 @@ function Detail() {
           itemName: item.itemName,
           price: item.price,
           options: [option],
-          quantity: option.quantity
+          quantity: option.quantity,
+          mainImage: getMainImageSrc(item.itemImageDTOs) // Add image URL
         }));
 
         const updatedCartItems = storedCartItems.concat(newCartItems);

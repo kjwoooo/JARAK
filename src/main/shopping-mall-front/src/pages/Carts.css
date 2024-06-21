@@ -126,3 +126,11 @@
     font-family: 'NanumGothic', sans-serif;
     font-size: 16px;
 }
+.Carts_select-all {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.Carts_cart-item input[type="checkbox"] {
+    margin-right: 10px;
+}
