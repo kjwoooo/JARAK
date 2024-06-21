@@ -67,7 +67,7 @@ public class ReviewController {
     }
 
     //특정상품의 모든 리뷰 조희
-    @Operation(summary = "특정 삼품의 모든 리뷰 조회", description = "특정 상품에 대한 모든 리뷰를 조회합니다.")
+    @Operation(summary = "특정 상품의 모든 리뷰 조회", description = "특정 상품에 대한 모든 리뷰를 조회합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공"),
     })
@@ -76,7 +76,7 @@ public class ReviewController {
         return reviewService.getAllReviews(itemId);
     }
 
-    @Operation(summary = "특정 삼품의 특정 리뷰 조회", description = "특정 상품에 대해 특정 리뷰를 조회합니다.")
+    @Operation(summary = "특정 상품의 특정 리뷰 조회", description = "특정 상품에 대해 특정 리뷰를 조회합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공"),
     })
