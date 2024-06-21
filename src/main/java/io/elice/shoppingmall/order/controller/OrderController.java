@@ -3,6 +3,8 @@ package io.elice.shoppingmall.order.controller;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
+import io.elice.shoppingmall.order.dto.OrderDetailDTO;
+import io.elice.shoppingmall.order.dto.OrderRequestDTO;
 import io.elice.shoppingmall.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -82,15 +84,15 @@ public class OrderController {
     // 주문 생성
     @Operation(summary = "주문 생성", description = "로그인한 회원의 주문 정보를 생성합니다.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "조회 성공"),
-        @ApiResponse(responseCode = "400", description = "회원 정보가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "400", description = "장바구니가 비어있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "회원 정보가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "장바구니가 비어있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@AuthenticationPrincipal UserDetails userDetails,
-        @Parameter(name = "orderDTO", description = "주문 정보", in = ParameterIn.PATH) @Valid @RequestBody OrderDTO orderDTO) {
+                                                @Valid @RequestBody OrderRequestDTO orderRequestDTO) {
         Member member = getAuthenticatedMember(userDetails);
-        OrderDTO createdOrder = orderService.createOrder(member, orderDTO);
+        OrderDTO createdOrder = orderService.createOrder(member, orderRequestDTO);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 

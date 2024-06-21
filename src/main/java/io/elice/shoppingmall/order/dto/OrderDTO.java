@@ -25,7 +25,7 @@ public class OrderDTO {
 
     private Integer price;
 
-    @NotNull(message = "Shipping cost is required.")
+    @NotNull(message = "배송비는 필수 항목입니다.")
     private Integer shippingCost;
 
     private Integer totalQuantity;
@@ -36,26 +36,26 @@ public class OrderDTO {
 
     private String refundReason;
 
-    @NotBlank(message = "Recipient name is required.")
-    @Size(max = 255, message = "Recipient name can have at most 255 characters.")
+    @NotBlank(message = "수령인 이름은 필수 항목입니다.")
+    @Size(max = 255, message = "수령인 이름은 최대 255자까지 입력할 수 있습니다.")
     private String recipientName;
 
-    @NotBlank(message = "Zipcode is required.")
-    @Size(max = 20, message = "Zipcode can have at most 20 characters.")
+    @NotBlank(message = "우편번호는 필수 항목입니다.")
+    @Size(max = 20, message = "우편번호는 최대 20자까지 입력할 수 있습니다.")
     private String zipcode;
 
-    @NotBlank(message = "Address is required.")
-    @Size(max = 255, message = "Address can have at most 255 characters.")
+    @NotBlank(message = "주소는 필수 항목입니다.")
+    @Size(max = 255, message = "주소는 최대 255자까지 입력할 수 있습니다.")
     private String addr;
 
     private String addrDetail;
 
-    @NotBlank(message = "Recipient telephone is required.")
-    @Size(max = 20, message = "Recipient telephone can have at most 20 characters.")
+    @NotBlank(message = "수령인 전화번호는 필수 항목입니다.")
+    @Size(max = 20, message = "수령인 전화번호는 최대 20자까지 입력할 수 있습니다.")
     private String recipientTel;
 
-    @NotBlank(message = "Address name is required.")
-    @Size(max = 255, message = "Address name can have at most 255 characters.")
+    @NotBlank(message = "배송지명은 필수 항목입니다.")
+    @Size(max = 255, message = "배송지명은 최대 255자까지 입력할 수 있습니다.")
     private String addrName;
 
     private String deliveryReq;
