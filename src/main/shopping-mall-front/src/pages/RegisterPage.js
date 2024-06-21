@@ -44,7 +44,7 @@ function RegisterPage() {
 
   return (
     <div className='RegisterPage_Register'>
-      <div>자락몰의 회원이 되어주세요!</div>
+      <div className='font-size40 mb-5'>SIGN-UP</div>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formName">
@@ -136,7 +136,7 @@ function RegisterPage() {
         </Form.Group>
 
         <Button variant="primary" type="submit" className="RegisterPage_btn-primary">
-          회원가입
+          SIGN-UP
         </Button>
       </Form>
     </div>

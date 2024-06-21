@@ -1,5 +1,5 @@
 .RegisterPage_Register {
-    max-width: 500px;
+    max-width: 800px;
     margin: 50px auto;
     padding: 20px;
     border: 1px solid #ddd;
@@ -23,4 +23,11 @@
 
 .RegisterPage_btn-primary {
     width: 100%;
+    background-color: white !important; /* 새로운 배경 색상 */
+    border: 2px solid black !important; /* 새로운 테두리 색상 및 두께 */
+    color: black !important; /* 버튼 안의 글자 색상 */
+}
+
+.font-size40 {
+    font-size : 40px;
 }
