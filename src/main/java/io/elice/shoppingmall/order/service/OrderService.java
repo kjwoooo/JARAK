@@ -1,8 +1,5 @@
 package io.elice.shoppingmall.order.service;
 
-import io.elice.shoppingmall.cart.domain.cart.Entity.Cart;
-import io.elice.shoppingmall.cart.domain.cartItems.DTO.CartItemResponseDto;
-import io.elice.shoppingmall.cart.domain.cartItems.Entity.CartItems;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.cart.service.CartService;
 import io.elice.shoppingmall.exception.CustomException;
@@ -10,13 +7,13 @@ import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.dto.OrderDetailDTO;
+import io.elice.shoppingmall.order.dto.OrderRequestDTO;
 import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.entity.OrderDetail;
 import io.elice.shoppingmall.order.entity.OrderState;
 import io.elice.shoppingmall.order.mapper.OrderDetailMapper;
 import io.elice.shoppingmall.order.mapper.OrderMapper;
 import io.elice.shoppingmall.order.repository.OrderRepository;
-import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Item.ItemImage;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
@@ -95,19 +92,15 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public OrderDTO createOrder(Member member, @Valid OrderDTO orderDTO) {
-        // Order 엔티티 생성
+    public OrderDTO createOrder(Member member, @Valid OrderRequestDTO orderRequestDTO) {
+        OrderDTO orderDTO = orderRequestDTO.getOrderDTO();
+        List<OrderDetailDTO> orderDetailDTOs = orderRequestDTO.getOrderDetailDTOs();
+
         Order order = orderDTO.toEntity();
         order.setMember(member);
-        order.setOrderState(OrderState.PENDING); // 기본 주문 상태를 PENDING 으로 설정
+        order.setOrderState(OrderState.PENDING);
 
-        List<CartItems> cartItems = getCartItems(member);
-        if (cartItems.isEmpty()) {
-            throw new CustomException(ErrorCode.EMPTY_CART);
-        }
-
-        // 주문 상세 정보 생성
-        List<OrderDetail> orderDetails = createOrderDetailsFromCartItems(cartItems, order);
+        List<OrderDetail> orderDetails = convertToOrderDetails(order, orderDetailDTOs);
         return saveAndReturnOrder(order, orderDetails);
     }
 
@@ -224,19 +217,30 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
+    // OrderDetailDTO -> OrderDetail 변환
+    private List<OrderDetail> convertToOrderDetails(Order order, List<OrderDetailDTO> orderDetailDTOs) {
+        return orderDetailDTOs.stream()
+                .map(detailDTO -> {
+                    Item item = itemRepository.findById(detailDTO.getItemId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+
+                    OrderDetail orderDetail = detailDTO.toEntity(order, item);
+                    orderDetail.setOrderState(order.getOrderState()); // Order의 orderState 값을 설정
+
+                    itemService.reduceQuantity(item.getId(), detailDTO.getQuantity()); // 상품의 수량 감소
+                    return orderDetail;
+                })
+                .toList();
+    }
+
     // 주문 저장 및 DTO 반환
     private OrderDTO saveAndReturnOrder(Order order, List<OrderDetail> orderDetails) {
-        try {
-            order.setOrderDetails(orderDetails);
-            setOrderSummary(order, orderDetails);
-            order.setPrice(order.getPrice() + order.getShippingCost());
+        order.setOrderDetails(orderDetails);
+        setOrderSummary(order, orderDetails);
+        order.setPrice(order.getPrice() + order.getShippingCost());
 
-            Order savedOrder = orderRepository.save(order);
-            return orderMapper.orderToOrderDTO(savedOrder);
-        } catch (DataAccessException e) {
-            // 데이터베이스 접근 예외 처리
-            throw new CustomException(ErrorCode.SAVE_ORDER_FAILED);
-        }
+        Order savedOrder = orderRepository.save(order);
+        return orderMapper.orderToOrderDTO(savedOrder);
     }
 
     // 주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)
@@ -254,52 +258,6 @@ public class OrderService {
         order.setRepItemName(repItemName);
         order.setRepItemImage(repItemImage);
         order.setPrice(itemTotalPrice);
-    }
-
-    // CartItems 가져오기
-    private List<CartItems> getCartItems(Member member) {
-        Cart cart = cartService.findCartByMemberId(member);
-        return cartItemService.findAllItemsByCartId(cart.getId()).stream()
-                .map(cartItemDto -> convertToCartItems(cartItemDto, cart))
-                .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
-    }
-
-    // CartItemResponseDto를 CartItems로 변환하는 메서드
-    private CartItems convertToCartItems(CartItemResponseDto cartItemDto, Cart cart) {
-        // ItemDetail 정보를 가져옴
-        ItemDetailDTO itemDetail = itemService.getItemDetailById(cartItemDto.getItem_id());
-
-        // 예외 처리: ItemDetail의 quantity가 0 이하인 경우 예외 발생
-        //Feedback : 요건 validator에서...?
-        if (itemDetail.getQuantity() <= 0) {
-            throw new CustomException(ErrorCode.INVALID_ITEM_QUANTITY);
-        }
-
-        Item item = itemRepository.findById(cartItemDto.getItem_id())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
-
-        return cartItemDto.toEntity(cart, item);
-    }
-
-    // CartItems로부터 OrderDetail 생성 및 상품 수량 감소
-    private List<OrderDetail> createOrderDetailsFromCartItems(List<CartItems> cartItems, Order order) {
-        return cartItems.stream()
-                .map(cartItem -> {
-                    // 아이템 수량 감소
-//                    itemService.reduceQuantity(cartItem.getItem_id().getId(), cartItem.getQuantity(), cartItem.getColor(), cartItem.getSize());
-
-                    // OrderDetail 생성
-                    return OrderDetail.builder()
-                            .order(order)
-                            .item(cartItem.getItem_id())
-                            .price(cartItem.getItem_id().getPrice())
-                            .quantity(cartItem.getQuantity())
-                            .color(cartItem.getColor())
-                            .size(cartItem.getSize())
-                            .orderState(order.getOrderState())
-                            .build();
-                })
-                .toList(); // Stream.toList()로 변경하여 불변 리스트를 반환
     }
 
     // 예외 처리 헬퍼 메서드
