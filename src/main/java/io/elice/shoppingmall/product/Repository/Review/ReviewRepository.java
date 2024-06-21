@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.product.Repository;
+package io.elice.shoppingmall.product.Repository.Review;
 
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.product.Entity.Item.Item;

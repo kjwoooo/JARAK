@@ -1,6 +1,6 @@
 package io.elice.shoppingmall.product.Service.Item;
 
-import io.elice.shoppingmall.S3.S3Uploader;
+import io.elice.shoppingmall.product.S3.S3Uploader;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.repository.CategoryRepository;
 import io.elice.shoppingmall.exception.CustomException;
@@ -20,7 +20,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.*;
 
 
 import java.io.File;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -165,6 +163,8 @@ public class ItemService {
         validateImageFile(subFile);
 
         Item savedItem = itemRepository.save(convertToEntity(itemDTO));
+//        itemDTO.setId(savedItem.getId());
+
         List<String> mainFileInfo = s3Uploader.uploadFiles(mainFile, "itemImageDir");
         List<String> subFileInfo = s3Uploader.uploadFiles(subFile, "itemImageDir");
 
@@ -174,7 +174,7 @@ public class ItemService {
         mainItemImage.setFilePath(mainFileInfo.get(1));
         mainItemImage.setItem(savedItem);
         mainItemImage.setIsMain(true);
-        ItemImageDTO mainItemImageDTO = convertToDTO(itemImageRepository.save(mainItemImage));
+//        ItemImageDTO mainItemImageDTO = convertToDTO(itemImageRepository.save(mainItemImage));
 
         ItemImage subItemImage = new ItemImage();
         subItemImage.setId(itemDTO.getId());
@@ -182,63 +182,120 @@ public class ItemService {
         subItemImage.setFilePath(subFileInfo.get(1));
         subItemImage.setItem(savedItem);
         subItemImage.setIsMain(false);
-        ItemImageDTO subItemImageDTO = convertToDTO(itemImageRepository.save(subItemImage));
+//        ItemImageDTO subItemImageDTO = convertToDTO(itemImageRepository.save(subItemImage));
 
-        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
-        itemImageDTOs.add(mainItemImageDTO);
-        itemImageDTOs.add(subItemImageDTO);
+        List<ItemImage> itemImages = new ArrayList<>();
+        itemImages.add(mainItemImage);
+        itemImages.add(subItemImage);
+        savedItem.setItemImages(itemImages);
 
-        itemDTO.setItemImageDTOs(itemImageDTOs);
-        return itemDTO;
+        return convertToDTO(savedItem);
     }
+
+//    @Transactional
+//    public ItemDTO updateItem(Long itemId, ItemDTO itemDTO, MultipartFile mainFile, MultipartFile subFile) throws IOException {
+//        validateImageFile(mainFile);
+//        validateImageFile(subFile);
+//
+//        Item existingItem = itemRepository.findById(itemId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
+//        // ItemDTO의 내용으로 기존 아이템 업데이트
+//        existingItem.setItemName(itemDTO.getItemName());
+//        existingItem.setGender(itemDTO.getGender());
+//        existingItem.setPrice(itemDTO.getPrice());
+//        Brand brand = brandRepository.findById(itemDTO.getBrandId())
+//                        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_BRAND));
+//        existingItem.setBrand(brand);
+//        Category category = categoryRepository.findById(itemDTO.getCategoryId())
+//                        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
+//        existingItem.setCategory(category);
+//
+//        // 기타 필요한 필드 업데이트
+//        itemRepository.save(existingItem);
+//        itemImageRepository.deleteAllByItemId(existingItem.getId());
+//
+//        List<String> mainFileInfo = s3Uploader.uploadFiles(mainFile, "itemImageDir");
+//        List<String> subFileInfo = s3Uploader.uploadFiles(subFile, "itemImageDir");
+//
+//        ItemImage mainItemImage = new ItemImage();
+//        mainItemImage.setId(itemDTO.getId());
+//        mainItemImage.setFileName(mainFileInfo.get(0));
+//        mainItemImage.setFilePath(mainFileInfo.get(1));
+//        mainItemImage.setItem(existingItem);
+//        mainItemImage.setIsMain(true);
+//        ItemImageDTO mainItemImageDTO = convertToDTO(itemImageRepository.save(mainItemImage));
+//
+//        ItemImage subItemImage = new ItemImage();
+//        subItemImage.setId(itemDTO.getId());
+//        subItemImage.setFileName(subFileInfo.get(0));
+//        subItemImage.setFilePath(subFileInfo.get(1));
+//        subItemImage.setItem(existingItem);
+//        subItemImage.setIsMain(false);
+//        ItemImageDTO subItemImageDTO = convertToDTO(itemImageRepository.save(subItemImage));
+//
+//        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
+//        itemImageDTOs.add(mainItemImageDTO);
+//        itemImageDTOs.add(subItemImageDTO);
+//
+//        itemDTO.setItemImageDTOs(itemImageDTOs);
+//        return itemDTO;
+//    }
 
     @Transactional
     public ItemDTO updateItem(Long itemId, ItemDTO itemDTO, MultipartFile mainFile, MultipartFile subFile) throws IOException {
-        validateImageFile(mainFile);
-        validateImageFile(subFile);
+        if (mainFile != null) {
+            validateImageFile(mainFile);
+        }
+        if (subFile != null) {
+            validateImageFile(subFile);
+        }
+        List<ItemImage> itemImages = new ArrayList<>();
 
         Item existingItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM));
+
         // ItemDTO의 내용으로 기존 아이템 업데이트
         existingItem.setItemName(itemDTO.getItemName());
         existingItem.setGender(itemDTO.getGender());
         existingItem.setPrice(itemDTO.getPrice());
+
         Brand brand = brandRepository.findById(itemDTO.getBrandId())
-                        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_BRAND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_BRAND));
         existingItem.setBrand(brand);
         Category category = categoryRepository.findById(itemDTO.getCategoryId())
-                        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         existingItem.setCategory(category);
 
+        if(mainFile!=null){
+            List<String> mainFileInfo = s3Uploader.uploadFiles(mainFile, "itemImageDir");
+            ItemImage mainItemImage = new ItemImage();
+            mainItemImage.setFileName(mainFileInfo.get(0));
+            mainItemImage.setFilePath(mainFileInfo.get(1));
+            mainItemImage.setItem(existingItem);
+            mainItemImage.setIsMain(true);
+            itemImageRepository.deleteByItemIdAndIsMain(existingItem.getId(), true);
+            itemImages.add(itemImageRepository.save(mainItemImage));
+        }else{
+            itemImages.add(itemImageRepository.findByItemIdAndIsMain(existingItem.getId(),true));
+        }
+
+        if(subFile!=null){
+            List<String> subFileInfo = s3Uploader.uploadFiles(subFile, "itemImageDir");
+            ItemImage subItemImage = new ItemImage();
+            subItemImage.setFileName(subFileInfo.get(0));
+            subItemImage.setFilePath(subFileInfo.get(1));
+            subItemImage.setItem(existingItem);
+            subItemImage.setIsMain(false);
+            itemImageRepository.deleteByItemIdAndIsMain(existingItem.getId(), false);
+            itemImages.add(itemImageRepository.save(subItemImage));
+        }else{
+           itemImages.add(itemImageRepository.findByItemIdAndIsMain(existingItem.getId(), false));
+        }
         // 기타 필요한 필드 업데이트
+        existingItem.setItemImages(itemImages);
         itemRepository.save(existingItem);
-        itemImageRepository.deleteAllByItemId(existingItem.getId());
 
-        List<String> mainFileInfo = s3Uploader.uploadFiles(mainFile, "itemImageDir");
-        List<String> subFileInfo = s3Uploader.uploadFiles(subFile, "itemImageDir");
-
-        ItemImage mainItemImage = new ItemImage();
-        mainItemImage.setId(itemDTO.getId());
-        mainItemImage.setFileName(mainFileInfo.get(0));
-        mainItemImage.setFilePath(mainFileInfo.get(1));
-        mainItemImage.setItem(existingItem);
-        mainItemImage.setIsMain(true);
-        ItemImageDTO mainItemImageDTO = convertToDTO(itemImageRepository.save(mainItemImage));
-
-        ItemImage subItemImage = new ItemImage();
-        subItemImage.setId(itemDTO.getId());
-        subItemImage.setFileName(subFileInfo.get(0));
-        subItemImage.setFilePath(subFileInfo.get(1));
-        subItemImage.setItem(existingItem);
-        subItemImage.setIsMain(false);
-        ItemImageDTO subItemImageDTO = convertToDTO(itemImageRepository.save(subItemImage));
-
-        List<ItemImageDTO> itemImageDTOs = new ArrayList<>();
-        itemImageDTOs.add(mainItemImageDTO);
-        itemImageDTOs.add(subItemImageDTO);
-
-        itemDTO.setItemImageDTOs(itemImageDTOs);
-        return itemDTO;
+        return convertToDTO(existingItem);
     }
 
     // Delete Item
@@ -351,9 +408,8 @@ public class ItemService {
     }
 
     @Transactional
-    public void reduceQuantity(Long itemDetailId, Integer quantity) {
-        ItemDetail itemDetail = itemDetailRepository.findById(itemDetailId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ITEM_DETAIL));
+    public void reduceQuantity(Long itemId, String color, String size, Integer quantity) {
+        ItemDetail itemDetail = itemDetailRepository.findByitemIdAndColorAndSize(itemId, color, size);
         if (itemDetail.getQuantity() < quantity) {
             throw new CustomException(ErrorCode.INVALID_ITEM_QUANTITY);
         }
@@ -362,8 +418,11 @@ public class ItemService {
 
     // 이미지 파일 유효성 검사 메서드
     private void validateImageFile(MultipartFile file) {
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
+        if (file == null) {
+            return;  // 파일이 null인 경우 그냥 반환
+        }
+        // 기존의 파일 검증 로직
+        if (!file.getContentType().startsWith("image/")) {
             throw new CustomException(ErrorCode.INVALID_IMAGE_FILE);
         }
     }

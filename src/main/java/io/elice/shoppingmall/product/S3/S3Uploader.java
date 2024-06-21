@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.S3;
+package io.elice.shoppingmall.product.S3;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;

@@ -1,11 +1,8 @@
 package io.elice.shoppingmall.product.Controller;
 
-import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
-import io.elice.shoppingmall.product.DTO.review.ReviewDTO;
-import io.elice.shoppingmall.product.Entity.Review.Review;
-import io.elice.shoppingmall.product.Service.ReviewService;
-import jakarta.mail.Multipart;
+import io.elice.shoppingmall.product.DTO.Review.ReviewDTO;
+import io.elice.shoppingmall.product.Service.Review.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
