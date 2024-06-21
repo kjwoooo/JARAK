@@ -3,7 +3,6 @@ package io.elice.shoppingmall.order.controller;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
 import io.elice.shoppingmall.order.dto.OrderDTO;
-import io.elice.shoppingmall.order.dto.OrderDetailDTO;
 import io.elice.shoppingmall.order.dto.OrderRequestDTO;
 import io.elice.shoppingmall.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;

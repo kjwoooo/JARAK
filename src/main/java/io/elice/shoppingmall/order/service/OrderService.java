@@ -1,7 +1,5 @@
 package io.elice.shoppingmall.order.service;
 
-import io.elice.shoppingmall.cart.service.CartItemService;
-import io.elice.shoppingmall.cart.service.CartService;
 import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
@@ -20,9 +18,10 @@ import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import io.elice.shoppingmall.product.Service.Item.ItemService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,19 +36,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
     private final ItemService itemService;
-    private final CartService cartService;
-    private final CartItemService cartItemService;
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
     private static final OrderDetailMapper orderDetailMapper = OrderDetailMapper.INSTANCE;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, ItemRepository itemRepository, ItemService itemService,
-                        CartService cartService, CartItemService cartItemService) {
+    public OrderService(OrderRepository orderRepository, ItemRepository itemRepository, ItemService itemService) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
         this.itemService = itemService;
-        this.cartService = cartService;
-        this.cartItemService = cartItemService;
     }
 
     // 주문 조회 (페이징 적용)
@@ -150,12 +144,7 @@ public class OrderService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
         order.setOrderState(OrderState.CANCELLED);
-
-        if (refundReason != null) {
-            order.setRefundReason(refundReason);
-        } else {
-            order.setRefundReason("취소 사유가 존재하지 않습니다.");  // 기본 환불 사유 설정
-        }
+        order.setRefundReason(Objects.requireNonNullElse(refundReason, "취소 사유가 존재하지 않습니다."));
 
         // 모든 OrderDetail의 상태를 CANCELLED로 설정
         for (OrderDetail detail : order.getOrderDetails()) {
@@ -227,7 +216,7 @@ public class OrderService {
                     OrderDetail orderDetail = detailDTO.toEntity(order, item);
                     orderDetail.setOrderState(order.getOrderState()); // Order의 orderState 값을 설정
 
-                    itemService.reduceQuantity(item.getId(), detailDTO.getQuantity()); // 상품의 수량 감소
+                    itemService.reduceQuantity(item.getId(), detailDTO.getColor(), detailDTO.getSize(), detailDTO.getQuantity()); // 상품의 수량 감소
                     return orderDetail;
                 })
                 .toList();
@@ -240,7 +229,17 @@ public class OrderService {
         order.setPrice(order.getPrice() + order.getShippingCost());
 
         Order savedOrder = orderRepository.save(order);
-        return orderMapper.orderToOrderDTO(savedOrder);
+        return createOrderDTO(savedOrder);
+    }
+
+    // Order -> OrderDTO 변환 및 orderDetails 설정
+    private OrderDTO createOrderDTO(Order order) {
+        OrderDTO orderDTO = orderMapper.orderToOrderDTO(order);
+        List<OrderDetailDTO> orderDetailDTOs = order.getOrderDetails().stream()
+                .map(orderDetailMapper::orderDetailToOrderDetailDTO)
+                .toList();
+        orderDTO.setOrderDetails(orderDetailDTOs);
+        return orderDTO;
     }
 
     // 주문 요약 필드 설정 (가격, 총 개수, 대표 상품 이름, 대표 상품 이미지)

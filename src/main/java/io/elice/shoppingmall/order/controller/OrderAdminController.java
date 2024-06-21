@@ -1,13 +1,11 @@
 package io.elice.shoppingmall.order.controller;
 
-import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.order.dto.OrderDTO;
 import io.elice.shoppingmall.order.entity.OrderState;
 import io.elice.shoppingmall.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

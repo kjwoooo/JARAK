@@ -2,7 +2,6 @@ package io.elice.shoppingmall.order.dto;
 
 import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.entity.OrderState;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

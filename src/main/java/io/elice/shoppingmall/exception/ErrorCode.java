@@ -35,6 +35,7 @@ public enum ErrorCode {
     INVALID_PAGING_PARAMETERS(400, "페이지 매개변수가 유효하지 않습니다."),
     NO_ORDER_DETAILS_FOUND(400, "주문 세부 정보를 찾을 수 없습니다."),
     ITEM_NOT_FOUND(400, "해당 상품을 찾을 수 없습니다."),
+    INVALID_ITEM_QUANTITY(400, "상품의 수량이 유효하지 않습니다."),
 
     //상품 등록관련 error codes
     INVALID_IMAGE_FILE(500, "이미지 파일이 아닙니다."),
