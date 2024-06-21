@@ -24,6 +24,7 @@ import Brand from './pages/Brand.js';
 import AdminItemPage from './adminpage/AdminItemPage.js';
 import BannerSlider from './BannerSlider.js';
 import useBannerStore from './stores/useBannerStore';
+import SearchResults from './SearchResults.js';
 
 function App() {
   const { currentBanner } = useBannerStore();
@@ -69,6 +70,8 @@ function App() {
         <Route path='/orders/complete' element={<OrderComplete />} />
 
         <Route path='/carts' element={<Carts/>} />
+
+        <Route path='/search' element={<SearchResults/>}/>
 
         <Route path='*' element={<div>404</div>} />
       </Routes>

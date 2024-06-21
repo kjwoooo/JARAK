@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Col } from 'react-bootstrap/';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { apiInstance } from '../util/api';
 
 function Products() {
@@ -10,28 +10,31 @@ function Products() {
   const itemsPerPage = 9;
   const navigate = useNavigate();
   const { categoryId } = useParams();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search).get('query');
 
   useEffect(() => {
     apiInstance.get('/items')
       .then((result) => {
-        console.log(result.data);
         setItems(result.data);
         setDisplayItems(result.data.slice(0, itemsPerPage));
       })
       .catch((error) => {
-        console.error("상품데이터 못가져왔음요: ", error);
+        console.error("상품 데이터를 못 가져왔음요: ", error);
       });
   }, []);
 
   useEffect(() => {
+    let filteredItems = items;
     if (categoryId) {
-      const filteredItems = items.filter(item => item.categoryId === parseInt(categoryId));
-      setDisplayItems(filteredItems.slice(0, itemsPerPage));
-      setItemsOffset(0);
-    } else {
-      setDisplayItems(items.slice(0, itemsPerPage));
+      filteredItems = filteredItems.filter(item => item.categoryId === parseInt(categoryId));
     }
-  }, [categoryId, items]);
+    if (query) {
+      filteredItems = filteredItems.filter(item => item.itemName.toLowerCase().includes(query.toLowerCase()));
+    }
+    setDisplayItems(filteredItems.slice(0, itemsPerPage));
+    setItemsOffset(0);
+  }, [categoryId, query, items]);
 
   const loadMoreItems = () => {
     const newOffset = itemsOffset + itemsPerPage;
