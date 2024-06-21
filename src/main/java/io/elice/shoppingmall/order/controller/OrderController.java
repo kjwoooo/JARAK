@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -138,8 +139,9 @@ public class OrderController {
     @PatchMapping("/{orderId}")
     public ResponseEntity<String> deleteOrder(@AuthenticationPrincipal UserDetails userDetails,
         @Parameter(name = "orderId", description = "주문 내역 고유 번호", in = ParameterIn.PATH) @PathVariable Long orderId,
-        @Parameter(name = "refundReason", description = "주문 취소 사유", in = ParameterIn.PATH) @RequestParam(required = false) String refundReason) {
+        @Parameter(name = "refundReason", description = "주문 취소 사유", in = ParameterIn.PATH) @RequestBody Map<String, String> requestBody) {
         Member member = getAuthenticatedMember(userDetails);
+        String refundReason = requestBody.get("refundReason");
         orderService.cancelOrder(member, orderId, refundReason);
         return new ResponseEntity<>("주문이 성공적으로 취소되었습니다.", HttpStatus.OK);
     }
