@@ -25,6 +25,7 @@ import AdminItemPage from './adminpage/AdminItemPage.js';
 import BannerSlider from './BannerSlider.js';
 import useBannerStore from './stores/useBannerStore';
 import SearchResults from './SearchResults.js';
+import Footer from './Footer.js';
 
 function App() {
   const { currentBanner } = useBannerStore();
@@ -75,6 +76,7 @@ function App() {
 
         <Route path='*' element={<div>404</div>} />
       </Routes>
+      <Footer/>
     </div>
   );
 }
