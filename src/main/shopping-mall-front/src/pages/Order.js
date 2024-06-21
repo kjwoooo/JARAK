@@ -222,7 +222,7 @@ function Order() {
     };
 
     const handleSubmitOrder = async () => {
-        const orderData = {
+        const orderDTO = {
             shippingCost: shipping,
             recipientName: formData.recipientName,
             zipcode: formData.zipcode,
@@ -233,11 +233,26 @@ function Order() {
             deliveryReq: formData.deliveryReq || '' // 빈 값 처리
         };
 
-        console.log('Order Data:', JSON.stringify(orderData, null, 2)); // 요청 데이터 출력 (formatted)
+        const orderDetailDTOs = cartItems.flatMap(cartItem =>
+            cartItem.options.map(option => ({
+                itemId: cartItem.itemId,
+                price: cartItem.price,
+                quantity: option.quantity,
+                color: option.color,
+                size: option.size
+            }))
+        );
+
+        const orderRequestDTO = {
+            orderDTO,
+            orderDetailDTOs
+        };
+
+        console.log('Order Request Data:', JSON.stringify(orderRequestDTO, null, 2)); // 요청 데이터 출력 (formatted)
         console.log('JWT Token:', jwtToken); // 토큰 출력
 
         try {
-            const response = await apiInstance.post('/orders', orderData, {
+            const response = await apiInstance.post('/orders', orderRequestDTO, {
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`,
                     'Content-Type': 'application/json; charset=utf-8'
