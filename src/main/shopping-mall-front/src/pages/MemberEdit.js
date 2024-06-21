@@ -57,9 +57,11 @@ function MemberEdit() {
   };
 
   const handleUnregister = async () => {
-    if (window.confirm('정말 저희 쑈핑모올을 더 이상 이용하지 않으실건가요?')) {
+    if (window.confirm('정말 저희 자락몰을 더 이상 이용하지 않으실건가요?')) {
       try {
         await apiInstance.delete('/unregister', { withCredentials: true });
+        const cartKey = `cart_${user.id}`;
+        localStorage.removeItem(cartKey); // 로컬스토리지에서 장바구니 정보 삭제
         logout();
         alert('회원 탈퇴가 완료되었습니다.');
         navigate(LINKS.HOME.path);

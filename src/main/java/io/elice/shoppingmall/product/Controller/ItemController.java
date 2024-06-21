@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.product.Controller.Item;
+package io.elice.shoppingmall.product.Controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,12 +81,11 @@ public class ItemController {
             @ApiResponse(responseCode = "204", description = "수정 성공"),
             @ApiResponse(responseCode = "404", description = "아이템을 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-
     @PutMapping("/{id}")
     public ItemDTO updateItem(@PathVariable Long id,
                               @RequestPart(value = "itemDTO") ItemDTO itemDTO,
-                              @RequestPart(value = "mainFile") MultipartFile mainFile,
-                              @RequestPart(value = "subFile") MultipartFile subFile) throws IOException {
+                              @RequestPart(required = false, value = "mainFile") MultipartFile mainFile,
+                              @RequestPart(required = false, value = "subFile") MultipartFile subFile) throws IOException {
         return itemService.updateItem(id, itemDTO, mainFile, subFile);
     }
 

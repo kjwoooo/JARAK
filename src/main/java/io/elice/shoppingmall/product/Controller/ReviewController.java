@@ -1,12 +1,14 @@
 package io.elice.shoppingmall.product.Controller;
 
 import io.elice.shoppingmall.member.service.MemberService;
-import io.elice.shoppingmall.product.DTO.review.ReviewDTO;
-import io.elice.shoppingmall.product.Service.ReviewService;
+
+import io.elice.shoppingmall.product.DTO.Review.ReviewDTO;
+import io.elice.shoppingmall.product.Service.Review.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,7 +67,7 @@ public class ReviewController {
     }
 
     //특정상품의 모든 리뷰 조희
-    @Operation(summary = "특정 삼품의 모든 리뷰 조회", description = "특정 상품에 대한 모든 리뷰를 조회합니다.")
+    @Operation(summary = "특정 상품의 모든 리뷰 조회", description = "특정 상품에 대한 모든 리뷰를 조회합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공"),
     })
@@ -74,7 +76,7 @@ public class ReviewController {
         return reviewService.getAllReviews(itemId);
     }
 
-    @Operation(summary = "특정 삼품의 특정 리뷰 조회", description = "특정 상품에 대해 특정 리뷰를 조회합니다.")
+    @Operation(summary = "특정 상품의 특정 리뷰 조회", description = "특정 상품에 대해 특정 리뷰를 조회합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공"),
     })

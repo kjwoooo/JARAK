@@ -1,20 +1,15 @@
-package io.elice.shoppingmall.product.Service;
+package io.elice.shoppingmall.product.Service.Review;
 
-import io.elice.shoppingmall.S3.S3Uploader;
+import io.elice.shoppingmall.product.S3.S3Uploader;
 import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
-import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.member.service.MemberService;
-import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
-import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
-import io.elice.shoppingmall.product.DTO.review.ReviewDTO;
+import io.elice.shoppingmall.product.DTO.Review.ReviewDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
-import io.elice.shoppingmall.product.Entity.Item.ItemDetail;
-import io.elice.shoppingmall.product.Entity.Item.ItemImage;
 import io.elice.shoppingmall.product.Entity.Review.Review;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
-import io.elice.shoppingmall.product.Repository.ReviewRepository;
+import io.elice.shoppingmall.product.Repository.Review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

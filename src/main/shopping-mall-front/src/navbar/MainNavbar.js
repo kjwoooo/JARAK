@@ -1,8 +1,6 @@
-// NavigationBar.js
 import React, { useEffect, useState } from 'react';
 import { NavDropdown, Navbar, Nav, Form, Container, Button } from 'react-bootstrap/';
 import { Link, useNavigate } from 'react-router-dom';
-// import axios from 'axios';
 import { apiInstance } from '../util/api.js';
 import LINKS from '../links/links.js';
 import useUserStore from '../stores/useUserStore.js';
@@ -13,6 +11,7 @@ function NavigationBar() {
   const logout = useUserStore(state => state.logout);
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태 추가
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -35,6 +34,15 @@ function NavigationBar() {
     } catch (error) {
       console.error("로그아웃 실패:", error);
     }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/search?query=${searchQuery}`);
   };
 
   const renderSubCategories = (parentId) => {
@@ -68,7 +76,6 @@ function NavigationBar() {
           <Navbar.Collapse id="navbarScroll">
             <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
               {renderCategories()}
-              <Nav.Link href="#" disabled>비활성화</Nav.Link>
             </Nav>
             <Nav>
               {!user && (
@@ -114,9 +121,16 @@ function NavigationBar() {
                   </Navbar.Text>
               )}
             </Nav>
-            <Form className="d-flex">
-              <Form.Control type="search" placeholder="Search" className="me-2" aria-label="Search" />
-              <Button variant="outline-success">Search</Button>
+            <Form className="d-flex" onSubmit={handleSearchSubmit}>
+              <Form.Control 
+                type="search" 
+                placeholder="상품 검색하기" 
+                className="me-2" 
+                aria-label="Search" 
+                value={searchQuery} 
+                onChange={handleSearchChange} // 검색어 변경 핸들러 추가
+              />
+              <Button variant="outline-success" type="submit">Search</Button>
             </Form>
           </Navbar.Collapse>
         </Container>
