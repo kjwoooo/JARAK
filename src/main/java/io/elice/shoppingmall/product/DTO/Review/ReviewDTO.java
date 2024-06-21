@@ -1,6 +1,4 @@
 package io.elice.shoppingmall.product.DTO.Review;
-
-import io.elice.shoppingmall.product.Entity.Review.Request;
 import lombok.*;
 
 import java.time.LocalDateTime;
