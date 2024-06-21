@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Modal, Nav, DropdownButton, Dropdown } from 'react-bootstrap';
+import { Button, Nav, DropdownButton, Dropdown } from 'react-bootstrap';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -38,7 +38,7 @@ function Detail() {
   }
 
   const handleBuyNow = () => {
-    if (selectedOptions.length === 0 || selectedOptions.some(option => !option.size || !option.color)) {
+    if (selectedOptions.length === 0 || selectedOptions.some(option => !option.size || !option.color || option.stockQuantity === 0)) {
       toast.error("옵션을 먼저 선택해주세요!");
       optionAddButtonRef.current.focus();
       return;
@@ -84,7 +84,7 @@ function Detail() {
   };
 
   const handleAddToCart = () => {
-    if (selectedOptions.length === 0 || selectedOptions.some(option => !option.size || !option.color)) {
+    if (selectedOptions.length === 0 || selectedOptions.some(option => !option.size || !option.color || option.stockQuantity === 0)) {
       toast.error("옵션을 먼저 선택해주세요!");
       optionAddButtonRef.current.focus();
       return;
@@ -229,13 +229,19 @@ function Detail() {
               </div>
               {option.size && option.color && (
                 <>
-                  <p className="Detail_current-stock">현재 재고: {option.stockQuantity}</p>
-                  <p className="Detail_option-details">{item.itemName} / {option.size} / {option.color}</p>
-                  <div className="Detail_quantity-selector">
-                    <Button variant="outline-secondary" onClick={() => handleDecreaseQuantity(index)}>{"<"}</Button>
-                    <span className="Detail_quantity">{option.quantity}</span>
-                    <Button variant="outline-secondary" onClick={() => handleIncreaseQuantity(index)}>{">"}</Button>
-                  </div>
+                  {option.stockQuantity === 0 ? (
+                    <p className="Detail_out-of-stock">품절입니다!</p>
+                  ) : (
+                    <>
+                      <p className="Detail_current-stock">현재 재고: {option.stockQuantity}</p>
+                      <p className="Detail_option-details">{item.itemName} / {option.size} / {option.color}</p>
+                      <div className="Detail_quantity-selector">
+                        <Button variant="outline-secondary" onClick={() => handleDecreaseQuantity(index)}>{"<"}</Button>
+                        <span className="Detail_quantity">{option.quantity}</span>
+                        <Button variant="outline-secondary" onClick={() => handleIncreaseQuantity(index)}>{">"}</Button>
+                      </div>
+                    </>
+                  )}
                   <Button variant="danger" className="Detail_remove-option" onClick={() => handleOptionRemove(index)}>x</Button>
                 </>
               )}
@@ -243,8 +249,8 @@ function Detail() {
           ))}
           <p className="Detail_total-price">총 상품 금액 {selectedOptions.reduce((acc, option) => acc + (item.price * option.quantity), 0).toLocaleString()} 원</p>
           <div className="Detail_buttons">
-            <Button variant="outline-dark" className="Detail_add-to-cart" onClick={handleAddToCart}>Add to cart</Button>
-            <Button variant="outline-dark" className="Detail_buy-now" onClick={handleBuyNow}>Buy now</Button>
+            <Button variant="outline-dark" className="Detail_add-to-cart" onClick={handleAddToCart} disabled={selectedOptions.some(option => option.stockQuantity === 0)}>Add to cart</Button>
+            <Button variant="outline-dark" className="Detail_buy-now" onClick={handleBuyNow} disabled={selectedOptions.some(option => option.stockQuantity === 0)}>Buy now</Button>
           </div>
         </div>
       </div>
