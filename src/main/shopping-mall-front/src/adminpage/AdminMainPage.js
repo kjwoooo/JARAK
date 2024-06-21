@@ -8,7 +8,7 @@ function AdminPage() {
 
     return (
         <div className='AdminMainPage_Admin'>
-            <div className='AdminMainPage_header'>헉! Admin Page임.</div>
+            <div className='AdminMainPage_header'>ADMIN PAGE</div>
             <div className='AdminMainPage_left-menu'>
                 <ListGroup variant="flush">
                     <ListGroup.Item action onClick={() => { navigate(LINKS.ADMIN_PAGE.path + '/main') }}>관리자 메인</ListGroup.Item>

@@ -107,7 +107,7 @@ function MemberEdit() {
           <Form.Control type="text" name="gender" value={formData.gender} onChange={handleChange} className="MemberEdit_form-control" />
         </Form.Group>
         <div className="MemberEdit_btn-container">
-          <Button variant="primary" type="submit" className="MemberEdit_btn-primary">
+          <Button variant="outline-dark" type="submit" className="MemberEdit_btn-primary">
             수정하기
           </Button>
           <Button variant="danger" className="MemberEdit_unregister-button" onClick={handleUnregister}>

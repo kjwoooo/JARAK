@@ -56,38 +56,41 @@ function LoginPage() {
     };
 
     return (
-        <div className='LoginPage_LoginPage'>
-            <div>자락몰에 오신것을 환영합니다!</div>
-            {errorMessage && <div className="LoginPage_error-message">{errorMessage}</div>} {/* 에러 메시지 표시 */}
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3 LoginPage_form-group" controlId="formUsername">
-                    <Form.Label className="LoginPage_form-label">아이디</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="username"
-                        value={credentials.username}
-                        onChange={handleChange}
-                        placeholder="아이디를 입력하세요"
-                     required
-                     className="LoginPage_form-control"/>
-                </Form.Group>
+        <div className='contain'>
+            <div className='LoginPage_LoginPage'>
+                <div className='font-size40 mb-5'>LOGIN</div>
+                {errorMessage && <div className="LoginPage_error-message">{errorMessage}</div>} {/* 에러 메시지 표시 */}
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3 LoginPage_form-group" controlId="formUsername">
+                        <Form.Label className="LoginPage_form-label">아이디</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="username"
+                            value={credentials.username}
+                            onChange={handleChange}
+                            placeholder="아이디를 입력하세요"
+                         required
+                         className="LoginPage_form-control"/>
+                    </Form.Group>
 
-                <Form.Group className="mb-3 LoginPage_form-group" controlId="formPassword">
-                    <Form.Label className="LoginPage_form-label">비밀번호</Form.Label>
-                    <Form.Control
-                        type="password"
-                        name="password"
-                        value={credentials.password}
-                        onChange={handleChange}
-                        placeholder="비밀번호를 입력하세요"
-                    required
-                    className="LoginPage_form-control"/>
-                </Form.Group>
+                    <Form.Group className="mb-3 LoginPage_form-group" controlId="formPassword">
+                        <Form.Label className="LoginPage_form-label">비밀번호</Form.Label>
+                        <Form.Control
+                            type="password"
+                            name="password"
+                            value={credentials.password}
+                            onChange={handleChange}
+                            placeholder="비밀번호를 입력하세요"
+                        required
+                        className="LoginPage_form-control"/>
+                    </Form.Group>
 
-                <Button variant="primary" type="submit" className="LoginPage_btn-primary">
-                    로그인
-                </Button>
-            </Form>
+                    <Button variant="primary" type="submit" className="LoginPage_btn-primary mt-5 pt-3 pb-3"
+                            style={{ fontSize: '24px', borderRadius: '0'}}>
+                        LOGIN
+                    </Button>
+                </Form>
+            </div>
         </div>
     );
 }

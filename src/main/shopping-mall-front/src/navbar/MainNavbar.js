@@ -5,6 +5,7 @@ import { apiInstance } from '../util/api.js';
 import LINKS from '../links/links.js';
 import useUserStore from '../stores/useUserStore.js';
 import MainLogo from '../images/main-logo.png';
+import './MainNavbar.css'
 
 function NavigationBar() {
   const user = useUserStore(state => state.user);
@@ -67,56 +68,55 @@ function NavigationBar() {
   };
 
   return (
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg">
         <Container fluid>
-          <Navbar.Brand href={LINKS.HOME.path}><img src={MainLogo} alt='main-logo' height='50' width='70'/>
-            자락몰
+          <Navbar.Brand href={LINKS.HOME.path}><img src={MainLogo} alt='main-logo' height='85' width='300'/>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
-            <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
+            <Nav className="me-auto my-2 my-lg-5 font-size20" style={{ maxHeight: '100px', marginLeft: '10px'}} navbarScroll>
               {renderCategories()}
             </Nav>
             <Nav>
               {!user && (
                   <Navbar.Text>
                     <Link to={LINKS.LOGIN.path}>
-                      <Button variant="outline-dark">로그인</Button>
+                      <Button className='btn-custom' variant="outline-dark">LOGIN</Button>
                     </Link>
                   </Navbar.Text>
               )}
               {user && (
                   <Navbar.Text>
                     <Link to={LINKS.LOGOUT.path}>
-                      <Button variant="outline-dark" onClick={handleLogout}>로그아웃</Button>
+                      <Button className='btn-custom' variant="outline-dark" onClick={handleLogout}>LOGOUT</Button>
                     </Link>
                   </Navbar.Text>
               )}
               {!user && (
                   <Navbar.Text>
                     <Link to={LINKS.REGISTER.path}>
-                      <Button variant="outline-dark">회원가입</Button>
+                      <Button className='btn-custom' variant="outline-dark">SIGN-UP</Button>
                     </Link>
                   </Navbar.Text>
               )}
               {user && (
                   <Navbar.Text>
                     <Link to={LINKS.MYPAGE.path}>
-                      <Button variant="outline-dark">마이페이지</Button>
+                      <Button className='btn-custom' variant="outline-dark">MY</Button>
                     </Link>
                   </Navbar.Text>
               )}
               {user && user.authority === 'ADMIN' && (
                   <Navbar.Text>
                     <Link to={LINKS.ADMIN_PAGE.path}>
-                      <Button variant="outline-dark">관리자</Button>
+                      <Button className='btn-custom' variant="outline-dark">ADMIN</Button>
                     </Link>
                   </Navbar.Text>
               )}
               {user && (
                   <Navbar.Text>
                     <Link to={LINKS.CART.path}>
-                      <Button variant="outline-dark">장바구니</Button>
+                      <Button className='btn-custom' variant="outline-dark">CART</Button>
                     </Link>
                   </Navbar.Text>
               )}
@@ -130,7 +130,7 @@ function NavigationBar() {
                 value={searchQuery} 
                 onChange={handleSearchChange} // 검색어 변경 핸들러 추가
               />
-              <Button variant="outline-success" type="submit">Search</Button>
+              <Button variant="outline-dark" type="submit">Search</Button>
             </Form>
           </Navbar.Collapse>
         </Container>

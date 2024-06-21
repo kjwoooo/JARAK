@@ -43,103 +43,106 @@ function RegisterPage() {
   };
 
   return (
-    <div className='RegisterPage_Register'>
-      <div className='font-size40 mb-5'>SIGN-UP</div>
+      <div className='contain'>
+        <div className='RegisterPage_Register'>
+          <div className='font-size40 mb-5'>SIGN-UP</div>
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="formName">
-          <Form.Label>이름</Form.Label>
-          <Form.Control
-            type="text"
-            name="displayName"
-            value={formData.displayName}
-            onChange={handleChange}
-            placeholder="이름을 입력하세요"
-            className="RegisterPage_form-control"
-          />
-        </Form.Group>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formName">
+              <Form.Label>이름</Form.Label>
+              <Form.Control
+                type="text"
+                name="displayName"
+                value={formData.displayName}
+                onChange={handleChange}
+                placeholder="이름을 입력하세요"
+                className="RegisterPage_form-control"
+              />
+            </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formUsername">
-          <Form.Label>아이디</Form.Label>
-          <Form.Control
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="아이디를 입력하세요"
-            className="RegisterPage_form-control"
-          />
-        </Form.Group>
+            <Form.Group className="mb-3" controlId="formUsername">
+              <Form.Label>아이디</Form.Label>
+              <Form.Control
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="아이디를 입력하세요"
+                className="RegisterPage_form-control"
+              />
+            </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formEmail">
-          <Form.Label>이메일</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="이메일을 입력하세요"
-            className="RegisterPage_form-control"
-          />
-        </Form.Group>
+            <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Label>이메일</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="이메일을 입력하세요"
+                className="RegisterPage_form-control"
+              />
+            </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formPassword">
-          <Form.Label>비밀번호</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="비밀번호를 입력하세요"
-            className="RegisterPage_form-control"
-          />
-        </Form.Group>
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Label>비밀번호</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="비밀번호를 입력하세요"
+                className="RegisterPage_form-control"
+              />
+            </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formPhone">
-          <Form.Label>휴대폰번호</Form.Label>
-          <Form.Control
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="휴대폰번호를 입력하세요"
-            className="RegisterPage_form-control"
-          />
-        </Form.Group>
+            <Form.Group className="mb-3" controlId="formPhone">
+              <Form.Label>휴대폰번호</Form.Label>
+              <Form.Control
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="휴대폰번호를 입력하세요"
+                className="RegisterPage_form-control"
+              />
+            </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formGender">
-          <Form.Label>성별</Form.Label>
-          <div>
-            <Form.Check
-              inline
-              type="radio"
-              label="남"
-              id="genderMale"
-              name="gender"
-              value="male"
-              checked={formData.gender === 'male'}
-              onChange={handleChange}
-              className="RegisterPage_form-check-inline"
-            />
-            <Form.Check
-              inline
-              type="radio"
-              label="여"
-              id="genderFemale"
-              name="gender"
-              value="female"
-              checked={formData.gender === 'female'}
-              onChange={handleChange}
-              className="RegisterPage_form-check-inline"
-            />
-          </div>
-        </Form.Group>
+            <Form.Group className="mb-3" controlId="formGender">
+              <Form.Label>성별</Form.Label>
+              <div>
+                <Form.Check
+                  inline
+                  type="radio"
+                  label="남"
+                  id="genderMale"
+                  name="gender"
+                  value="male"
+                  checked={formData.gender === 'male'}
+                  onChange={handleChange}
+                  className="RegisterPage_form-check-inline"
+                />
+                <Form.Check
+                  inline
+                  type="radio"
+                  label="여"
+                  id="genderFemale"
+                  name="gender"
+                  value="female"
+                  checked={formData.gender === 'female'}
+                  onChange={handleChange}
+                  className="RegisterPage_form-check-inline"
+                />
+              </div>
+            </Form.Group>
 
-        <Button variant="primary" type="submit" className="RegisterPage_btn-primary">
-          SIGN-UP
-        </Button>
-      </Form>
-    </div>
+            <Button variant="primary" type="submit" className="RegisterPage_btn-primary mt-5 pt-3 pb-3"
+                    style={{ fontSize: '24px', borderRadius: '0'}}>
+              SIGN-UP
+            </Button>
+          </Form>
+        </div>
+      </div>
   )
 }
 

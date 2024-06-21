@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Col } from 'react-bootstrap/';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { apiInstance } from '../util/api';
+import './Products.css'
 
 function Products() {
   const [items, setItems] = useState([]);
@@ -59,13 +60,14 @@ function Products() {
 
   return (
     <div className="Products">
+      <div className='title'>Products</div>
       {Array.isArray(itemsInRows) && itemsInRows.map((row, rowIndex) => (
         <div className="row" key={rowIndex}>
           {Array.isArray(row) && row.map((item, index) => (
             <Col xs key={index}>
-              <img src={getMainImageSrc(item.itemImageDTOs)} width="150px" height="150px" alt={item.itemName}></img>
-              <Link style={{ textDecoration: "none" }} to={`/detail/${item.id}`} state={{ item }}>
-                <h4>{item.itemName}</h4>
+              <img src={getMainImageSrc(item.itemImageDTOs)} width="400px" height="400px" alt={item.itemName}></img>
+              <Link to={`/detail/${item.id}`} state={{ item }} className='customLink'>
+                <h4 style={{ margin: '30px 0', fontSize: '20px'}}>{item.itemName}</h4>
               </Link>
               <p style={{ color: "black" }}>{item.content}</p>
               <p>가격 : {item.price}</p>

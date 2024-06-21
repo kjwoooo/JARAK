@@ -53,11 +53,14 @@ function SearchResults() {
             <div className="searchResults-row" key={rowIndex}>
               {row.map((item, index) => (
                 <Col xs key={index}>
-                  <img src={getMainImageSrc(item.itemImageDTOs)} width="150px" height="150px" alt={item.itemName} />
-                  <Link style={{ textDecoration: "none" }} to={`/detail/${item.id}`} state={{ item }}>
-                    <h4>{item.itemName}</h4>
+                  <img src={getMainImageSrc(item.itemImageDTOs)} width="400px" height="400px" alt={item.itemName} />
+                  <Link to={`/detail/${item.id}`} state={{item}} className='customLink'>
+                    <h4 style={{
+                      margin: '30px 0',
+                      fontSize: '20px'
+                    }}>{item.itemName}</h4>
                   </Link>
-                  <p style={{ color: "black" }}>{item.content}</p>
+                  <p style={{color: "black"}}>{item.content}</p>
                   <p>가격 : {item.price}</p>
                 </Col>
               ))}

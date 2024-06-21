@@ -1,0 +1,19 @@
+.Products {
+  margin-top : 150px;
+}
+
+.row {
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 30px;
+  margin-bottom: 30px;
+  margin-left: auto;
+}
+
+.customLink {
+  text-decoration: none;
+  color: inherit;
+}

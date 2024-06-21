@@ -1,10 +1,16 @@
+.contain {
+    display: flex;
+    justify-content: center; /* 수평 정렬 */
+    align-items: center;    /* 수직 정렬 */
+    height: 80vh;
+}
+
 .RegisterPage_Register {
-    max-width: 800px;
-    margin: 50px auto;
+    width: 700px;
+    margin: 200px auto;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
 }
 
@@ -31,3 +37,5 @@
 .font-size40 {
     font-size : 40px;
 }
+
+

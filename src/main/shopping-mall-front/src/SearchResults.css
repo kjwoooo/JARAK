@@ -24,3 +24,8 @@
 .searchResults-Products p {
     text-align: center;
 }
+
+.customLink {
+    text-decoration: none;
+    color: inherit;
+}

@@ -89,11 +89,15 @@ function Category() {
             .filter(category => category.parentId === parentId)
             .map(category => (
                 <div key={category.id} className="Category_category-item">
-                    <div>
-                        {parentId && <span className="Category_indent">└</span>}
-                        {category.name}
-                        <Button size="sm" variant="secondary" onClick={() => handleEditButtonClick(category)}>수정</Button>
-                        <Button size="sm" variant="danger" onClick={() => handleDeleteCategory(category.id)}>삭제</Button>
+                    <div class='container'>
+                        <div className='left-align'>
+                            {parentId && <span className="Category_indent">└</span>}
+                            {category.name}
+                        </div>
+                        <div className='right-align'>
+                            <Button size="sm" variant="secondary" onClick={() => handleEditButtonClick(category)}>수정</Button>
+                            <Button size="sm" variant="danger" onClick={() => handleDeleteCategory(category.id)} style={{ marginLeft: '10px'}}>삭제</Button>
+                        </div>
                     </div>
                     {renderCategories(category.id)}
                 </div>
@@ -103,7 +107,7 @@ function Category() {
     return (
         <div className="Category_category-container">
             <h2>카테고리</h2>
-            <Button variant="primary" onClick={() => setShowAddModal(true)}>+</Button>
+            <Button className="custombtn" variant="primary" onClick={() => setShowAddModal(true)}>+</Button>
             <div className="Category_category-list">
                 {renderCategories()}
             </div>
@@ -129,7 +133,7 @@ function Category() {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleAddMainCategory}>추가하기</Button>
+                    <Button variant="outline-dark" onClick={handleAddMainCategory}>추가하기</Button>
                 </Modal.Footer>
             </Modal>
 

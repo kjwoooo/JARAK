@@ -12,7 +12,7 @@ function MyPage() {
 
     return (
         <div className='MyPage_MyPage'>
-            <div className='MyPage_header'>헉! My Page임.</div>
+            <div className='MyPage_header'>MY PAGE</div>
             <div className='MyPage_left-menu'>
                 <ListGroup variant="flush">
                     <ListGroup.Item action onClick={() => { navigate(LINKS.MYPAGE.path + '/edit') }}>회원정보 수정</ListGroup.Item>

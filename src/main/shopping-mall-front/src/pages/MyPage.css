@@ -4,9 +4,13 @@
 }
 
 .MyPage_header {
+    border-bottom: black solid 1px;
     width: 100%;
-    height: 50px;
-    background-color: #ccc;
+    text-align: center;
+    font-family: 'Cormorant', serif;
+    font-size: 36px;
+    color: #000000;
+    top: 20px;
 }
 
 .MyPage_left-menu {
