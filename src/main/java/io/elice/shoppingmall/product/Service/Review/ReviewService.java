@@ -5,7 +5,7 @@ import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
-import io.elice.shoppingmall.product.DTO.Review.ReviewDTO;
+import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Review.Review;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;

@@ -2,7 +2,7 @@ package io.elice.shoppingmall.product.Controller;
 
 import io.elice.shoppingmall.member.service.MemberService;
 
-import io.elice.shoppingmall.product.DTO.Review.ReviewDTO;
+import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.product.Service.Review.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
