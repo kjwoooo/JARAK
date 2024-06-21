@@ -240,7 +240,7 @@ function Order() {
             const response = await apiInstance.post('/orders', orderData, {
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json; charset=utf-8'
                 }
             });
             console.log('Response:', response.data); // 응답 데이터 출력

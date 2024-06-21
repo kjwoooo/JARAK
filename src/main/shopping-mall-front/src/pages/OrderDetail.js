@@ -1,92 +1,89 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { apiInstance } from '../util/api';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './OrderDetail.css';
 
 const OrderDetail = () => {
     const { orderId } = useParams();
-    const [orderDetail, setOrderDetail] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [order, setOrder] = useState(null);
+    const [itemImages, setItemImages] = useState({});
 
     useEffect(() => {
         const fetchOrderDetail = async () => {
             try {
                 const response = await apiInstance.get(`/orders/order/${orderId}`);
-                setOrderDetail(response.data);
-                setLoading(false);
+                console.log('Fetched order details:', response.data); // orderDetails 확인을 위한 로그 추가
+                setOrder(response.data);
             } catch (error) {
-                setError(error);
-                setLoading(false);
+                console.error('Failed to fetch order detail:', error);
             }
         };
 
         fetchOrderDetail();
     }, [orderId]);
 
-    if (loading) {
-        return <p>Loading...</p>;
+    if (!order) {
+        return <div>Loading...</div>;
     }
 
-    if (error) {
-        return <p>Error loading order detail: {error.message}</p>;
-    }
+    const { orderDetails, member, shippingCost, price, recipientName, zipcode, addr, addrDetail, recipientTel, addrName, deliveryReq } = order;
 
-    if (!orderDetail) {
-        return <p>No order detail available.</p>;
-    }
+    const getMainImageSrc = (itemId) => {
+        const images = itemImages[itemId];
+        if (!images) return '';
+        const mainImage = images.find(image => image.isMain);
+        return mainImage ? mainImage.filePath : '';
+    };
+
+    console.log('orderDetails:', orderDetails); // orderDetails 로그 추가
 
     return (
-        <Container className="order-detail-container mt-4">
-            <Card>
-                <Card.Header>
-                    <h2>Order Detail for Order #{orderDetail.id}</h2>
-                </Card.Header>
-                <Card.Body>
-                    <Row>
-                        <Col md={6}>
-                            <h4>Order Information</h4>
-                            <p><strong>Order ID:</strong> {orderDetail.id}</p>
-                            <p><strong>Status:</strong> {orderDetail.orderState}</p>
-                            <p><strong>Total Price:</strong> {orderDetail.price.toLocaleString()}</p>
-                            <p><strong>Shipping Cost:</strong> {orderDetail.shippingCost.toLocaleString()}</p>
-                            <p><strong>Order Date:</strong> {new Date(orderDetail.createdAt).toLocaleDateString('ko-KR')}</p>
-                        </Col>
-                        <Col md={6}>
-                            <h4>Recipient Information</h4>
-                            <p><strong>Name:</strong> {orderDetail.recipientName}</p>
-                            <p><strong>Phone:</strong> {orderDetail.recipientTel}</p>
-                            <p><strong>Address:</strong> {orderDetail.addr} {orderDetail.addrDetail}</p>
-                            <p><strong>Zipcode:</strong> {orderDetail.zipcode}</p>
-                        </Col>
-                    </Row>
-                    <h4 className="mt-4">Items</h4>
-                    {orderDetail.orderDetails.map(item => (
-                        <Card key={item.id} className="mb-3">
-                            <Card.Body>
-                                <Row>
-                                    <Col md={6}>
-                                        <p><strong>Item ID:</strong> {item.item.id}</p>
-                                        <p><strong>Item Name:</strong> {item.item.name}</p>
-                                        <p><strong>Quantity:</strong> {item.quantity}</p>
-                                        <p><strong>Price:</strong> {item.price.toLocaleString()}</p>
-                                    </Col>
-                                    <Col md={6}>
-                                        <p><strong>Color:</strong> {item.color}</p>
-                                        <p><strong>Size:</strong> {item.size}</p>
-                                        <p><strong>Status:</strong> {item.orderState}</p>
-                                    </Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
-                    ))}
-                    <Button variant="primary" onClick={() => window.history.back()}>Back</Button>
-                </Card.Body>
-            </Card>
-        </Container>
+        <div className="order-detail-container">
+            <h1>주문 상세 내역</h1>
+
+            <section className="order-detail-section">
+                <h2>상품 정보</h2>
+                {orderDetails.map((orderDetail, index) => (
+                    <div key={index} className="order-detail-item">
+                        <img src={getMainImageSrc(orderDetail.item.itemId)} alt={orderDetail.item.itemName} className="order-detail-image" />
+                        <div className="order-detail-info">
+                            <p>상품: {orderDetail.item.itemName}</p>
+                            <p>가격: {orderDetail.price.toLocaleString()} 원</p>
+                            <p>수량: {orderDetail.quantity}</p>
+                            <p>색상: {orderDetail.color}</p>
+                            <p>사이즈:{orderDetail.size}</p>
+                        </div>
+                    </div>
+                ))}
+            </section>
+
+            <section className="order-detail-section">
+                <h2>구매자 정보</h2>
+                <p>주문자: {member.name}</p>
+                <p>연락처: {member.phone}</p>
+                <p>이메일: {member.email}</p>
+            </section>
+
+            <section className="order-detail-section">
+                <h2>배송지 정보</h2>
+                <p>수령인: {recipientName}</p>
+                <p>연락처: {recipientTel}</p>
+                <p>배송지명: {addrName}</p>
+                <p>우편번호: {zipcode}</p>
+                <p>주소: {addr} {addrDetail}</p>
+                <p>배송 요청 사항: {deliveryReq}</p>
+            </section>
+
+            <section className="order-detail-section">
+                <h2>주문 금액 상세</h2>
+                <p>총 주문 금액: {price.toLocaleString()} 원</p>
+                <p>상품 금액: {(price - shippingCost).toLocaleString()} 원</p>
+                <p>배송비: {shippingCost.toLocaleString()} 원</p>
+                <p>총 결제 금액: {price.toLocaleString()} 원</p>
+            </section>
+        </div>
     );
 };
 
 export default OrderDetail;
+

@@ -70,7 +70,7 @@ const Orders = () => {
     };
 
     const handleOrderClick = (orderId) => {
-        navigate(`/order-detail/${orderId}`);
+        navigate(`/my-page/orders/order/${orderId}`);
     };
 
     return (
@@ -101,13 +101,13 @@ const Orders = () => {
                                             : 'Invalid Date'}
                                     </div>
                                     <div className="order-col order-col-1" onClick={() => handleOrderClick(order.id)}>
-                                        <img src={order.repItemImageUrl} className="order-item-image" alt="대표 상품"/>
+                                        <img src={order.repItemImage} className="order-item-image" alt="대표 상품"/>
                                     </div>
                                     <div className="order-col order-col-3 order-summary" onClick={() => handleOrderClick(order.id)}>
                                         {order.totalQuantity - 1 === 0 ? order.repItemName : `${order.repItemName} 외 ${order.totalQuantity - 1}건`}
                                     </div>
                                     <div
-                                        className="order-col order-col-2">{order.totalPrice ? order.totalPrice.toLocaleString() + " 원" : '-'}</div>
+                                        className="order-col order-col-2">{order.price ? order.price.toLocaleString() + " 원" : '-'}</div>
                                     <div className="order-col order-col-2">{orderStateMap[order.orderState]}</div>
                                     <div className="order-col order-col-2 order-cancel-button-container">
                                         <button

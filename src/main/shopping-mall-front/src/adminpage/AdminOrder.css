@@ -125,30 +125,6 @@
     cursor: not-allowed;
 }
 
-/*!* Modal Styles *!*/
-/*.modal-content {*/
-/*    border-radius: 8px;*/
-/*}*/
-
-/*.modal-header {*/
-/*    background-color: #f8d7da;*/
-/*    border-bottom: 1px solid #dc3545;*/
-/*}*/
-
-/*.modal-title {*/
-/*    color: #dc3545;*/
-/*}*/
-
-/*.modal-footer .btn-secondary {*/
-/*    background-color: #6c757d;*/
-/*    border: none;*/
-/*}*/
-
-/*.modal-footer .btn-danger {*/
-/*    background-color: #dc3545;*/
-/*    border: none;*/
-/*}*/
-
 /* Responsive Styles */
 @media (max-width: 1200px) {
     .admin-order-orders-top, .admin-order-orders-item {

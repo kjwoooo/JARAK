@@ -247,7 +247,7 @@ public class OrderService {
 
         String repItemImage = orderDetails.isEmpty() ? "No Image" : orderDetails.get(0).getItem().getItemImages().stream()
                 .findFirst()
-                .map(ItemImage::getFileName)
+                .map(ItemImage::getFilePath)
                 .orElse("No Image");
 
         order.setTotalQuantity(totalQuantity);
@@ -286,7 +286,7 @@ public class OrderService {
         return cartItems.stream()
                 .map(cartItem -> {
                     // 아이템 수량 감소
-//                    itemService.reduceQuantity(cartItem.getItem_id().getId(), cartItem.getQuantity());
+//                    itemService.reduceQuantity(cartItem.getItem_id().getId(), cartItem.getQuantity(), cartItem.getColor(), cartItem.getSize());
 
                     // OrderDetail 생성
                     return OrderDetail.builder()
