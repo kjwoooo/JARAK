@@ -1,19 +1,20 @@
 package io.elice.shoppingmall.product.Service.Review;
 
-import io.elice.shoppingmall.product.S3.S3Uploader;
+
 import io.elice.shoppingmall.exception.CustomException;
 import io.elice.shoppingmall.exception.ErrorCode;
 import io.elice.shoppingmall.member.entity.Member;
 import io.elice.shoppingmall.member.service.MemberService;
-import io.elice.shoppingmall.product.DTO.Review.ReviewDTO;
+import io.elice.shoppingmall.product.DTO.ReviewDTO;
 import io.elice.shoppingmall.product.Entity.Item.Item;
 import io.elice.shoppingmall.product.Entity.Review.Review;
 import io.elice.shoppingmall.product.Repository.Item.ItemRepository;
 import io.elice.shoppingmall.product.Repository.Review.ReviewRepository;
+import io.elice.shoppingmall.product.S3.S3Uploader;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -58,24 +59,6 @@ public class ReviewService {
         savedReivewDTO.setUsername(username);
         return savedReivewDTO;
     }
-
-//    @Transactional
-//    public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO, String username) {
-//        Review review = reviewRepository.findById(id).orElseThrow(() -> new RuntimeException("Review not found"));
-//        review.setContent(reviewDTO.getContent());
-//        review.setRate(reviewDTO.getRate());
-//        review.setUsername(username);
-//
-//        Item item = itemRepository.findById(reviewDTO.getItemId())
-//                .orElseThrow(() -> new RuntimeException("Item not found"));
-//        review.setItem(item);
-//
-//        Member member = memberService.findByUsername(username);
-//        review.setMember(member);
-//
-//        Review updatedReview = reviewRepository.save(review);
-//        return convertToDTO(updatedReview);
-//    }
 
     public ReviewDTO updateReview(Long reviewId, ReviewDTO reviewDTO, String username, MultipartFile imageFile) throws IOException {
         // 1. 기존 리뷰 정보 가져오기

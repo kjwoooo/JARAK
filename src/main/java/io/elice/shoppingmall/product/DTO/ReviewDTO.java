@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.product.DTO.Review;
+package io.elice.shoppingmall.product.DTO;
 
 import lombok.*;
 

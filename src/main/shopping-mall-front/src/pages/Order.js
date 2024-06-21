@@ -260,6 +260,7 @@ function Order() {
             });
             console.log('Response:', response.data); // 응답 데이터 출력
             toast.success('주문이 성공적으로 진행되었습니다!');
+            clearPurchasedItemsFromLocalStorage(cartItems, user.id);
             navigate('/orders/complete'); // 주문 내역 조회 페이지로 이동
         } catch (error) {
             if (error.response) {
@@ -271,6 +272,15 @@ function Order() {
             }
             console.error('Error Object:', error); // 전체 오류 객체 출력
         }
+    };
+
+    const clearPurchasedItemsFromLocalStorage = (purchasedItems, userId) => {
+        const cartKey = `cart_${userId}`;
+        const storedCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+        const remainingItems = storedCartItems.filter(storedItem =>
+            !purchasedItems.some(purchasedItem => purchasedItem.itemId === storedItem.itemId)
+        );
+        localStorage.setItem(cartKey, JSON.stringify(remainingItems));
     };
 
     return (

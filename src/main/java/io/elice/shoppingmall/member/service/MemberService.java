@@ -13,6 +13,7 @@ import io.elice.shoppingmall.member.repository.MemberRepository;
 import io.elice.shoppingmall.security.JwtTokenUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -143,10 +144,12 @@ public class MemberService {
         return "로그아웃";
     }
 
+    @Transactional
     public String delete(String username, HttpServletResponse response){
         Member member = findByUsername(username);
 
         memberRepository.delete(member);
+        loginInfoService.delete(member.getLoginInfo());
         util.tokenDestroy(response);
 
         return "회원 탈퇴";
@@ -157,9 +160,12 @@ public class MemberService {
      * @param id
      * @return
      */
+    @Transactional
     public String delete(Long id){
         Member member = findByIdToMember(id);
         memberRepository.delete(member);
+        loginInfoService.delete(member.getLoginInfo());
+
         return "회원 정보 삭제";
     }
 

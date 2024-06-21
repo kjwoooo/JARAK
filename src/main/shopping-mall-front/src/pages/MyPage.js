@@ -23,7 +23,6 @@ function MyPage() {
             <div className='MyPage_content'>
                 <Outlet></Outlet>
             </div>
-            <div className='MyPage_footer'></div>
         </div>
     );
 }
