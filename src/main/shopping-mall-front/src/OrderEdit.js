@@ -6,7 +6,7 @@ import { apiInstance } from './util/api.js';
 import Cookies from 'js-cookie';
 import './OrderEdit.css';
 
-function OrderEdit({ show, handleClose, orderId, initialData }) {
+function OrderEdit({ show, handleClose, orderId, initialData, onSave }) { // onSave 콜백 추가
     const [formData, setFormData] = useState({
         recipientName: '',
         addrName: '',
@@ -15,6 +15,7 @@ function OrderEdit({ show, handleClose, orderId, initialData }) {
         addr: '',
         addrDetail: '',
         deliveryReq: '',
+        shippingCost: 0, // 초기값 설정
     });
     const [customDeliveryReq, setCustomDeliveryReq] = useState(false);
     const jwtToken = Cookies.get('jwtToken');
@@ -29,6 +30,7 @@ function OrderEdit({ show, handleClose, orderId, initialData }) {
                 addr: initialData.addr || '',
                 addrDetail: initialData.addrDetail || '',
                 deliveryReq: initialData.deliveryReq || '',
+                shippingCost: initialData.shippingCost || 0, // 초기값 설정
             });
             if (initialData.deliveryReq === 'custom') {
                 setCustomDeliveryReq(true);
@@ -80,6 +82,7 @@ function OrderEdit({ show, handleClose, orderId, initialData }) {
             });
             toast.success('배송 정보가 성공적으로 수정되었습니다!');
             handleClose();
+            onSave(); // 데이터 업데이트 후 onSave 호출
         } catch (error) {
             console.error('Failed to update address:', error);
             toast.error('배송 정보 수정에 실패했습니다.');

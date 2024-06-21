@@ -23,7 +23,6 @@ function AdminPage() {
             <div className='AdminMainPage_content'>
                 <Outlet></Outlet>
             </div>
-            <div className='AdminMainPage_footer'></div>
         </div>
     );
 }
