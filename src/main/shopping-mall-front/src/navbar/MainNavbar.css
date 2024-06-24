@@ -1,0 +1,22 @@
+button.btn-custom {
+  background-color: white; /* 새로운 배경 색상 */
+  border: 1px solid black;/* 새로운 테두리 색상 및 두께 */
+  border-radius: 0;
+  color: black; /* 버튼 안의 글자 색상 */
+  margin: 0 5px;
+  font-size: 20px;
+  width: 150px; /* 예시로 너비를 150px로 고정 */
+  height: 50px; /* 높이도 필요에 따라 고정 */
+}
+
+.navbar-brand {
+  margin : 5px 0;
+}
+
+.me-2 {
+  margin-left: 30px;
+}
+
+.font-size20 {
+  font-size: 20px;
+}

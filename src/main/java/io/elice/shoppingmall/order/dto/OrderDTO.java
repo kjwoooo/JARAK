@@ -2,7 +2,6 @@ package io.elice.shoppingmall.order.dto;
 
 import io.elice.shoppingmall.order.entity.Order;
 import io.elice.shoppingmall.order.entity.OrderState;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,70 +20,52 @@ import lombok.Setter;
 public class OrderDTO {
     private Long id;
 
-    @NotNull(message = "Member ID is required.")
     private Long memberId;
 
-    @NotNull(message = "Price is required.")
     private Integer price;
 
-    @NotNull(message = "Shipping cost is required.")
+    @NotNull(message = "배송비는 필수 항목입니다.")
     private Integer shippingCost;
 
-    @NotNull(message = "Total quantity is required.")
     private Integer totalQuantity;
 
-    @NotBlank(message = "Representative item name is required.")
-    @Size(max = 255, message = "Representative item name can have at most 255 characters.")
     private String repItemName;
 
-    @NotBlank(message = "Representative item image is required.")
-    @Size(max = 255, message = "Representative item image can have at most 255 characters.")
     private String repItemImage;
 
     private String refundReason;
 
-    @NotBlank(message = "Recipient name is required.")
-    @Size(max = 255, message = "Recipient name can have at most 255 characters.")
+    @NotBlank(message = "수령인 이름은 필수 항목입니다.")
+    @Size(max = 255, message = "수령인 이름은 최대 255자까지 입력할 수 있습니다.")
     private String recipientName;
 
-    @NotBlank(message = "Zipcode is required.")
-    @Size(max = 20, message = "Zipcode can have at most 20 characters.")
+    @NotBlank(message = "우편번호는 필수 항목입니다.")
+    @Size(max = 20, message = "우편번호는 최대 20자까지 입력할 수 있습니다.")
     private String zipcode;
 
-    @NotBlank(message = "Address is required.")
-    @Size(max = 255, message = "Address can have at most 255 characters.")
+    @NotBlank(message = "주소는 필수 항목입니다.")
+    @Size(max = 255, message = "주소는 최대 255자까지 입력할 수 있습니다.")
     private String addr;
 
     private String addrDetail;
 
-    @NotBlank(message = "Recipient telephone is required.")
-    @Size(max = 20, message = "Recipient telephone can have at most 20 characters.")
+    @NotBlank(message = "수령인 전화번호는 필수 항목입니다.")
+    @Size(max = 20, message = "수령인 전화번호는 최대 20자까지 입력할 수 있습니다.")
     private String recipientTel;
 
-    @NotBlank(message = "Address name is required.")
-    @Size(max = 255, message = "Address name can have at most 255 characters.")
+    @NotBlank(message = "배송지명은 필수 항목입니다.")
+    @Size(max = 255, message = "배송지명은 최대 255자까지 입력할 수 있습니다.")
     private String addrName;
 
     private String deliveryReq;
 
-    @NotNull(message = "Order state is required.")
     private OrderState orderState;
 
-    @Valid  // 리스트 내부의 OrderDetailDTO도 유효성 검사 수행
-    @NotNull(message = "Order details are required.")
-    @Size(min = 1, message = "Order details must have at least one item.")
     private List<OrderDetailDTO> orderDetails;
-
-    private Long selectedAddressId; // 사용자가 선택한 특정 주소 ID
 
     public Order toEntity() {
         return Order.builder()
-                .id(id)
-                .price(price)
                 .shippingCost(shippingCost)
-                .totalQuantity(totalQuantity)
-                .repItemName(repItemName)
-                .repItemImage(repItemImage)
                 .refundReason(refundReason)
                 .recipientName(recipientName)
                 .zipcode(zipcode)
@@ -93,7 +74,6 @@ public class OrderDTO {
                 .recipientTel(recipientTel)
                 .addrName(addrName)
                 .deliveryReq(deliveryReq)
-                .orderState(orderState)
                 .build();
     }
 }

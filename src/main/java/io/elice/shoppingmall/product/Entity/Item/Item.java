@@ -1,7 +1,9 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
-import io.elice.shoppingmall.product.DTO.Item.ItemDTO;
-import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
+import io.elice.shoppingmall.category.entity.Category;
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
+import io.elice.shoppingmall.option.entity.Brand;
+import io.elice.shoppingmall.product.DTO.Item.ItemImageDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,4 +31,12 @@ public class Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemImage> itemImages;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 }

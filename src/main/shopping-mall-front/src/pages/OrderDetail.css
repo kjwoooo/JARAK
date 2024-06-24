@@ -1,0 +1,173 @@
+/* OrderDetail.css */
+
+/* Reset some default margins and paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Container styling */
+.order-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+}
+
+/* Header styling */
+.order-detail-header {
+    font-size: 28px; /* Increased font size */
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+/* Section styling */
+.order-detail-section {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 22px; /* Increased font size */
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 5px;
+    color: #555;
+}
+
+/* Product info styling */
+.order-detail-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.order-detail-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 40px;
+    border-radius: 8px;
+}
+
+.order-detail-info {
+    display: flex;
+    flex-direction: column;
+    text-align: left; /* Left-align content */
+}
+
+.item-name {
+    font-size: 18px; /* Increased font size */
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.item-quantity,
+.item-color {
+    font-size: 16px; /* Increased font size */
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.no-product-info {
+    text-align: center;
+    font-size: 16px; /* Increased font size */
+    color: #999;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+/* Buyer info styling */
+.buyer-info-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.buyer-info-details div {
+    margin-bottom: 5px;
+    font-size: 16px; /* Increased font size */
+    color: #333;
+}
+
+/* Shipping info styling */
+.shipping-info-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.shipping-info-details div {
+    margin-bottom: 5px;
+    font-size: 16px; /* Increased font size */
+    color: #333;
+}
+
+.order-edit-button {
+    background-color: #00d1b2;
+    border: 1px solid #00d1b2;
+    color: #ffffff;
+    padding: 7px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.order-edit-button:hover {
+    background-color: #00c4a7;
+    border-color: #00c4a7;
+}
+
+/* Payment info styling */
+.payment-info-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.payment-info-details div {
+    margin-bottom: 5px;
+    font-size: 16px; /* Increased font size */
+    color: #333;
+}
+
+.total-price,
+.item-price,
+.shipping-cost {
+    font-size: 18px; /* Increased font size */
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    .order-detail-container {
+        padding: 10px;
+    }
+
+    .order-detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-detail-image {
+        margin-bottom: 10px;
+    }
+
+    .order-edit-button {
+        width: 100%;
+        text-align: center;
+    }
+}

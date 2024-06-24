@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 상의, 하의, 신발, 악세사리 등 <p>
  * 상위 카테고리에 대한 하위 카테고리를<p>
  * 계층형 구조로 나타냄
  * */
@@ -37,7 +36,6 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> subCategories = new ArrayList<>();
 
-    // Entity를 DTO로 변환하는 메서드
     public CategoryDto entityToDto() {
         return new CategoryDto(this.id, this.name,
                 Optional.ofNullable(this.parent)

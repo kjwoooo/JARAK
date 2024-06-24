@@ -25,7 +25,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "cart")
+@Table(name = "cartitems")
 public class CartItems extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,11 +40,9 @@ public class CartItems extends BaseEntity {
     @JoinColumn(name="cart_id")
     private Cart cart_id;
 
-    //수정 필요
     @Column(nullable = true)
     private boolean selected;
 
-    @Column(nullable = true)
     private int quantity;
 
     private String color;

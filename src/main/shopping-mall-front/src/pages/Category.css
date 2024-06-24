@@ -1,30 +1,56 @@
-.category-container {
+.Category_category-container {
     padding: 20px;
+    max-width: 400px;
+    margin: 100px auto;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.category-container h2 {
+.custombtn {
+    position: relative;
+    top: -10px;
+    background-color: dimgray;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.Category_category-container h2 {
     display: inline-block;
     margin-right: 20px;
 }
 
-.category-container button {
+.Category_category-container button {
     display: inline-block;
     vertical-align: middle;
 }
 
-.category-list {
+.Category_category-list {
     margin-top: 20px;
 }
 
-.category-item {
+.Category_category-item {
     margin-left: 20px;
     margin-top: 10px;
 }
 
-.indent {
+.Category_indent {
     margin-right: 10px;
 }
 
-button {
+.Category_button {
     margin-left: 10px;
+}
+
+.container {
+    overflow: hidden;
+}
+
+.right-align, .left-align {
+    float: left;
+    width: 50%; /* 두 개의 요소를 반씩 차지하도록 설정 */
+    box-sizing: border-box; /* padding, border 포함한 요소의 크기 설정 */
+    padding: 20px; /* 여백 추가 */
 }

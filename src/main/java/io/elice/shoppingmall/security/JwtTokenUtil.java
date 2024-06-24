@@ -75,8 +75,12 @@ public class JwtTokenUtil {
     }
 
     public boolean isExpired(String token) {
-        Date expiredDate = extractClaims(token).getExpiration();
-        return expiredDate.before(new Date());
+        try{
+            Date expiredDate = extractClaims(token).getExpiration();
+            return expiredDate.before(new Date());
+        } catch (Exception e){
+            return false;
+        }
     }
 
     public Long getIssuedAtTime(String token){

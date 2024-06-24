@@ -35,7 +35,7 @@ public class CategoryService {
         return categoryDtos;
     }
 
-    // 특정상위 카테고리의 하위 카테고리 조회
+    // 특정 상위 카테고리의 하위 카테고리 조회
     public List<CategoryDto> getSubCategories(Long parentId) {
         Category parentCategory = categoryRepository.findById(parentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PARENT_CATEGORY));
@@ -55,21 +55,26 @@ public class CategoryService {
         return category.entityToDto();
     }
 
-    //  카테고리 추가
+    // 카테고리 추가
     @Transactional(readOnly = false)
     public CategoryDto createCategory(CategoryDto categoryDto) {
-        // 추가하려는 카테고리가 존재하는지 확인
-        if (categoryRepository.existsByName(categoryDto.getName())) {
-            throw new CustomException(ErrorCode.EXIST_CATEGORY_NAME);
-        }
-
         Category categoryEntity = categoryDto.toEntity();
+
         // 하위 카테고리 일 경우 상위 카테고리의 아이디가 존재하는지 확인
         if (categoryDto.getParentId() != null) {
             Category parentCategory = categoryRepository.findById(categoryDto.getParentId())
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PARENT_CATEGORY));
-            // 상위 카테고리를 설정
             categoryEntity.setParent(parentCategory);
+
+            // 동일한 상위 카테고리 내에서(이름, 부모id가 같은) 중복된 이름의 하위 카테고리가 있는지 확인
+            if (categoryRepository.existsByNameAndParentId(categoryDto.getName(), categoryDto.getParentId())) {
+                throw new CustomException(ErrorCode.EXIST_CATEGORY_NAME);
+            }
+        } else {
+            // 상위 카테고리 일 경우 중복 체크
+            if (categoryRepository.existsByName(categoryDto.getName())) {
+                throw new CustomException(ErrorCode.EXIST_CATEGORY_NAME);
+            }
         }
 
         Category savedCategoryEntity = categoryRepository.save(categoryEntity);
@@ -78,7 +83,6 @@ public class CategoryService {
 
 
     //  카테고리 업데이트
-    // CategoryDto로 받을지 Stirng으로 받을지 고민
     @Transactional(readOnly = false)
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id).orElseThrow(() ->
@@ -111,7 +115,7 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    // 자식 카테고리 삭제 메서드
+    // 자식 카테고리 삭제
     private void deleteSubCategories(Category category) {
         if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
             category.getSubCategories().forEach(subCategory -> deleteCategory(subCategory.getId()));

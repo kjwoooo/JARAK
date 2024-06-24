@@ -12,5 +12,4 @@ public class CartItemAddResponseDto {
     private Long id;
     private int quantity;
     private LocalDateTime created_at;
-
 }

@@ -1,17 +1,15 @@
 package io.elice.shoppingmall.product.Entity.Item;
 
-import io.elice.shoppingmall.product.DTO.Item.ItemDetailDTO;
+import io.elice.shoppingmall.entity.baseEntity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ItemDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

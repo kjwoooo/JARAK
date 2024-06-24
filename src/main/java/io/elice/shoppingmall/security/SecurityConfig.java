@@ -21,19 +21,21 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 @ConditionalOnDefaultWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final JwtTokenUtil util;
     private final MemberService memberService;
-    private final PrincipalOauth2UserService principalOauth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailurHandler oAuth2AuthenticationFailurHandler;
+    //    private final PrincipalOauth2UserService principalOauth2UserService;
+//    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+//    private final OAuth2AuthenticationFailurHandler oAuth2AuthenticationFailurHandler;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
@@ -42,6 +44,7 @@ public class SecurityConfig{
         http.csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
         http.formLogin(AbstractHttpConfigurer::disable);
+        http.cors();
 
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -52,34 +55,36 @@ public class SecurityConfig{
 
         http.authorizeHttpRequests(authorize -> authorize
 
-            //NOTE: 일반회원, 관리자 모두 접근 가능
-            .requestMatchers("/unregister", "/logout", "/token-refresh")
+                // Swagger 관련 요청 모두 허용
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                //NOTE: 일반회원, 관리자 모두 접근 가능
+                .requestMatchers("/unregister", "/logout", "/token-refresh")
                 .hasAnyAuthority(MemberAuthority.USER.name(), MemberAuthority.ADMIN.name())
-            .requestMatchers(HttpMethod.POST, "/members")
+                .requestMatchers(HttpMethod.POST, "/members")
                 .hasAuthority(MemberAuthority.USER.name())
 
-            //NOTE: 일반회원만 접근 가능
-            .requestMatchers("/members/info", "/addresses/**", "")
+                //NOTE: 일반회원만 접근 가능
+                .requestMatchers("/members/info", "/addresses/**", "/orders/**", "/carts/**")
                 .hasAuthority(MemberAuthority.USER.name())
 
-            //NOTE: 관리자만 접근 가능
-            .requestMatchers(HttpMethod.GET, "/admin/**")
+                //NOTE: 관리자만 접근 가능
+                .requestMatchers(HttpMethod.GET, "/admin/**")
                 .hasAuthority(MemberAuthority.ADMIN.name())
 
-            .anyRequest().permitAll()
-        ).exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+                .anyRequest().permitAll()
+        );
 
-        http.oauth2Login()
-                .userInfoEndpoint()
-                    .userService(principalOauth2UserService)
-                        .and()
-                            .successHandler(oAuth2AuthenticationSuccessHandler);
+//        http.oauth2Login()
+//                .userInfoEndpoint()
+//                    .userService(principalOauth2UserService)
+//                        .and()
+//                            .successHandler(oAuth2AuthenticationSuccessHandler);
 //                                .and()
 //                                    .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
 
-        http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new JwtExceptionFilter(), JwtTokenFilter.class);
+        http.addFilterBefore(new JwtTokenFilter(util, memberService), UsernamePasswordAuthenticationFilter.class).exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
         return http.build();
     }

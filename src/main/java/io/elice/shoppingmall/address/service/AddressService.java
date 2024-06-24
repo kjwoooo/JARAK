@@ -31,27 +31,49 @@ public class AddressService {
     }
 
     /**
-     * jwtToken으로 인증된 회원의 모든 주소 검색
+     * @deprecated findAllByUsername 사용 권장
      * @param jwtToken
      * @return
      */
+    @Deprecated
     public List<Address> findAllByJwtToken(String jwtToken){
         Member member = memberService.findByJwtToken(jwtToken);
 
         return addressRepository.findByMember(member);
     }
 
+    public List<Address> findAllByUsername(String username){
+        Member member = memberService.findByUsername(username);
+
+        return addressRepository.findByMember(member);
+    }
+
+    public List<Address> findAllByMember(Member member){
+        return addressRepository.findByMember(member);
+    }
+
+    /**
+     * @deprecated findAllByUsernameToResponseDTO 사용 권장
+     * @param jwtToken
+     * @return
+     */
+    @Deprecated
     public List<AddressResponseDTO> findAllByJwtTokenAndReturnResponseDTO(String jwtToken){
         return findAllByJwtToken(jwtToken).stream().map(AddressResponseDTO::new).toList();
 
     }
 
+    public List<AddressResponseDTO> findAllByUsernameToResponseDTO(String username){
+        return findAllByUsername(username).stream().map(AddressResponseDTO::new).toList();
+    }
+
     /**
-     * jwtToken으로 인증된 회원의 특정 주소 검색
+     * @deprecated findByUsernameAndAddressId 사용 권장
      * @param jwtToken
      * @param addressId
      * @return
      */
+    @Deprecated
     public AddressResponseDTO findByJwtTokenAndAddressId(String jwtToken, Long addressId){
         Member member = memberService.findByJwtToken(jwtToken);
         Address address = addressRepository.findByIdAndMember(addressId, member).orElseThrow(()->
@@ -59,8 +81,16 @@ public class AddressService {
         return new AddressResponseDTO(address);
     }
 
-    public String delete(String jwtToken, Long id){
-        Member member = memberService.findByJwtToken(jwtToken);
+    public AddressResponseDTO findByUsernameAndAddressId(String username, Long addressId){
+        Member member = memberService.findByUsername(username);
+        Address address = addressRepository.findByIdAndMember(addressId, member).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
+
+        return new AddressResponseDTO(address);
+    }
+
+    public String delete(String username, Long id){
+        Member member = memberService.findByUsername(username);
         Address address = addressRepository.findById(id).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_ADDRESS));
 
@@ -83,12 +113,13 @@ public class AddressService {
 
     /**
      * 인증받은 회원의 새로운 주소 등록
-     * @param jwtToken
+     * @param member
      * @param addressDto
      * @return
      */
-    public Address save(String jwtToken,AddressDTO addressDto){
-        Member member = memberService.findByJwtToken(jwtToken);
+    public Address save(Member member,AddressDTO addressDto){
+        if(member == null)
+            throw new CustomException(ErrorCode.NULL_POINT_MEMBER);
 
         Address address = addressDto.toEntity();
         address.setMember(member);
@@ -96,38 +127,41 @@ public class AddressService {
         return save(address);
     }
 
-    public AddressResponseDTO saveAndReturnResponseDTO(String jwtToken, AddressDTO addressDTO){
-        return new AddressResponseDTO(save(jwtToken, addressDTO));
+    public AddressResponseDTO saveAndReturnResponseDTO(String username, AddressDTO addressDTO){
+        Member member = memberService.findByUsername(username);
+        return new AddressResponseDTO(save(member, addressDTO));
     }
 
     /**
      * 인증받은 회원의 특정 주소 수정
-     * @param jwtToken
+     * @param username
      * @param id
      * @param addressDTO
      * @return
      */
-    public Address save(String jwtToken, Long id, AddressDTO addressDTO){
-        try{
-            Address oldAddress = findById(id);
-            Address newAddress = addressDTO.toEntity();
+    public Address save(String username, Long id, AddressDTO addressDTO){
+        Member member = memberService.findByUsername(username);
+        Address[] addresses = new Address[1];
 
-            Member member = memberService.findByJwtToken(jwtToken);
+        Address address = addressRepository.findById(id).orElseGet(Address::new);
+        address.updateAddress(addressDTO);
+        address.setMember(member);
 
-            newAddress.setMember(member);
-            newAddress.setId(oldAddress.getId());
+        return save(address);
 
-            return save(newAddress);
 
-        } catch(CustomException e){
-            if(e.getCode() == ErrorCode.NOT_FOUND_ADDRESS)
-                return save(jwtToken, addressDTO);
-            else
-                throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
+//        addressRepository.findById(id).ifPresentOrElse(oldAddress -> {
+//            Address newAddress = addressDTO.toEntity();
+//            newAddress.setMember(member);
+//            newAddress.setId(oldAddress.getId());
+//
+//            addresses[0] = save(newAddress);
+//        },() -> save(member, addressDTO));
+//
+//        return addresses[0];
     }
 
-    public AddressResponseDTO saveAndReturnResponseDTO(String jwtToken, Long id, AddressDTO addressDTO){
-        return new AddressResponseDTO(save(jwtToken, id, addressDTO));
+    public AddressResponseDTO saveAndReturnResponseDTO(String username, Long id, AddressDTO addressDTO){
+        return new AddressResponseDTO(save(username, id, addressDTO));
     }
 }

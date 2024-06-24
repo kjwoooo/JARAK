@@ -33,4 +33,8 @@ public class LoginInfoService {
         if(!encoder.matches(password, loginInfo.getPassword()))
             throw new CustomException(ErrorCode.MEMBER_PASSWROD_WRONG);
     }
+
+    public void delete(LoginInfo loginInfo){
+        loginInfoRepository.delete(loginInfo);
+    }
 }

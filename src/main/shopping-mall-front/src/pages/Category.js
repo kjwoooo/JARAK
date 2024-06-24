@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Form, ListGroup } from 'react-bootstrap';
-import axios from 'axios';
+import { apiInstance } from '../util/api';
 import './Category.css';
 
 function Category() {
@@ -20,7 +20,7 @@ function Category() {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('/categories');
+            const response = await apiInstance.get('/categories');
             console.log('Fetched categories:', response.data); 
             setCategories(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
@@ -31,7 +31,7 @@ function Category() {
 
     const handleAddMainCategory = async () => {
         try {
-            await axios.post('/categories', { name: newCategoryName });
+            await apiInstance.post('/categories', { name: newCategoryName });
             setShowMainAddModal(false);
             setNewCategoryName('');
             fetchCategories();
@@ -43,7 +43,7 @@ function Category() {
 
     const handleAddSubCategory = async () => {
         try {
-            await axios.post('/categories', { name: newCategoryName, parentId: selectedMainCategory });
+            await apiInstance.post('/categories', { name: newCategoryName, parentId: selectedMainCategory });
             setShowSubAddModal(false);
             setNewCategoryName('');
             fetchCategories();
@@ -55,7 +55,7 @@ function Category() {
 
     const handleEditCategory = async () => {
         try {
-            await axios.put(`/categories/${editCategoryId}`, { name: editCategoryName, parentId: editCategoryParentId });
+            await apiInstance.put(`/categories/${editCategoryId}`, { name: editCategoryName, parentId: editCategoryParentId });
             setEditCategoryId(null);
             setEditCategoryName('');
             setEditCategoryParentId(null);
@@ -69,7 +69,7 @@ function Category() {
     const handleDeleteCategory = async (id) => {
         if (window.confirm("정말 삭제하시겠어요?")) {
             try {
-                await axios.delete(`/categories/${id}`);
+                await apiInstance.delete(`/categories/${id}`);
                 fetchCategories();
                 window.location.reload(); 
             } catch (error) {
@@ -88,12 +88,16 @@ function Category() {
         return categories
             .filter(category => category.parentId === parentId)
             .map(category => (
-                <div key={category.id} className="category-item">
-                    <div>
-                        {parentId && <span className="indent">└</span>}
-                        {category.name}
-                        <Button size="sm" variant="secondary" onClick={() => handleEditButtonClick(category)}>수정</Button>
-                        <Button size="sm" variant="danger" onClick={() => handleDeleteCategory(category.id)}>삭제</Button>
+                <div key={category.id} className="Category_category-item">
+                    <div class='container'>
+                        <div className='left-align'>
+                            {parentId && <span className="Category_indent">└</span>}
+                            {category.name}
+                        </div>
+                        <div className='right-align'>
+                            <Button size="sm" variant="secondary" onClick={() => handleEditButtonClick(category)}>수정</Button>
+                            <Button size="sm" variant="danger" onClick={() => handleDeleteCategory(category.id)} style={{ marginLeft: '10px'}}>삭제</Button>
+                        </div>
                     </div>
                     {renderCategories(category.id)}
                 </div>
@@ -101,10 +105,10 @@ function Category() {
     };
 
     return (
-        <div className="category-container">
+        <div className="Category_category-container">
             <h2>카테고리</h2>
-            <Button variant="primary" onClick={() => setShowAddModal(true)}>+</Button>
-            <div className="category-list">
+            <Button className="custombtn" variant="primary" onClick={() => setShowAddModal(true)}>+</Button>
+            <div className="Category_category-list">
                 {renderCategories()}
             </div>
 
@@ -129,7 +133,7 @@ function Category() {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleAddMainCategory}>추가하기</Button>
+                    <Button variant="outline-dark" onClick={handleAddMainCategory}>추가하기</Button>
                 </Modal.Footer>
             </Modal>
 

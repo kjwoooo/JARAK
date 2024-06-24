@@ -1,26 +1,41 @@
-.Register {
-    max-width: 500px;
-    margin: 50px auto;
+.contain {
+    display: flex;
+    justify-content: center; /* 수평 정렬 */
+    align-items: center;    /* 수직 정렬 */
+    height: 80vh;
+}
+
+.RegisterPage_Register {
+    width: 700px;
+    margin: 200px auto;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
 }
 
-.Register h2 {
+.RegisterPage_Register h2 {
     text-align: center;
     margin-bottom: 20px;
 }
 
-.Register .form-control {
+.RegisterPage_form-control {
     margin-bottom: 15px;
 }
 
-.Register .form-check-inline {
+.RegisterPage_form-check-inline {
     margin-right: 10px;
 }
 
-.Register .btn-primary {
+.RegisterPage_btn-primary {
     width: 100%;
+    background-color: white !important; /* 새로운 배경 색상 */
+    border: 2px solid black !important; /* 새로운 테두리 색상 및 두께 */
+    color: black !important; /* 버튼 안의 글자 색상 */
 }
+
+.font-size40 {
+    font-size : 40px;
+}
+
+
