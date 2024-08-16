@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 node_modules/
 mainimagefiles/
+src/main/resources/application-oauth.properties
 
 ### STS ###
 .apt_generated
