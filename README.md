@@ -11,7 +11,7 @@
 
 - **자락 (JARAK)**
 
-![메인로고 2](https://github.com/user-attachments/assets/039d1ad8-0b03-4dab-8d31-040d453f4aef)
+![메인로고 2](https://github.com/user-attachments/assets/db84075d-8405-4e84-8c16-125313931329)
 
 ## 서버 주소
 - http://34.22.69.4/
@@ -119,34 +119,35 @@
 ---
 ## 서비스 화면
 ### - 회원가입, 정보수정, 회원탈퇴
-![회원가입,정보수정,회원탈퇴](https://github.com/user-attachments/assets/f7b87771-98c7-4fd5-95da-b2ab8b0da30e)
+![회원가입,정보수정,회원탈퇴](https://github.com/user-attachments/assets/a401ac99-3a2a-4ebd-a581-860674f3aac6)
 
 
 ### - 상품 등록
-<img width="1171" alt="상품 등록" src="https://github.com/user-attachments/assets/d182845a-c1eb-496d-89c6-a07cbacbded6">
+<img width="1271" alt="스크린샷 2024-09-19 오후 4 33 05" src="https://github.com/user-attachments/assets/bd51b3f1-5758-4820-981e-27cbd3f29a16">
 
-<img width="1340" alt="스크린샷 2024-09-19 오후 4 33 27" src="https://github.com/user-attachments/assets/7b421b33-e5ca-46d4-aa9d-799a7f5c932e">
+
+<img width="1340" alt="스크린샷 2024-09-19 오후 4 33 27" src="https://github.com/user-attachments/assets/d2ea8fea-f4f2-43b5-a298-556338579bdf">
 
 ### - 상품 재고 등록
-<img width="998" alt="스크린샷 2024-09-19 오후 4 43 41" src="https://github.com/user-attachments/assets/c3673288-a3bf-443e-8d51-e819e3301c1e">
-<img width="1089" alt="스크린샷 2024-09-19 오후 4 43 50" src="https://github.com/user-attachments/assets/323ad357-4948-4030-963e-a3549dbe9b90">
+<img width="998" alt="스크린샷 2024-09-19 오후 4 43 41" src="https://github.com/user-attachments/assets/949869c7-5099-45a5-85f0-7759320773d1">
+<img width="1089" alt="스크린샷 2024-09-19 오후 4 43 50" src="https://github.com/user-attachments/assets/52cb60f8-428c-42f3-89b5-713708707993">
+
 
 ### - 리뷰 작성
-<img width="1102" alt="스크린샷 2024-09-19 오후 4 48 25" src="https://github.com/user-attachments/assets/346cf431-587a-4d84-8515-0158818994d9">
+<img width="1102" alt="스크린샷 2024-09-19 오후 4 48 25" src="https://github.com/user-attachments/assets/427a7b13-400f-4e75-9bea-2fadd22b8065">
 
 
 ### - 브랜드 등록
-<img width="1042" alt="스크린샷 2024-09-19 오후 4 54 05" src="https://github.com/user-attachments/assets/bce8cc35-f5be-4da6-8d1b-4e652391b2e9">
+<img width="1042" alt="스크린샷 2024-09-19 오후 4 54 05" src="https://github.com/user-attachments/assets/42af352e-1371-455d-9309-35ed2d13a50f">
 
 ### - 메인 카테고리 등록
-<img width="1326" alt="메인 카태고리 등록" src="https://github.com/user-attachments/assets/2e43ca8d-ae82-40d3-be80-a886f42975a5">
+<img width="1194" alt="스크린샷 2024-09-19 오후 8 38 26" src="https://github.com/user-attachments/assets/319dc9f0-5e1a-4812-bc24-fe159ee80bb5">
 
 ### - 서브 카테고리 등록
-<img width="1322" alt="서브 카테고리 등록" src="https://github.com/user-attachments/assets/463786ed-9e3d-4d17-8d52-dfc30397ba24">
-
+<img width="1163" alt="스크린샷 2024-09-19 오후 8 39 53" src="https://github.com/user-attachments/assets/8e82b20e-752a-4fdb-b394-152027d567f5">
 
 ### - 장바구니
-<img width="1061" alt="스크린샷 2024-09-19 오후 4 56 41" src="https://github.com/user-attachments/assets/dc9e80c1-4af7-49e8-9e46-ef05b39cb851">
+<img width="1061" alt="스크린샷 2024-09-19 오후 4 56 41" src="https://github.com/user-attachments/assets/9a7df081-711a-4977-99e7-936abb3d472b">
 
 ---
 ## 깃 컨벤션
