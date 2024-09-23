@@ -72,13 +72,12 @@
 ---
 
 ## ERD
-<img width="1309" alt="ERD(2)" src="https://github.com/user-attachments/assets/7ac33bfd-fb96-4f82-a1e4-d5e435816a88">
+<img width="1309" alt="ERD(2)" src="https://github.com/user-attachments/assets/cddf73d8-776f-425a-8709-4a45f39b5103">
 
 ---
 ## 피그마 (와이어프레임)
 
-<img width="1269" alt="와이어 프레임" src="https://github.com/user-attachments/assets/8fb670ee-eba9-413e-a032-4913dc91f59d">
-
+<img width="1269" alt="와이어 프레임" src="https://github.com/user-attachments/assets/8ecd00b2-49d4-4a5c-a151-7da0329efbc0">
 ---
 ## 서비스 기능
 ### [회원 도메인]
